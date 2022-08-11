@@ -10,7 +10,7 @@ function login() {
             result = JSON.parse(xhr.responseText);
             if (result.status == "OK") {
                 lu = result.data;
-                localStorage.setItem("loggeduser", JSON.stringify(lu));
+                localStorage.setItem("ricdomloggeduser", JSON.stringify(lu));
                 location.reload();
             } else {
                 Swal.fire({
@@ -27,7 +27,7 @@ function login() {
 }
 
 function logout() {
-    localStorage.removeItem("loggeduser");
+    localStorage.removeItem("ricdomloggeduser");
     localStorage.removeItem("lastRead");
     $("#username").val("");
     $("#password").val("");

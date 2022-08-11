@@ -6,7 +6,7 @@ function showUsers(){
 }
 
 function getUsers() {
-    let lu = localStorage.getItem("loggeduser");
+    let lu = localStorage.getItem("ricdomloggeduser");
     if (lu != null) {
         loggedUser = JSON.parse(lu);
         let username = loggedUser.username;

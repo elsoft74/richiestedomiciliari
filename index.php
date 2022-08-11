@@ -51,7 +51,7 @@
         });
         //window.addEventListener('dataUpdated', updateTableData); 
         window.onload = function() {
-            lu = JSON.parse(localStorage.getItem("loggeduser"));
+            lu = JSON.parse(localStorage.getItem("ricdomloggeduser"));
             if (lu == null) {
                 if (!$("#login").is(":visible")) {
                     showLogin();

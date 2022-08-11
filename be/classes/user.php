@@ -81,13 +81,12 @@
                 $conn=DB::conn();
                 if ($conn!=null){
                     try {
-                        // $password=hash("sha256",$this->password);
-                    
-                        $query="SELECT u.id AS id, u.nome AS nome, u.cognome AS cognome, u.role_id AS role_id, u.is_active AS is_active, r.permissions AS permissions, r.email AS email FROM `users` AS u JOIN `roles` AS r ON u.role_id=r.id WHERE `username`=:username AND `password`=SHA1(:password)";
+                        $password=hash("sha256",$this->password);
+                        $query="SELECT u.id AS id, u.nome AS nome, u.cognome AS cognome, u.role_id AS role_id, u.is_active AS is_active, r.permissions AS permissions, u.email AS email FROM `users` AS u JOIN `roles` AS r ON u.role_id=r.id WHERE `username`=:username AND `password`=:password";
                         
                         $stmt = $conn->prepare($query);
                         $stmt->bindParam(':username',$this->username,PDO::PARAM_STR);
-                        $stmt->bindParam(':password',$this->password,PDO::PARAM_STR);
+                        $stmt->bindParam(':password',$password,PDO::PARAM_STR);
                         $stmt->execute();
                         $res=$stmt->fetch(PDO::FETCH_ASSOC);
                         if(!$res){
