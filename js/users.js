@@ -1,4 +1,4 @@
-function showUsers(){
+function showUsers() {
     $("#main").html("");
     $(".requests-form-btn").hide();
     $(".users-form-btn").show();
@@ -74,11 +74,77 @@ function showUsersTable(users) {
 var showUserUpdate = function (e, row) {
     $("#editUser").fadeIn();
     var element = row.getData();
-    $("#idUser").val(element.id);
-    $("#nomeUser").val(element.nome);
-    $("#cognomeUser").val(element.cognome);
-    $("#usernameUser").val(element.username);
-    $("#emailUser").val(element.email);
-    $("#roleIdUser").val(element.role_id);
-    $("#isActivedUser").val(element.is_active);
+    $("#editIdUser").val();
+    $("#editNomeUser").val(element.nome);
+    $("#editCognomeUser").val(element.cognome);
+    $("#editeUsernameUser").val(element.username);
+    $("#editEmailUser").val(element.email);
+    $("#editRoleIdUser").val(element.role_id);
+    $("#editIsActivedUser").val(element.is_active);
+}
+
+function inserisciUser() {
+    let lu = localStorage.getItem("ricdomloggeduser");
+    if (lu != null) {
+        loggedUser = JSON.parse(lu);
+        let username = loggedUser.username;
+        let token = "123456";
+        let xhr = new XMLHttpRequest();
+        let url = "be/insertUser.php";
+        let user = {};
+        user.nome = $("#nomeUser").val();
+        user.cognome = $("#cognomeUser").val();
+        user.username = $("#usernameUser").val();
+        user.email = $("#emailUser").val();
+        user.password = $("#passwordUser").val();
+        user.roleId = $("#roleIdUser").val();
+        let err="";
+        err+=(user.nome=="")?"Nome vuoto\n":"";
+        err+=(user.cognome=="")?"Cognome vuoto\n":"";
+        err+=(user.username=="")?"Username vuoto\n":"";
+        err+=(user.email=="")?"E-mail vuota\n":"";
+        err+=(user.password=="")?"Password vuota\n":"";
+        err+=(user.roleId=="")?"Ruolo non selezionato\n":"";
+        if (err=="") {
+            xhr.open("POST", url, true);
+            xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    result = JSON.parse(xhr.responseText);
+                    if(result.status=="OK"){
+                        Swal.fire({
+                            text: "Operazione completata",
+                            icon: 'info',
+                            showCancelButton: false,
+                            confirmButtonColor: '#3085d6',
+                            confirmButtonText: 'Ok'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                cleanUserInsert();
+                                showUsers();
+                            }
+                        })
+                    } else {
+                        Swal.fire({
+                            text: result.error,
+                            icon: 'error',
+                            showCancelButton: false,
+                            confirmButtonColor: '#3085d6',
+                            confirmButtonText: 'Ok'
+                        })
+                    }
+                }
+            }
+            xhr.send("username=" + username + "&token=" + token + "&user=" + JSON.stringify(user));
+        } else {
+            Swal.fire({
+                text: err,
+                icon: 'error',
+                showCancelButton: false,
+                confirmButtonColor: '#3085d6',
+                confirmButtonText: 'Ok'
+            })
+        }
+    }
+
 }
