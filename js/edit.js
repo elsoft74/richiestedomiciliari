@@ -32,3 +32,12 @@ function cleanUserEdit() {
     $("#isActivedUser").val('');
     $("#editUser").fadeOut();
 }
+
+function buildAssistitoEditForm(target){
+    buildAssistitoInsertForm(target); 
+}
+
+function cleanUserEdit() {
+    $(".assitito-input-form").val('');
+    $("#editAssistito").fadeOut();
+}

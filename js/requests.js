@@ -15,114 +15,83 @@ function showRequests(richieste, user) {
         paginationSize: 12,         //allow 7 rows per page of data
         paginationCounter: "rows", //display count of paginated rows in footer
         movableColumns: true,      //allow column order to be changed
-        initialSort: [             //set the initial sort order of the data
-            { column: "dataRic", dir: "asc" },
-        ],
+        // initialSort: [             //set the initial sort order of the data
+        //     { column: "dataRic", dir: "asc" },
+        // ],
         columns: [                 //define the table columns
-            { title: "#", field: "id", width: 10, editor: false, hozAlign: "center", visible: checkUserPermission(user, "canViewRequestId") },
             {
-                title: "", width: 10, hozAlign: "center", editor: false, visible: checkUserPermission(user, "canEdit"), cellClick: checkUserPermission(user, "canEdit") ? showElementUpdate : null, formatter: function (cell, formatterParams, onRendered) {
-
-                    return '<span class="material-symbols-outlined" style="color: green">edit</span>';
-                },
-            },
-            {
-                title: "", width: 10, hozAlign: "center", editor: false, visible: checkUserPermission(user, "canDelete"), cellClick: checkUserPermission(user, "canDelete") ? deleteElement : null, formatter: function (cell, formatterParams, onRendered) {
-
-                    return '<span class="material-symbols-outlined" style="color: red">delete</span>';
-                },
-            },
-            { title: "Nome", field: "nome", editor: false },
-            { title: "Cognome", field: "cognome", editor: false, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-symbols-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
-            { title: "Codice Fiscale", field: "codiceFiscale", editor: false, hozAlign: "center", headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-symbols-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
-            { title: "e-mail", field: "email", editor: false, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-symbols-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
-            { title: "Numero Richiesta", field: "numero", editor: false, hozAlign: "center", headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-symbols-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
-            {
-                title: "Data", columns: [
+                title: "Assistito", columns: [
+                    { title: "#", field: "idAssistito", width: 10, editor: false, hozAlign: "center", visible: checkUserPermission(user, "canViewId") },
                     {
-                        title: "Ricezione", field: "dataRic", editor: false, hozAlign: "center", formatter: "datetime", formatterParams: {
-                            //inputFormat:"YYY-MM-DD HH:mm:ss",
-                            outputFormat: "dd-MM-yyyy",
-                            invalidPlaceholder: "(data non valida)",
-                            timezone: "Europe/Rome",
-                        }
+                        title: "", width: 10, hozAlign: "center", editor: false, visible: checkUserPermission(user, "canEditAssistito"), cellClick: checkUserPermission(user, "canEditAssistito") ? showElementUpdate : null, formatter: function (cell, formatterParams, onRendered) {
+
+                            return '<span class="material-symbols-outlined" style="color: green">edit</span>';
+                        },
                     },
                     {
-                        title: "Nostra risposta", field: "dataUltimaCom", editor: false, hozAlign: "center", formatter: "datetime", formatterParams: {
-                            //inputFormat:"YYY-MM-DD HH:mm:ss",
-                            outputFormat: "dd-MM-yyyy",
-                            invalidPlaceholder: "(data non valida)",
-                            timezone: "Europe/Rome",
-                        }
-                    }]
-            },
-            // {
-            //     title: "Avanzamento",
-            //     columns: [
-            {
-                title: "Giorni trascorsi", columns: [
-                    { title: "dalla richiesta", field: "giorni", editor: false, hozAlign: "center" },
-                    { title: "dalla nostra risposta", field: "giorni2", editor: false, hozAlign: "center" },
+                        title: "", width: 10, hozAlign: "center", editor: false, visible: checkUserPermission(user, "canDeleteAssistito"), cellClick: checkUserPermission(user, "canDeleteAssistito") ? deleteElement : null, formatter: function (cell, formatterParams, onRendered) {
+
+                            return '<span class="material-symbols-outlined" style="color: red">delete</span>';
+                        },
+                    },
+                    {
+                        title: "", width: 10, hozAlign: "center", editor: false, visible: checkUserPermission(user, "canAddRequest"), cellClick: checkUserPermission(user, "canAddRequest") ? deleteElement : null, formatter: function (cell, formatterParams, onRendered) {
+
+                            return '<span class="material-symbols-outlined" style="color: green">add</span>';
+                        },
+                    },
+                    { title: "Nome", field: "nome", editor: false },
+                    { title: "Cognome", field: "cognome", editor: false, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-symbols-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
+                    { title: "Codice Fiscale", field: "codiceFiscale", editor: false, hozAlign: "center", headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-symbols-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
+                    { title: "e-mail", field: "email", editor: false, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-symbols-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
+                    { title: "Indirizzo", field: "indirizzo", editor: false, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-symbols-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
+                    { title: "Note", field: "noteAssistito", editor: false/*, formatter: "textarea" */, cellClick: cellPopupFormatterNoteAssistito },
                 ]
-            },
-
-            {
-                title: "Fase", field: "fase", editor: false, hozAlign: "center", editor: false, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-symbols-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, /*headerFilterFunc: "like",*/headerFilter: true/*, headerFilterParams: {
-                    values: function (cell, formatterParams, onRendered) {
-                        var out = [];
-                        let fase = { "": "Tutte" };
-                        out.push(fase);
-                        fasi.forEach(el => {
-                            fase[el.id] = el.descrizione;
-                            console.log(fase);
-                            out.push(fase);
-                        });
-                        return out;
-
-                    }
-                }*/, formatter: function (cell, formatterParams, onRendered) {
-                    let val = cell.getValue();
-                    let out = "FASE NON TROVATA";
-                    fasi.forEach(el => {
-                        if (el.id == val) {
-                            out = el.descrizione;
-                        }
-                    });
-                    return out;
-                }
-            },
-            { title: "Motivo", field: "motivo", editor: false/*, formatter: "textarea" */, cellClick: cellPopupFormatterMotivo },
-            { title: "Note", field: "note", editor: false/*, formatter: "textarea" */, cellClick: cellPopupFormatterNote },
-            (user.permissions.canViewDetails) ?
-                {
-                    title: "Creata",
-                    visible: user.permissions.canViewDetails,
-                    columns: [{
-                        title: "il", field: "created", editor: false, hozAlign: "center", formatter: "datetime", formatterParams: {
+            }, {
+                title: "Richiesta", columns: [
+                    { title: "#", field: "idRichiesta", width: 10, editor: false, hozAlign: "center", visible: checkUserPermission(user, "canViewId") },
+                    { title: "Tipo", field: "idTipologia", width: 10, editor: false, hozAlign: "center" },
+                    { title: "Priorità", field: "idPriorita", width: 10, editor: false, hozAlign: "center" },
+                    {
+                        title: "Data", field: "data", editor: false, hozAlign: "center", formatter: "datetime", formatterParams: {
                             //inputFormat:"YYY-MM-DD HH:mm:ss",
-                            outputFormat: "dd-MM-yyyy HH:mm:ss",
+                            outputFormat: "dd-MM-yyyy",
                             invalidPlaceholder: "(data non valida)",
                             timezone: "Europe/Rome",
                         }
                     },
-                    { title: "da", field: "createdByNomeCognome", editor: false },]
-                } : { visible: false },
-            (user.permissions.canViewDetails) ?
-                {
-                    title: "Aggiornata",
-                    visible: user.permissions.canViewDetails,
-                    columns: [{
-                        title: "il", field: "lastUpdate", editor: false, hozAlign: "center", formatter: "datetime", formatterParams: {
-                            //inputFormat:"YYY-MM-DD HH:mm:ss",
-                            outputFormat: "dd-MM-yyyy HH:mm:ss",
-                            invalidPlaceholder: "(data non valida)",
-                            timezone: "Europe/Rome",
-                        }
-                    },
-                    { title: "da", field: "lastUpdateByNomeCognome", editor: false },]
-                } : { visible: false }
+                    { title: "Note", field: "noteRichiesta", editor: false/*, formatter: "textarea" */, cellClick: cellPopupFormatterNoteRichiesta },
+                    // (user.permissions.canViewDetails) ?
+                    //     {
+                    //         title: "Creata",
+                    //         visible: user.permissions.canViewDetails,
+                    //         columns: [{
+                    //             title: "il", field: "created", editor: false, hozAlign: "center", formatter: "datetime", formatterParams: {
+                    //                 //inputFormat:"YYY-MM-DD HH:mm:ss",
+                    //                 outputFormat: "dd-MM-yyyy HH:mm:ss",
+                    //                 invalidPlaceholder: "(data non valida)",
+                    //                 timezone: "Europe/Rome",
+                    //             }
+                    //         },
+                    //         { title: "da", field: "createdByNomeCognome", editor: false },]
+                    //     } : { visible: false },
+                    // (user.permissions.canViewDetails) ?
+                    //     {
+                    //         title: "Aggiornata",
+                    //         visible: user.permissions.canViewDetails,
+                    //         columns: [{
+                    //             title: "il", field: "lastUpdate", editor: false, hozAlign: "center", formatter: "datetime", formatterParams: {
+                    //                 //inputFormat:"YYY-MM-DD HH:mm:ss",
+                    //                 outputFormat: "dd-MM-yyyy HH:mm:ss",
+                    //                 invalidPlaceholder: "(data non valida)",
+                    //                 timezone: "Europe/Rome",
+                    //             }
+                    //         },
+                    //         { title: "da", field: "lastUpdateByNomeCognome", editor: false },]
+                    //     } : { visible: false }
 
-        ],
+                ],
+            }]
     });
 
     if (checkUserPermission(user, "canExport")) {
@@ -140,8 +109,8 @@ function updateTableData() {
     if (table != null || table != undefined) {
         console.log("Scrivo i dati aggiornati");
         table.updateOrAddData(richieste);
-        var deleted=localStorage.getItem("deleted");
-        if(deleted != null || deleted!=undefined){
+        var deleted = localStorage.getItem("deleted");
+        if (deleted != null || deleted != undefined) {
             table.deleteRow(deleted);
             localStorage.removeItem("deleted");
         }
@@ -366,11 +335,11 @@ var deleteElement = function (e, row) {
 function readRequests(toBeCompleted) {
     var table = Tabulator.findTable("#main")[0];
     var rowCount = 0;
-    if(table!=null && table!=undefined) {
+    if (table != null && table != undefined) {
         rowCount = table.getDataCount();
     }
-    if (rowCount==0){
-        localStorage.setItem("lastRead",null);
+    if (rowCount == 0) {
+        localStorage.setItem("lastRead", null);
     }
     let xhr = new XMLHttpRequest();
     let url = "be/getrequests.php";
@@ -384,10 +353,10 @@ function readRequests(toBeCompleted) {
                 richieste = result.data;
                 toBeCompleted.richieste = true;
                 localStorage.setItem("lastRead", result.lastRead);
-                if (result.hasOwnProperty("deleted")){
-                    localStorage.setItem("deleted",result.deleted);
+                if (result.hasOwnProperty("deleted")) {
+                    localStorage.setItem("deleted", result.deleted);
                 }
-                setTimeout(checkIfAreUpdatedData, 1000);
+                //setTimeout(checkIfAreUpdatedData, 1000);
             } else {
                 Swal.fire({
                     text: "Impossibile recuperare l'elenco delle richieste.",
@@ -400,7 +369,7 @@ function readRequests(toBeCompleted) {
         }
     }
     //xhr.send();
-    xhr.send("lastRead="+localStorage.getItem("lastRead"));
+    xhr.send("lastRead=" + localStorage.getItem("lastRead"));
 }
 
 //create header popup contents
@@ -431,9 +400,14 @@ var emptyHeaderFilter = function () {
     return document.createElement("div");;
 }
 
-var cellPopupFormatterNote = function (e, row, onRendered) {
+var cellPopupFormatterNoteAssistito = function (e, row, onRendered) {
     var data = row.getData();
-    cellPopupFormatter("Note per: " + data.cognome + " " + data.nome, data.note);
+    cellPopupFormatter("Note per: " + data.cognome + " " + data.nome, data.noteAssistito);
+};
+
+var cellPopupFormatterNoteRichiesta = function (e, row, onRendered) {
+    var data = row.getData();
+    cellPopupFormatter("Note: " + data.noteRichiesta);
 };
 
 var cellPopupFormatterMotivo = function (e, row, onRendered) {

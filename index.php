@@ -32,10 +32,12 @@
     <div id="main" class="sections"></div>
     <div id="insert"></div>
     <div id="insertUser"></div>
+    <div id="insertAssistito"></div>
     <div id="login" class="sections"></div>
     <div id="users" class="sections"></div>
     <div id="edit"></div>
     <div id="editUser"></div>
+    <div id="editAssistito"></div>
     <div id="firma"><a href="https://ivopugliese.it">©2022 Ivo Pugliese</a></div>
     <script>       
         if ($("#login").html() == "") {
@@ -46,6 +48,8 @@
             buildEditForm("edit");
             buildUserInsertForm("insertUser");
             buildUserEditForm("editUser");
+            buildAssistitoInsertForm("insertAssistito");
+            buildAssistitoEditForm("editAssistito");
             showMenu(lu);
             showRequests(richieste, lu);
         });

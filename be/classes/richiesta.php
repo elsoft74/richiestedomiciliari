@@ -2,7 +2,16 @@
 class Richiesta
 {
     public $id;
-    public $assistito;
+    public $id_tipologia;
+    public $id_priorita;
+    public $data;
+    public $note;
+    public $is_active;
+    public $created;
+    public $created_by;
+    public $last_update;
+    public $last_update_by;
+
     
 
 
@@ -14,30 +23,8 @@ class Richiesta
                 $conn = DB::conn();
                 if ($conn != null) {
 
-                    $query = 'SELECT r.id AS id,
-                            r.nome AS nome,
-                            r.cognome AS cognome,
-                            r.codicefiscale AS codicefiscale,
-                            r.email AS email,
-                            r.numero AS numero,
-                            r.data_ric AS data_ric,
-                            r.data_ultima_com AS data_ultima_com,
-                            r.fase AS fase,
-                            r.motivo AS motivo,
-                            r.note as note,
-                            r.created AS created,
-                            r.created_by AS created_by,
-                            CONCAT(u1.nome," ",u1.cognome) AS created_by_nome_cognome,
-                            r.last_update AS last_update,
-                            r.updated_by AS updated_by,
-                            CONCAT(u2.nome," ",u2.cognome) AS last_update_by_nome_cognome,
-                            r.is_active AS is_active,
-                            DATEDIFF(CURRENT_DATE(),r.data_ric) AS giorni,
-                            DATEDIFF(CURRENT_DATE(),r.data_ultima_com) AS giorni2,
-                            r.is_archived AS is_archived
+                    $query = 'SELECT *
                             FROM `richieste` AS r
-                            LEFT JOIN `users` AS u1 ON r.`created_by`= u1.ID
-                            LEFT JOIN `users` AS u2 ON r.`updated_by`= u2.ID
                             WHERE r.id=:id';
 
                     $stmt = $conn->prepare($query);
@@ -51,26 +38,8 @@ class Richiesta
                     } else {
                         //var_dump($res);
                         $res = $res[0]; // Ci sarà un solo risultato utile
-                        $this->setNome($res["nome"]);
-                        $this->setCognome($res["cognome"]);
-                        $this->setCodiceFiscale($res["codicefiscale"]);
-                        $this->setEmail($res["email"]);
-                        $this->setNumero($res["numero"]);
-                        $this->setDataRic($res["data_ric"]);
-                        $this->setDataUltimaComunicazione($res["data_ultima_com"]);
-                        $this->setFase($res["fase"]);
-                        $this->setMotivo($res["motivo"]);
-                        $this->setNote($res["note"]);
-                        $this->setCreated($res["created"]);
-                        $this->setCreatedBy($res["created_by"]);
-                        $this->setCreatedByNomeCognome($res["created_by_nome_cognome"]);
-                        $this->setLastUpdate($res["last_update"]);
-                        $this->setLastUpdateBy($res["updated_by"]);
-                        $this->setLastUpdateByNomeCognome($res["last_update_by_nome_cognome"]);
-                        $this->setIsActive($res["is_active"]);
-                        $this->setGiorni($res["giorni"]);
-                        $this->setGiorni2($res["giorni2"]);
-                        $this->setisArchived($res["is_archived"]);
+                        $this->setIdTipologia($res['id_tipologia']);
+                        $this->setIdPriorita($res['id_priorita']);
                     }
                 } else {
                     throw new Exception("DB-CONNECTION-ERROR");
@@ -83,7 +52,7 @@ class Richiesta
         }
     }
 
-    public static function getRequestes($val,$lastRead,$showArchived)
+    public static function getRequestes()
     {
         //$val null o "A" restituisce tutte le richieste Attive
         //$val "T" restituisce tutte le richieste
@@ -95,33 +64,29 @@ class Richiesta
             $conn = DB::conn();
             if ($conn != null) {
                 try {
-                    $query = "SELECT id FROM `richieste` ";
-                    if ($val == null || $val == "A") {
-                        $query .= "WHERE `is_active` = 1 ";
-                    } else if ($val == "C") {
-                        $query .= "WHERE `is_active` = 0 ";
-                    }
-                    if ($showArchived){
-                        $query .= " AND `is_archived` = 1 ";
-                    } else {
-                        $query .= " AND `is_archived` = 0 ";
-                    }
-                    
-
-                    $lastRead = null; // forzatura momentanea
-                    if($lastRead!=null){
-                        $query.=" AND (`created` >= :last_read1 OR `last_update` >= :last_read2) ";
-                    }
-                    
-
-                    $query .= " ORDER BY data_ric, created, last_update";
+                    $query = "SELECT a.id AS id_assistito,
+                    a.nome AS nome,
+                    a.cognome AS cognome,
+                    a.email AS email,
+                    a.indirizzo AS indirizzo,
+                    a.codicefiscale AS codicefiscale,
+                    a.note AS note_assistito,
+                    a.is_active AS assistito_is_active,
+                    r.id as id_richiesta,
+                    r.id_tipologia AS id_tipologia,
+                    r.id_priorita AS id_priorita,
+                    r.data AS data,
+                    r.note AS note_richiesta,
+                    r.is_active AS richiesta_is_active,
+                    r.created AS created,
+                    r.created_by AS created_by,
+                    r.last_update AS last_update,
+                    r.last_update_by AS last_update_by
+                    FROM `assistiti` AS a LEFT JOIN `richieste` AS r ON a.id=r.id_assistito
+                    WHERE a.is_active=1 AND r.is_active=1";
                     
 
                     $stmt = $conn->prepare($query);
-                    if($lastRead!=null){
-                        $stmt->bindParam(":last_read1",$lastRead,PDO::PARAM_STR);
-                        $stmt->bindParam(":last_read2",$lastRead,PDO::PARAM_STR);
-                    }
                     $stmt->execute();
 
                     $res = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -131,26 +96,30 @@ class Richiesta
                     // }
                     $out->data = [];
                     foreach ($res as $r) {
-                        $tmp = new Richiesta();
-                        $tmp->setId($r["id"]);
-                        $tmp->getDetails();
+                        $tmp = new StdClass();
+                        $tmp->idAssistito=$r['id_assistito'];
+                        $tmp->nome=$r['nome'];
+                        $tmp->cognome=$r['cognome'];
+                        $tmp->email=$r['email'];
+                        $tmp->indirizzo=$r['indirizzo'];
+                        $tmp->codiceFiscale=$r['codicefiscale'];
+                        $tmp->noteAssistito=$r['note_assistito'];
+                        $tmp->assistitoIsActive=$r['assistito_is_active'];
+                        $tmp->idRichiesta=$r['id_richiesta'];
+                        $tmp->idTipologia=$r['id_tipologia'];
+                        $tmp->idPriorita=$r['id_priorita'];
+                        $tmp->data=$r['data'];
+                        $tmp->noteRichiesta=$r['note_richiesta'];
+                        $tmp->richiestaIsActive=$r['richiesta_is_active'];
+                        $tmp->created=$r['created'];
+                        $tmp->createdByNomeCognome=$r['created_by'];
+                        $tmp->last_update=$r['last_update'];
+                        $tmp->lastUpdateByNomeCognome=$r['last_update_by'];
+
                         array_push($out->data, $tmp);
                     }
 
-                    if($lastRead!=null){
-                        $query = "SELECT id FROM `richieste` WHERE `is_active` = 0 AND `deleted_date` >= :last_read";
-                        $stmt = $conn->prepare($query);
-                        $stmt->bindParam(":last_read",$lastRead,PDO::PARAM_STR);
-                        $stmt->execute();
-                        $res = $stmt->fetchAll(PDO::FETCH_ASSOC);
-                        $out->deleted = [];
-                        foreach ($res as $r) {
-                            array_push($out->deleted, $r["id"]);
-                        }
-                    }
-
                     $out->status = "OK";
-                    $out->lastRead = (new DateTime("now"))->format("Y-m-d H:i");
                 } catch (Exception $ex) {
                     $out->error = $ex->getMessage();
                 }
