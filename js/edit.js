@@ -23,13 +23,7 @@ function buildUserEditForm(target){
 }
 
 function cleanUserEdit() {
-    $("#idUser").val('');
-    $("#nomeUser").val('');
-    $("#cognomeUser").val('');
-    $("#usernameUser").val('');
-    $("#emailUser").val('');
-    $("#roleIdUser").val('');
-    $("#isActivedUser").val('');
+    $('.user-input-form').val('');
     $("#editUser").fadeOut();
 }
 

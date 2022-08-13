@@ -14,15 +14,15 @@
             $this->username=$val;
         }
 
-        public function getUserName($val){
+        public function getUserName(){
             return $this->username;
         }
 
         public function setPassword($val){
-            $this->password=$val;
+            $this->password=$password=hash("sha256",$val);
         }
 
-        public function getPassword($val){
+        public function getPassword(){
             return $this->password;
         }
 
@@ -30,7 +30,7 @@
             $this->nome=$val;
         }
 
-        public function getNome($val){
+        public function getNome(){
             return $this->nome;
         }
 
@@ -38,7 +38,7 @@
             $this->cognome=$val;
         }
 
-        public function getCognome($val){
+        public function getCognome(){
             return $this->cognome;
         }
 
@@ -46,7 +46,7 @@
             $this->role_id=$val;
         }
 
-        public function getRoleId($val){
+        public function getRoleId(){
             return $this->role_id;
         }
 
@@ -54,7 +54,7 @@
             $this->email=$val;
         }
 
-        public function getEmail($val){
+        public function getEmail(){
             return $this->email;
         }
 
@@ -62,7 +62,7 @@
             $this->is_active=$val;
         }
 
-        public function getIsActive($val){
+        public function getIsActive(){
             return $this->is_active;
         }
 
@@ -70,7 +70,7 @@
             $this->id=$val;
         }
 
-        public function getId($val){
+        public function getId(){
             return $this->id;
         }
 
@@ -81,12 +81,11 @@
                 $conn=DB::conn();
                 if ($conn!=null){
                     try {
-                        $password=hash("sha256",$this->password);
                         $query="SELECT u.id AS id, u.nome AS nome, u.cognome AS cognome, u.role_id AS role_id, u.is_active AS is_active, r.permissions AS permissions, u.email AS email FROM `users` AS u JOIN `roles` AS r ON u.role_id=r.id WHERE `username`=:username AND `password`=:password";
                         
                         $stmt = $conn->prepare($query);
                         $stmt->bindParam(':username',$this->username,PDO::PARAM_STR);
-                        $stmt->bindParam(':password',$password,PDO::PARAM_STR);
+                        $stmt->bindParam(':password',$this->password,PDO::PARAM_STR);
                         $stmt->execute();
                         $res=$stmt->fetch(PDO::FETCH_ASSOC);
                         if(!$res){
@@ -157,6 +156,63 @@
                                 $user->setEmail($res['email']);
                                 $user->setIsActive($res['is_active']==1);
                                 array_push($out->data,$user);
+                            }
+                            $out->status="OK";
+                        } else {
+                            throw new Exception("OPERAZIONE-NON-PERMESSA");
+                        } 
+                    } catch(Exception $ex){
+                            $out->error=$ex->getMessage();
+                        }
+                }
+                else {
+                    $out->error="DB-CONNECTION-ERROR";
+                }
+            } catch(Exception $e){
+                $conn=null;
+            }
+            //file_put_contents("../log/dbtest.log",(new DateTime("now"))->format("Y-m-d H:i").$msg."\n",FILE_APPEND);
+            return $out;
+        }
+
+        public function insert($username,$token){
+            $out = new stdClass();
+            $out->status="KO";
+            $out->data=[];
+            try {
+                $conn=DB::conn();
+                if ($conn!=null){
+                    try {
+                        $query="SELECT is_active, role_id FROM `users` AS u WHERE u.username=:username";
+                        $stmt = $conn->prepare($query);
+                        $stmt->bindParam(':username',$username,PDO::PARAM_STR);
+                        $stmt->execute();
+                        $res=$stmt->fetch(PDO::FETCH_ASSOC);
+                        if (User::checkToken($token) && $res && $res['is_active']==1 AND User::checkCanCreateUser($res['role_id'])){
+                            $query="SELECT count(id) presente
+                            FROM `users` AS u WHERE u.username=:username";
+                            $stmt = $conn->prepare($query);
+                            $stmt->bindParam(':username',$this->username,PDO::PARAM_STR);
+                            $stmt->execute();
+                            $res=$stmt->fetch(PDO::FETCH_ASSOC);
+                            if($res && $res['presente']==0){
+                                $query="INSERT INTO `users` (nome,cognome,username,email,password,role_id) VALUES (:nome,:cognome,:username,:email,:password,:role_id)";
+                                $stmt = $conn->prepare($query);
+                                $stmt->bindParam(':nome',$this->nome,PDO::PARAM_STR);
+                                $stmt->bindParam(':cognome',$this->cognome,PDO::PARAM_STR);
+                                $stmt->bindParam(':username',$this->username,PDO::PARAM_STR);
+                                $stmt->bindParam(':email',$this->email,PDO::PARAM_STR);
+                                $stmt->bindParam(':password',$this->password,PDO::PARAM_STR);
+                                $stmt->bindParam(':role_id',$this->role_id,PDO::PARAM_STR);
+                                $stmt->execute();
+                                $this->setId($conn->lastInsertId());
+                                if ($this->getId()!=0){
+                                    $out->status="OK";
+                                } else {
+                                    throw new Exception("ERRORE-DI-INSERIMENTO");    
+                                }
+                            } else {
+                                throw new Exception("USERNAME-ESISTENTE");
                             }
                             $out->status="OK";
                         } else {

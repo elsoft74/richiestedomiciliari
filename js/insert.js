@@ -181,7 +181,6 @@ function buildUserInsertForm(target) {
                 email:"emailUser",
                 roleId:"roleIdUser",
                 password:"passwordUser",
-                isActive:"isActivedUser",
                 titleId:"insertModalTitle",
                 titleText:"Inserisci nuovo utente"
             }
@@ -192,14 +191,14 @@ function buildUserInsertForm(target) {
             fun1="aggiornaUser()";
             fun2="cleanUserEdit()";
             attrs={
-                id:"idUser",
-                nome:"nomeUser",
-                cognome:"cognomeUser",
-                username:"usernameUser",
-                email:"emailUser",
-                roleId:"roleIdUser",
-                password:"passwordUser",
-                isActive:"isActivedUser",
+                id:"editIdUser",
+                nome:"editNomeUser",
+                cognome:"editCognomeUser",
+                username:"editUsernameUser",
+                email:"editEmailUser",
+                roleId:"editRoleIdUser",
+                password:"editPasswordUser",
+                isActive:"editIsActivedUser",
                 titleId:"editModalTitle",
                 titleText:"Modifica utente"
             }
@@ -225,40 +224,42 @@ function buildUserInsertForm(target) {
         divFormGroup.append(el);
         el = $("<label>").attr({ "for": attrs.nome }).text("Nome");
         divFormGroup.append(el);
-        el = $("<input>").addClass("form-control").attr({ "type": "text", "id": attrs.nome });
+        el = $("<input>").addClass('user-input-form').addClass("form-control").attr({ "type": "text", "id": attrs.nome });
         divFormGroup.append(el);
     
         el = $("<label>").attr({ "for": attrs.cognome }).text("Cognome");
         divFormGroup.append(el);
-        el = $("<input>").addClass("form-control").attr({ "type": "text", "id": attrs.cognome });
+        el = $("<input>").addClass('user-input-form').addClass("form-control").attr({ "type": "text", "id": attrs.cognome });
         divFormGroup.append(el);
     
         el = $("<label>").attr({ "for": attrs.username }).text("Nome utente");
         divFormGroup.append(el);
-        el = $("<input>").addClass("form-control").attr({ "type": "text", "id": attrs.username });
+        el = $("<input>").addClass('user-input-form').addClass("form-control").attr({ "type": "text", "id": attrs.username });
         divFormGroup.append(el);
-        el = $("<label>").attr({ "for": attrs.password }).text("Nuova Password");
+        el = $("<label>").attr({ "for": attrs.password }).text("Password - In modifica lasciare vuota per non cambiarla");
         divFormGroup.append(el);
-        el = $("<input>").addClass("form-control").attr({ "type": "text", "id": attrs.password });
+        el = $("<input>").addClass('user-input-form').addClass("form-control").attr({ "type": "text", "id": attrs.password });
         divFormGroup.append(el);
         form.append(divFormGroup);
 
         divFormGroup = $("<div>").addClass("form-group");
         el = $("<label>").attr({ "for": attrs.email }).text("e-mail");
         divFormGroup.append(el);
-        el = $("<input>").addClass("form-control").attr({ "type": "email", "id": attrs.email });
+        el = $("<input>").addClass('user-input-form').addClass("form-control").attr({ "type": "email", "id": attrs.email });
         divFormGroup.append(el);
     
         el = $("<label>").attr({ "for": attrs.roleId }).text("Ruolo");
         divFormGroup.append(el);
-        el = $("<input>").addClass("form-control").attr({ "type": "text", "id": attrs.roleId });
+        el = $("<input>").addClass('user-input-form').addClass("form-control").attr({ "type": "text", "id": attrs.roleId });
         divFormGroup.append(el);
     
         let div4 = $("<div>").addClass("col");
-        el = $("<label>").attr({ "for": attrs.isActive }).text("Attivo");
-        div4.append(el);
-        el = $("<input>").addClass("form-control").attr({ "type": "text", "id": attrs.isActive });
-        div4.append(el);
+        if(attrs.hasOwnProperty('isActive')){
+            el = $("<label>").attr({ "for": attrs.isActive }).text("Attivo");
+            div4.append(el);
+            el = $("<input>").addClass('user-input-form').addClass("form-control").attr({ "type": "text", "id": attrs.isActive });
+            div4.append(el);
+        }
         let div5 = $("<div>").addClass("input-group-addon");
         el = $("<span>").addClass("glyphicon glyphicon-th");
         div5.append(el);
@@ -283,13 +284,7 @@ function buildUserInsertForm(target) {
 }
 
 function cleanUserInsert() {
-    $("#idUser").val('');
-    $("#nomeUser").val('');
-    $("#cognomeUser").val('');
-    $("#usernameUser").val('');
-    $("#emailUser").val('');
-    $("#roleIdUser").val('');
-    $("#isActivedUser").val('');
+    $(".user-input-form").val('');
     $("#insertUser").fadeOut();
 }
 
