@@ -1,19 +1,107 @@
 <?php
+include_once("user.php");
+include_once("db.php");
 class Richiesta
 {
     public $id;
-    public $id_tipologia;
-    public $id_priorita;
+    public $idAssistito;
+    public $idTipologia;
+    public $idPriorita;
     public $data;
     public $note;
-    public $is_active;
+    public $isactive;
     public $created;
-    public $created_by;
-    public $last_update;
-    public $last_update_by;
+    public $createdBy;
+    public $lastUpdate;
+    public $lastUpdateBy;
 
-    
+    public function setId($val){
+        $this->id=$val;
+    }
 
+    public function getId(){
+        return $this->id;
+    }
+
+    public function setIdAssistito($val){
+        $this->idAssistito=$val;
+    }
+
+    public function getIdAssistito(){
+        return $this->idAssistito;
+    }
+
+    public function setIdTipologia($val){
+        $this->idTipologia=$val;
+    }
+
+    public function getIdTipologia(){
+        return $this->idTipologia;
+    }
+
+    public function setIdPriorita($val){
+        $this->idPriorita=$val;
+    }
+
+    public function getIdPriorita(){
+        return $this->idPriorita;
+    }
+
+    public function setData($val){
+        $this->data=$val;
+    }
+
+    public function getData(){
+        return $this->data;
+    }
+
+    public function setNote($val){
+        $this->note=$val;
+    }
+
+    public function getNote(){
+        return $this->note;
+    }
+
+    public function setIsActive($val){
+        $this->isActive=$val;
+    }
+
+    public function getIsActive(){
+        return $this->isActive;
+    }
+
+    public function setCreated($val){
+        $this->created=$val;
+    }
+
+    public function getCreated(){
+        return $this->created;
+    }
+
+    public function setCreatedBy($val){
+        $this->createdBy=$val;
+    }
+
+    public function getCreatedBy(){
+        return $this->createdBy;
+    }
+
+    public function setLastUpdate($val){
+        $this->lastUpdate=$val;
+    }
+
+    public function getLastUpdate(){
+        return $this->lastUpdate;
+    }
+
+    public function setLastUpdateBy($val){
+        $this->lastUpdateBy=$val;
+    }
+
+    public function getLastUpdateBy(){
+        return $this->lastUpdateBy;
+    }
 
 
     public function getDetails()
@@ -135,11 +223,10 @@ class Richiesta
         } catch (Exception $e) {
             $conn = null;
         }
-        //file_put_contents("../log/dbtest.log",(new DateTime("now"))->format("Y-m-d H:i").$msg."\n",FILE_APPEND);
         return $out;
     }
 
-    public function insertRequest()
+    public function insert($username,$token)
     {
         $out = new stdClass();
         $out->status = "KO";
@@ -147,69 +234,49 @@ class Richiesta
             $conn = DB::conn();
             if ($conn != null) {
                 try {
-                    $query = "SELECT COUNT(*) AS presenti FROM `richieste`
-                    WHERE `is_active` = 1 AND
-                    UPPER(`codicefiscale`)=UPPER(:codicefiscale)";
-
-                    $stmt = $conn->prepare($query);
-                    $stmt->bindParam(':codicefiscale', $this->codiceFiscale, PDO::PARAM_STR);
-                    //$stmt->bindParam(':numero', $this->numero, PDO::PARAM_STR);
-                    $stmt->execute();
-
-                    $res = $stmt->fetch(PDO::FETCH_ASSOC);
-                    // $out->presenti = $res;
-                    if ($res && $res['presenti'] == 0) {
-                        $query = "INSERT INTO `richieste` (
-                            `nome`,
-                            `cognome`,
-                            `codicefiscale`,
-                            `email`,
-                            `numero`,
-                            `data_ric`,
-                            `data_ultima_com`,
-                            `fase`,
-                            `motivo`,
-                            `note`,
-                            `created_by`
-                        ) VALUES (:nome,
-                            :cognome,
-                            :codicefiscale,
-                            :email,
-                            :numero,
-                            :data_ric,
-                            :data_ultima_com,
-                            :fase,
-                            :motivo,
-                            :note,
-                            :created_by)";
-
+                    $query="SELECT is_active, role_id FROM `users` AS u WHERE u.username=:username";
                         $stmt = $conn->prepare($query);
-                        $stmt->bindParam(':nome', $this->nome, PDO::PARAM_STR);
-                        $stmt->bindParam(':cognome', $this->cognome, PDO::PARAM_STR);
-                        $stmt->bindParam(':codicefiscale', $this->codiceFiscale, PDO::PARAM_STR);
-                        $stmt->bindParam(':email', $this->email, PDO::PARAM_STR);
-                        $stmt->bindParam(':numero', $this->numero, PDO::PARAM_STR);
-                        $stmt->bindParam(':data_ric', $this->dataRic, PDO::PARAM_STR);
-                        $stmt->bindParam(':data_ultima_com', $this->dataUltimaCom, PDO::PARAM_STR);
-                        $stmt->bindParam(':fase', $this->fase, PDO::PARAM_INT);
-                        $stmt->bindParam(':motivo', $this->motivo, PDO::PARAM_STR);
-                        $stmt->bindParam(':note', $this->note, PDO::PARAM_STR);
-                        $stmt->bindParam(':created_by', $this->createdBy, PDO::PARAM_INT);
-
+                        $stmt->bindParam(':username',$username,PDO::PARAM_STR);
                         $stmt->execute();
+                        $res=$stmt->fetch(PDO::FETCH_ASSOC);
+                        if (User::checkToken($token) && $res && $res['is_active']==1 AND User::checkCanCreateRequest($res['role_id'])){
+                            $query = "INSERT INTO `richieste` (
+                                `id_assistito`,
+                                `id_tipologia`,
+                                `id_priorita`,
+                                `data`,
+                                `note`,
+                                `created_by`
+                            ) VALUES (:id_assistito,
+                                :id_tipologia,
+                                :id_priorita,
+                                :data,
+                                :note,
+                                :created_by)";
 
-                        $this->setId($conn->lastInsertId());
+                            $stmt = $conn->prepare($query);
+                            $stmt->bindParam(':id_assistito', $this->idAssistito, PDO::PARAM_INT);
+                            $stmt->bindParam(':id_tipologia', $this->idTipologia, PDO::PARAM_INT);
+                            $stmt->bindParam(':id_priorita', $this->idPriorita, PDO::PARAM_INT);
+                            $stmt->bindParam(':data', $this->data, PDO::PARAM_STR);
+                            $stmt->bindParam(':note', $this->note, PDO::PARAM_STR);
+                            $stmt->bindParam(':created_by', $this->createdBy, PDO::PARAM_INT);
 
-                        if ($this->id != 0) {
-                            $out->status = "OK";
+                            $stmt->execute();
+
+                            $this->setId($conn->lastInsertId());
+
+                            if ($this->id != 0) {
+                                $out->status = "OK";
+                            } else {
+                                $out->errorInfo=$conn->errorInfo();
+                                $out->errorCode=$conn->errorCode();
+                                throw new Exception("Errore d'inserimento");
+                            } 
                         } else {
-                            $out->errorInfo=$conn->errorInfo();
-			    $out->errorCode=$conn->errorCode();
-                            throw new Exception("Errore d'inserimento");
-                        }
-                    } else {
-                        throw new Exception("Codice fiscale o numero richiesta già presente.");
-                    }
+                            throw new Exception("OPERAZIONE-NON-PERMESSA");
+                        } 
+                    
                 } catch (Exception $ex) {
                     $out->error = $ex->getMessage();
                 }
