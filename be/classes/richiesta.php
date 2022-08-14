@@ -64,6 +64,7 @@ class Richiesta
             $conn = DB::conn();
             if ($conn != null) {
                 try {
+                    /*
                     $query = "SELECT a.id AS id_assistito,
                     a.nome AS nome,
                     a.cognome AS cognome,
@@ -72,6 +73,7 @@ class Richiesta
                     a.codicefiscale AS codicefiscale,
                     a.note AS note_assistito,
                     a.is_active AS assistito_is_active,
+                    a.telefono AS telefono,
                     r.id as id_richiesta,
                     r.id_tipologia AS id_tipologia,
                     r.id_priorita AS id_priorita,
@@ -83,7 +85,10 @@ class Richiesta
                     r.last_update AS last_update,
                     r.last_update_by AS last_update_by
                     FROM `assistiti` AS a LEFT JOIN `richieste` AS r ON a.id=r.id_assistito
-                    WHERE a.is_active=1 AND r.is_active=1";
+                    WHERE a.is_active=1";
+                    */
+
+                    $query = "SELECT * FROM `vista_richieste` WHERE richiesta_is_active=1 OR richiesta_is_active IS null";
                     
 
                     $stmt = $conn->prepare($query);
@@ -101,6 +106,7 @@ class Richiesta
                         $tmp->nome=$r['nome'];
                         $tmp->cognome=$r['cognome'];
                         $tmp->email=$r['email'];
+                        $tmp->telefono=$r['telefono'];
                         $tmp->indirizzo=$r['indirizzo'];
                         $tmp->codiceFiscale=$r['codicefiscale'];
                         $tmp->noteAssistito=$r['note_assistito'];

@@ -6,23 +6,23 @@
     $out->status = "KO";
     include_once("config/config.php");
     include_once("classes/db.php");
-    include_once("classes/user.php");
-    include_once("classes/user.php"); 
+    include_once("classes/assistito.php"); 
     try {
-        $tmp = json_decode($_POST['user']);
+        $tmp = json_decode($_POST['assistito']);
         $username = $_POST['username'];
         $token = $_POST['token'];
         $out->in=print_r($tmp,true);
         if ($tmp != null/* && $user != null*/) {
-            $newUser = new User();
-            $newUser->setNome($tmp->nome);
-            $newUser->setCognome($tmp->cognome);
-            $newUser->setEmail($tmp->email);
-            $newUser->setPassword($tmp->password);
-            $newUser->setRoleId($tmp->roleId);
-            $newUser->setUsername($tmp->username);
+            $assistito = new Assistito();
+            $assistito->setNome($tmp->nome);
+            $assistito->setCognome($tmp->cognome);
+            $assistito->setCodiceFiscale($tmp->codiceFiscale);
+            $assistito->setTelefono($tmp->telefono);
+            $assistito->setEmail($tmp->email);
+            $assistito->setIndirizzo($tmp->indirizzo);
+            $assistito->setNote($tmp->note);
             
-            $out=$newUser->insert($username,$token);
+            $out=$assistito->insert($username,$token);
             //$ric->getDetails();
             $out->debug=print_r($tmp,true);
             // $out->status="OK";

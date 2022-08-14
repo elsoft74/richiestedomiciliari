@@ -74,10 +74,10 @@ function showUsersTable(users) {
 var showUserUpdate = function (e, row) {
     $("#editUser").fadeIn();
     var element = row.getData();
-    $("#editIdUser").val();
+    $("#editIdUser").val(element.id);
     $("#editNomeUser").val(element.nome);
     $("#editCognomeUser").val(element.cognome);
-    $("#editeUsernameUser").val(element.username);
+    $("#editUsernameUser").val(element.username);
     $("#editEmailUser").val(element.email);
     $("#editRoleIdUser").val(element.role_id);
     $("#editIsActivedUser").val(element.is_active);
@@ -121,6 +121,74 @@ function inserisciUser() {
                         }).then((result) => {
                             if (result.isConfirmed) {
                                 cleanUserInsert();
+                                showUsers();
+                            }
+                        })
+                    } else {
+                        Swal.fire({
+                            text: result.error,
+                            icon: 'error',
+                            showCancelButton: false,
+                            confirmButtonColor: '#3085d6',
+                            confirmButtonText: 'Ok'
+                        })
+                    }
+                }
+            }
+            xhr.send("username=" + username + "&token=" + token + "&user=" + JSON.stringify(user));
+        } else {
+            Swal.fire({
+                text: err,
+                icon: 'error',
+                showCancelButton: false,
+                confirmButtonColor: '#3085d6',
+                confirmButtonText: 'Ok'
+            })
+        }
+    }
+
+}
+
+function aggiornaUser() {
+    let lu = localStorage.getItem("ricdomloggeduser");
+    if (lu != null) {
+        loggedUser = JSON.parse(lu);
+        let username = loggedUser.username;
+        let token = "123456";
+        let xhr = new XMLHttpRequest();
+        let url = "be/editUser.php";
+        let user = {};
+        user.id = $("#editIdUser").val();
+        user.nome = $("#editNomeUser").val();
+        user.cognome = $("#editCognomeUser").val();
+        user.username = $("#editUsernameUser").val();
+        user.email = $("#editEmailUser").val();
+        user.password = $("#editPasswordUser").val();
+        user.roleId = $("#editRoleIdUser").val();
+        user.isActive = $("#editIsActivedUser").val();
+        let err="";
+        err+=(user.nome=="")?"Nome vuoto\n":"";
+        err+=(user.cognome=="")?"Cognome vuoto\n":"";
+        err+=(user.username=="")?"Username vuoto\n":"";
+        err+=(user.email=="")?"E-mail vuota\n":"";
+        err+=(user.roleId=="")?"Ruolo non selezionato\n":"";
+        err+=(user.roleId=="")?"Attivo non selezionato\n":"";
+        if (err=="") {
+            xhr.open("POST", url, true);
+            xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    result = JSON.parse(xhr.responseText);
+                    if(result.status=="OK"){
+                        Swal.fire({
+                            text: "Operazione completata",
+                            icon: 'info',
+                            showCancelButton: false,
+                            confirmButtonColor: '#3085d6',
+                            confirmButtonText: 'Ok'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                cleanUserEdit();
                                 showUsers();
                             }
                         })

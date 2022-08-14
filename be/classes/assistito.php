@@ -1,4 +1,5 @@
 <?php
+    include_once("user.php");
     class Assistito {    
         public $id;
         public $nome;
@@ -116,11 +117,129 @@
             return $out;
         }
 
-        public static function checkCanCreateUser($role_id){
-            return ($role_id=="1"); // va implementato un check sul ruolo sulla base del json memorizzato
+        public function insert($username,$token){
+            $out = new stdClass();
+            $out->status="KO";
+            $out->data=[];
+            try {
+                $conn=DB::conn();
+                if ($conn!=null){
+                    try {
+                        $query="SELECT is_active, role_id FROM `users` AS u WHERE u.username=:username";
+                        $stmt = $conn->prepare($query);
+                        $stmt->bindParam(':username',$username,PDO::PARAM_STR);
+                        $stmt->execute();
+                        $res=$stmt->fetch(PDO::FETCH_ASSOC);
+                        if (User::checkToken($token) && $res && $res['is_active']==1 AND User::checkCanCreateAssistito($res['role_id'])){
+                            $query="SELECT COUNT(id) AS presente FROM `assistiti` AS a WHERE UPPER(a.codicefiscale)=UPPER(:codicefiscale)";
+                            $codicefiscale=$this->getCodiceFiscale();
+                            $stmt = $conn->prepare($query);
+                            $stmt->bindParam(':codicefiscale',$codicefiscale,PDO::PARAM_STR);
+                            $stmt->execute();
+                            $results=$stmt->fetch(PDO::FETCH_ASSOC);
+                            if($results && $results['presente']==0){
+                                $query="INSERT INTO `assistiti` (nome,cognome,codicefiscale,telefono,email,indirizzo,note) VALUES (:nome,:cognome,:codicefiscale,:telefono,:email,:indirizzo,:note)";
+                                $stmt = $conn->prepare($query);
+                                $stmt->bindParam(':nome',$this->getNome(),PDO::PARAM_STR);
+                                $stmt->bindParam(':cognome',$this->getCognome(),PDO::PARAM_STR);
+                                $stmt->bindParam(':codicefiscale',$this->getCodiceFiscale(),PDO::PARAM_STR);
+                                $stmt->bindParam(':telefono',$this->getTelefono(),PDO::PARAM_STR);
+                                $stmt->bindParam(':email',$this->getEmail(),PDO::PARAM_STR);
+                                $stmt->bindParam(':indirizzo',$this->getIndirizzo(),PDO::PARAM_STR);
+                                $stmt->bindParam(':note',$this->getNote(),PDO::PARAM_STR);
+                                $stmt->execute();
+                                $this->setId($conn->lastInsertId());
+                                    if ($this->getId()!=0){
+                                    $out->status="OK";
+                                } else {
+                                    throw new Exception("ERRORE-DI-INSERIMENTO");    
+                                }
+                            } else {
+                                throw new Exception("CODICE-FISCALE-PRESENTE-IN-ANAGRAFICA");
+                            }
+                        } else {
+                            throw new Exception("OPERAZIONE-NON-PERMESSA");
+                        } 
+                    } catch(Exception $ex){
+                            $out->error=$ex->getMessage();
+                        }
+                }
+                else {
+                    $out->error="DB-CONNECTION-ERROR";
+                }
+            } catch(Exception $e){
+                $conn=null;
+            }
+            //file_put_contents("../log/dbtest.log",(new DateTime("now"))->format("Y-m-d H:i").$msg."\n",FILE_APPEND);
+            return $out;
         }
-
-        public static function checkToken($token){
-            return ($token=="123456"); // va implementata una generazione token con controllo di scadenza e restituito un oggetto con anche i dati quali lo username
+    
+        public function update($username,$token){
+            $out = new stdClass();
+            $out->status="KO";
+            $out->data=[];
+            try {
+                $conn=DB::conn();
+                if ($conn!=null){
+                    try {
+                        $query="SELECT is_active, role_id FROM `users` AS u WHERE u.username=:username";
+                        $stmt = $conn->prepare($query);
+                        $stmt->bindParam(':username',$username,PDO::PARAM_STR);
+                        $stmt->execute();
+                        $res=$stmt->fetch(PDO::FETCH_ASSOC);
+                        if (User::checkToken($token) && $res && $res['is_active']==1 AND User::checkCanUpdateAssistito($res['role_id'])){
+                            $query="SELECT COUNT(id) AS presente FROM `assistiti` AS a WHERE UPPER(a.codicefiscale)=UPPER(:codicefiscale)  AND NOT a.id=:id";
+                            $codicefiscale=$this->getCodiceFiscale();
+                            $stmt = $conn->prepare($query);
+                            $stmt->bindParam(':codicefiscale',$codicefiscale,PDO::PARAM_STR);
+                            $stmt->bindParam(':id',$this->id,PDO::PARAM_INT);
+                            $stmt->execute();
+                            $results=$stmt->fetch(PDO::FETCH_ASSOC);
+                            if($results && $results['presente']==0){
+                                $query="UPDATE `assistiti` SET
+                                nome=:nome,
+                                cognome=:cognome,
+                                codicefiscale=:codicefiscale,
+                                telefono=:telefono,
+                                email=:email,
+                                indirizzo=:indirizzo,
+                                note=:note
+                                WHERE id=:id";
+                                $stmt = $conn->prepare($query);
+                                $stmt->bindParam(':nome',$this->nome,PDO::PARAM_STR);
+                                $stmt->bindParam(':cognome',$this->cognome,PDO::PARAM_STR);
+                                $stmt->bindParam(':codicefiscale',$codicefiscale,PDO::PARAM_STR);
+                                $stmt->bindParam(':telefono',$this->telefono,PDO::PARAM_STR);
+                                $stmt->bindParam(':email',$this->email,PDO::PARAM_STR);
+                                $stmt->bindParam(':indirizzo',$this->indirizzo,PDO::PARAM_STR);
+                                $stmt->bindParam(':note',$this->note,PDO::PARAM_STR);
+                                $stmt->bindParam(':id',$this->id,PDO::PARAM_INT);
+                                $stmt->execute();
+                                if ($stmt->rowCount()==1){
+                                    $out->status="OK";
+                                } else {
+                                    throw new Exception("AGGIORNAMENTO-NON-ESEGUITO");    
+                                }
+                            } else {
+                                throw new Exception("CODICE-FISCALE-PRESENTE-IN-ALTRA-ANAGRAFICA");
+                            }
+                        } else {
+                            throw new Exception("OPERAZIONE-NON-PERMESSA");
+                        } 
+                    } catch(Exception $ex){
+                            $out->error=$ex->getMessage();
+                        }
+                }
+                else {
+                    $out->error="DB-CONNECTION-ERROR";
+                }
+            } catch(Exception $e){
+                $conn=null;
+            }
+            //file_put_contents("../log/dbtest.log",(new DateTime("now"))->format("Y-m-d H:i").$msg."\n",FILE_APPEND);
+            return $out;
         }
+    
     }
+
+

@@ -6,7 +6,6 @@
     $out->status = "KO";
     include_once("config/config.php");
     include_once("classes/db.php");
-    include_once("classes/user.php");
     include_once("classes/user.php"); 
     try {
         $tmp = json_decode($_POST['user']);
@@ -14,15 +13,19 @@
         $token = $_POST['token'];
         $out->in=print_r($tmp,true);
         if ($tmp != null/* && $user != null*/) {
-            $newUser = new User();
-            $newUser->setNome($tmp->nome);
-            $newUser->setCognome($tmp->cognome);
-            $newUser->setEmail($tmp->email);
-            $newUser->setPassword($tmp->password);
-            $newUser->setRoleId($tmp->roleId);
-            $newUser->setUsername($tmp->username);
+            $user = new User();
+            $user->setId($tmp->id);
+            $user->setNome($tmp->nome);
+            $user->setCognome($tmp->cognome);
+            $user->setEmail($tmp->email);
+            if($tmp->password!=""){
+                $user->setPassword($tmp->password);
+            }
+            $user->setRoleId($tmp->roleId);
+            $user->setUsername($tmp->username);
+            $user->setIsActive($tmp->isActive);
             
-            $out=$newUser->insert($username,$token);
+            $out=$user->update($username,$token);
             //$ric->getDetails();
             $out->debug=print_r($tmp,true);
             // $out->status="OK";

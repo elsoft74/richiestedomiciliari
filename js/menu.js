@@ -23,7 +23,7 @@ function showMenu(user) {
             div1.append(button);
             button = $("<button>").addClass("btn").addClass("btn-primary").addClass("btn-block").addClass('requests-form-btn').attr({"onClick":'showUsers()','id':'showUserButton'}).text("Utenti");
             div1.append(button);
-            button = $("<button>").addClass("btn").addClass("btn-primary").addClass("btn-block").addClass('users-form-btn').attr({"onClick":'showRequests()','id':'showRequestsButton'}).text("Richieste");
+            button = $("<button>").addClass("btn").addClass("btn-primary").addClass("btn-block").addClass('users-form-btn').attr({"onClick":'showRequests(richieste, lu)','id':'showRequestsButton'}).text("Richieste");
             div1.append(button);
         }        
         row.append(div1);

@@ -74,6 +74,11 @@
             return $this->id;
         }
 
+        function __construct() {
+            $this->id = null;
+            $this->password = null;
+        }
+
         public function login(){
             $out = new stdClass();
             $out->status="KO";
@@ -203,7 +208,7 @@
                                 $stmt->bindParam(':username',$this->username,PDO::PARAM_STR);
                                 $stmt->bindParam(':email',$this->email,PDO::PARAM_STR);
                                 $stmt->bindParam(':password',$this->password,PDO::PARAM_STR);
-                                $stmt->bindParam(':role_id',$this->role_id,PDO::PARAM_STR);
+                                $stmt->bindParam(':role_id',$this->role_id,PDO::PARAM_INT);
                                 $stmt->execute();
                                 $this->setId($conn->lastInsertId());
                                 if ($this->getId()!=0){
@@ -232,8 +237,89 @@
             return $out;
         }
 
+        public function update($username,$token){
+            $out = new stdClass();
+            $out->status="KO";
+            $out->data=[];
+            try {
+                $conn=DB::conn();
+                if ($conn!=null){
+                    try {
+                        $query="SELECT is_active, role_id FROM `users` AS u WHERE u.username=:username";
+                        $stmt = $conn->prepare($query);
+                        $stmt->bindParam(':username',$username,PDO::PARAM_STR);
+                        $stmt->execute();
+                        $res=$stmt->fetch(PDO::FETCH_ASSOC);
+                        if (User::checkToken($token) && $res && $res['is_active']==1 AND User::checkCanEditUser($res['role_id'])){
+                            $query="SELECT count(id) presente
+                            FROM `users` AS u WHERE u.username=:username AND NOT u.id=:id";
+                            $stmt = $conn->prepare($query);
+                            $stmt->bindParam(':username',$this->username,PDO::PARAM_STR);
+                            $stmt->bindParam(':id',$this->id,PDO::PARAM_STR);
+                            $stmt->execute();
+                            $res=$stmt->fetch(PDO::FETCH_ASSOC);
+                            if($res && $res['presente']==0){
+                                $query="UPDATE `users` SET
+                                nome = :nome,
+                                cognome = :cognome,
+                                username = :username,
+                                email = :email,
+                                role_id = :role_id,
+                                is_active = :is_active";
+                                $query.=($this->getPassword()!=null)?", password=:password":"";
+                                $query.=" WHERE id=:id";
+                                $stmt = $conn->prepare($query);
+                                $stmt->bindParam(':id',$this->id,PDO::PARAM_STR);
+                                $stmt->bindParam(':nome',$this->nome,PDO::PARAM_STR);
+                                $stmt->bindParam(':cognome',$this->cognome,PDO::PARAM_STR);
+                                $stmt->bindParam(':username',$this->username,PDO::PARAM_STR);
+                                $stmt->bindParam(':email',$this->email,PDO::PARAM_STR);
+                                if ($this->password!=null) {
+                                    $stmt->bindParam(':password',$this->password,PDO::PARAM_STR);
+                                }
+                                $stmt->bindParam(':role_id',$this->role_id,PDO::PARAM_INT);
+                                $stmt->bindParam(':is_active',$this->is_active,PDO::PARAM_INT);
+                                $stmt->execute();
+                                if ($stmt->rowCount()==1){
+                                    $out->status="OK";
+                                } else {
+                                    throw new Exception("AGGIORNAMENTO-NON-ESEGUITO");    
+                                }
+                            } else {
+                                throw new Exception("USERNAME-IN-USO-PER-ALTRO-UTENTE");
+                            }
+                            $out->status="OK";
+                        } else {
+                            throw new Exception("OPERAZIONE-NON-PERMESSA");
+                        } 
+                    } catch(Exception $ex){
+                            $out->error=$ex->getMessage();
+                        }
+                }
+                else {
+                    $out->error="DB-CONNECTION-ERROR";
+                }
+            } catch(Exception $e){
+                $conn=null;
+            }
+            //file_put_contents("../log/dbtest.log",(new DateTime("now"))->format("Y-m-d H:i").$msg."\n",FILE_APPEND);
+            return $out;
+        }
+
         public static function checkCanCreateUser($role_id){
             return ($role_id=="1"); // va implementato un check sul ruolo sulla base del json memorizzato
+        }
+
+        public static function checkCanEditUser($role_id){
+            return ($role_id=="1"); // va implementato un check sul ruolo sulla base del json memorizzato
+        }
+
+        public static function checkCanCreateAssistito($role_id){
+            return true; // va implementato un check sul ruolo sulla base del json memorizzato
+        }
+
+        public static function checkCanUpdateAssistito($role_id){
+            return true; // va implementato un check sul ruolo sulla base del json memorizzato
         }
 
         public static function checkToken($token){

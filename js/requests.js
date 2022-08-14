@@ -23,7 +23,7 @@ function showRequests(richieste, user) {
                 title: "Assistito", columns: [
                     { title: "#", field: "idAssistito", width: 10, editor: false, hozAlign: "center", visible: checkUserPermission(user, "canViewId") },
                     {
-                        title: "", width: 10, hozAlign: "center", editor: false, visible: checkUserPermission(user, "canEditAssistito"), cellClick: checkUserPermission(user, "canEditAssistito") ? showElementUpdate : null, formatter: function (cell, formatterParams, onRendered) {
+                        title: "", width: 10, hozAlign: "center", editor: false, visible: checkUserPermission(user, "canEditAssistito"), cellClick: checkUserPermission(user, "canEditAssistito") ? showAssistitoUpdate : null, formatter: function (cell, formatterParams, onRendered) {
 
                             return '<span class="material-symbols-outlined" style="color: green">edit</span>';
                         },
@@ -35,7 +35,7 @@ function showRequests(richieste, user) {
                         },
                     },
                     {
-                        title: "", width: 10, hozAlign: "center", editor: false, visible: checkUserPermission(user, "canAddRequest"), cellClick: checkUserPermission(user, "canAddRequest") ? deleteElement : null, formatter: function (cell, formatterParams, onRendered) {
+                        title: "", width: 10, hozAlign: "center", editor: false, visible: checkUserPermission(user, "canCreateRequest"), cellClick: checkUserPermission(user, "canAddRequest") ? deleteElement : null, formatter: function (cell, formatterParams, onRendered) {
 
                             return '<span class="material-symbols-outlined" style="color: green">add</span>';
                         },
@@ -43,6 +43,7 @@ function showRequests(richieste, user) {
                     { title: "Nome", field: "nome", editor: false },
                     { title: "Cognome", field: "cognome", editor: false, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-symbols-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
                     { title: "Codice Fiscale", field: "codiceFiscale", editor: false, hozAlign: "center", headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-symbols-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
+                    { title: "Telefono", field: "telefono", editor: false, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-symbols-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
                     { title: "e-mail", field: "email", editor: false, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-symbols-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
                     { title: "Indirizzo", field: "indirizzo", editor: false, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-symbols-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
                     { title: "Note", field: "noteAssistito", editor: false/*, formatter: "textarea" */, cellClick: cellPopupFormatterNoteAssistito },
@@ -104,44 +105,44 @@ function showRequests(richieste, user) {
 
 }
 
-function updateTableData() {
-    var table = Tabulator.findTable("#main")[0];
-    if (table != null || table != undefined) {
-        console.log("Scrivo i dati aggiornati");
-        table.updateOrAddData(richieste);
-        var deleted = localStorage.getItem("deleted");
-        if (deleted != null || deleted != undefined) {
-            table.deleteRow(deleted);
-            localStorage.removeItem("deleted");
-        }
-        setTimeout(checkIfUpdated, 1000);
-    }
-}
+// function updateTableData() {
+//     var table = Tabulator.findTable("#main")[0];
+//     if (table != null || table != undefined) {
+//         console.log("Scrivo i dati aggiornati");
+//         table.updateOrAddData(richieste);
+//         var deleted = localStorage.getItem("deleted");
+//         if (deleted != null || deleted != undefined) {
+//             table.deleteRow(deleted);
+//             localStorage.removeItem("deleted");
+//         }
+//         setTimeout(checkIfUpdated, 1000);
+//     }
+// }
 
-function checkIfAreUpdatedData() {
-    let xhr = new XMLHttpRequest();
-    let url = "be/getlastupdatetime.php";
-    xhr.open("POST", url, true);
-    xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-    xhr.onreadystatechange = function () {
-        if (xhr.readyState === 4 && xhr.status === 200) {
-            result = JSON.parse(xhr.responseText);
-            if (result.status == "OK") {
-                console.log("lu:" + result.data);
-                console.log("lr:" + localStorage.getItem("lastRead"));
-                var isChanged = (new Date(localStorage.getItem("lastRead")) - new Date(result.data)) < 0;
-                if (isChanged) {
-                    toBeCompleted.richieste = false;
-                    readRequests(toBeCompleted);
-                    setTimeout(checkIfUpdated, 1000);
-                } else {
-                    setTimeout(checkIfAreUpdatedData, 1000);
-                }
-            }
-        }
-    }
-    xhr.send("table=richieste");
-}
+// function checkIfAreUpdatedData() {
+//     let xhr = new XMLHttpRequest();
+//     let url = "be/getlastupdatetime.php";
+//     xhr.open("POST", url, true);
+//     xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+//     xhr.onreadystatechange = function () {
+//         if (xhr.readyState === 4 && xhr.status === 200) {
+//             result = JSON.parse(xhr.responseText);
+//             if (result.status == "OK") {
+//                 console.log("lu:" + result.data);
+//                 console.log("lr:" + localStorage.getItem("lastRead"));
+//                 var isChanged = (new Date(localStorage.getItem("lastRead")) - new Date(result.data)) < 0;
+//                 if (isChanged) {
+//                     toBeCompleted.richieste = false;
+//                     readRequests(toBeCompleted);
+//                     setTimeout(checkIfUpdated, 1000);
+//                 } else {
+//                     setTimeout(checkIfAreUpdatedData, 1000);
+//                 }
+//             }
+//         }
+//     }
+//     xhr.send("table=richieste");
+// }
 
 
 function inserisci() {
