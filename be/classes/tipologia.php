@@ -1,14 +1,14 @@
 <?php
-    class Fase {    
+    class Tipologia {    
         
-        public static function getFasiActive(){
+        public static function getTipologia(){
             $out = new stdClass();
             $out->status="KO";
             try {
                 $conn=DB::conn();
                 if ($conn!=null){
                     try {
-                        $query="SELECT * FROM `fasi` WHERE `is_active`=1";
+                        $query="SELECT id,descrizione FROM `tipologie` WHERE `is_active`=1";
                         
                         $stmt = $conn->prepare($query);
                         $stmt->execute();

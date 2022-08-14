@@ -35,7 +35,7 @@ function showRequests(richieste, user) {
                         },
                     },
                     {
-                        title: "", width: 10, hozAlign: "center", editor: false, visible: checkUserPermission(user, "canCreateRequest"), cellClick: checkUserPermission(user, "canAddRequest") ? deleteElement : null, formatter: function (cell, formatterParams, onRendered) {
+                        title: "", width: 10, hozAlign: "center", editor: false, visible: checkUserPermission(user, "canCreateRequest"), cellClick: checkUserPermission(user, "canCreateRequest") ? newRequest : null, formatter: function (cell, formatterParams, onRendered) {
 
                             return '<span class="material-symbols-outlined" style="color: green">add</span>';
                         },
@@ -146,62 +146,63 @@ function showRequests(richieste, user) {
 
 
 function inserisci() {
-    let richiesta = {};
-    richiesta.nome = $("#nome").val().trim();
-    richiesta.cognome = $("#cognome").val().trim();
-    richiesta.codiceFiscale = $("#codiceFiscale").val().trim();
-    richiesta.email = $("#email").val().trim();
-    richiesta.numero = $("#numero").val().trim();
-    richiesta.dataRic = $("#data").val();
-    richiesta.dataUltimaCom = ($("#dataUltimaComunicazione").val() == '') ? null : $("#dataUltimaComunicazione").val();
-    richiesta.fase = $("#fase").val();
-    richiesta.motivo = $("#motivo").val().trim();
-    richiesta.note = $("#note").val().trim();
-    richiesta.createdBy = "" + lu.id;
+    let lu = localStorage.getItem("ricdomloggeduser");
+    if (lu != null) {
+        let richiesta = {};
+        loggedUser = JSON.parse(lu);
+        let username = loggedUser.username;
+        let token = "123456";
+        richiesta.idAssistito = $("#idAssistito").val();
+        richiesta.idTipologia = $("#idTipologia").val();
+        richiesta.idPriorita = $("#idPriorita").val();
+        richiesta.data = $("#data").val();
+        richiesta.note = $("#noteRichiesta").val().trim();
+        richiesta.createdBy = "" + loggedUser.id;
 
-    let err = checkDatiObbligatori(richiesta);
+        let err = checkDatiObbligatori(richiesta);
 
-    if (err != '') {
-        Swal.fire({
-            text: err,
-            icon: 'error',
-            showCancelButton: false,
-            confirmButtonColor: '#3085d6',
-            confirmButtonText: 'Ok'
-        })
-    } else {
-        let xhr = new XMLHttpRequest();
-        let url = "be/insertRequest.php";
-        xhr.open("POST", url, true);
-        xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-        xhr.onreadystatechange = function () {
-            if (xhr.readyState === 4 && xhr.status === 200) {
-                result = JSON.parse(xhr.responseText);
-                if (result.status == "OK") {
-                    Swal.fire({
-                        text: "Operazione completata.",
-                        icon: 'info',
-                        showCancelButton: false,
-                        confirmButtonColor: '#3085d6',
-                        confirmButtonText: 'Ok'
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            cleanInsert();
-                            //location.reload();
-                        }
-                    })
-                } else {
-                    Swal.fire({
-                        text: "Impossibile completare l'operazione",
-                        icon: 'error',
-                        showCancelButton: false,
-                        confirmButtonColor: '#3085d6',
-                        confirmButtonText: 'Ok'
-                    })
+        if (err != '') {
+            Swal.fire({
+                text: err,
+                icon: 'error',
+                showCancelButton: false,
+                confirmButtonColor: '#3085d6',
+                confirmButtonText: 'Ok'
+            })
+        } else {
+            let xhr = new XMLHttpRequest();
+            let url = "be/insertRequest.php";
+            xhr.open("POST", url, true);
+            xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    result = JSON.parse(xhr.responseText);
+                    if (result.status == "OK") {
+                        Swal.fire({
+                            text: "Operazione completata.",
+                            icon: 'info',
+                            showCancelButton: false,
+                            confirmButtonColor: '#3085d6',
+                            confirmButtonText: 'Ok'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                cleanInsert();
+                                location.reload();
+                            }
+                        })
+                    } else {
+                        Swal.fire({
+                            text: "Impossibile completare l'operazione",
+                            icon: 'error',
+                            showCancelButton: false,
+                            confirmButtonColor: '#3085d6',
+                            confirmButtonText: 'Ok'
+                        })
+                    }
                 }
             }
+            xhr.send("username=" + username + "&token=" + token + "&richiesta=" + JSON.stringify(richiesta));
         }
-        xhr.send("richiesta=" + JSON.stringify(richiesta));
     }
 }
 
@@ -287,7 +288,7 @@ var deleteElement = function (e, row) {
     var element = row.getData();
     Swal.fire({
         title: 'Sicuro?',
-        text: "Confermando cancellerai la scheda con id " + element.id + " di:" + element.nome + " " + element.cognome + "\n" + element.codiceFiscale + "\n" + "Ricevuta il:" + element.dataRic,
+        text: "Confermando cancellerai la scheda con id " + element.idRichiesta + " di:" + element.nome + " " + element.cognome + "\n" + element.codiceFiscale + "\n" + "Prevista per il:" + element.data,
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#3085d6',
@@ -297,7 +298,7 @@ var deleteElement = function (e, row) {
     }).then((result) => {
         if (result.isConfirmed) {
             let richiesta = {};
-            richiesta.id = element.id;
+            richiesta.id = element.idRichiesta;
             richiesta.deletedBy = "" + lu.id;
 
             let xhr = new XMLHttpRequest();
@@ -429,13 +430,7 @@ var cellPopupFormatter = function (title, text) {
 
 function checkDatiObbligatori(richiesta) {
     let out = '';
-    // if (richiesta.numero == '') {
-    //     out += "Il numero della richiesta è obbligatorio\n";
-    // }
-    if (richiesta.codiceFiscale == '') {
-        out += "Il codice fiscale è obbligatorio\n";
-    }
-    if (richiesta.dataRic == '') {
+    if (richiesta.data == null) {
         out += "La data è obbligatoria\n";
     }
     return out;
@@ -464,4 +459,18 @@ function checkAndShowMessage(result) {
             confirmButtonText: 'Ok'
         })
     }
+}
+
+var newRequest = function (e, row) {
+    var element = row.getData();
+    $("#idAssistito").val(element.idAssistito);
+    $("#nome").val(element.nome);
+    $("#cognome").val(element.cognome);
+    $("#email").val(element.email);
+    $("#indirizzo").val(element.indirizzo);
+    $("#codiceFiscale").val(element.codiceFiscale);
+    $("#noteAssistito").val(element.noteAssistito);
+    $("#telefono").val(element.telefono);
+    $("#insert").fadeIn();
+
 }

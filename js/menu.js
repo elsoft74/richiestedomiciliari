@@ -16,8 +16,8 @@ function showMenu(user) {
         div2.text(user.nome + " " + user.cognome);
         button = $("<button>").addClass("btn").addClass("btn-primary").addClass("btn-block").addClass('requests-form-btn').attr({"onClick":'$("#insertAssistito").fadeIn()','id':'requestInsertButton'}).text("Nuovo Assistito");
         div1.append(button);
-        button = $("<button>").addClass("btn").addClass("btn-primary").addClass("btn-block").addClass('requests-form-btn').attr({"onClick":'$("#insert").fadeIn()','id':'requestInsertButton'}).text("Nuova Richiesta");
-        div1.append(button);
+        // button = $("<button>").addClass("btn").addClass("btn-primary").addClass("btn-block").addClass('requests-form-btn').attr({"onClick":'$("#insert").fadeIn()','id':'requestInsertButton'}).text("Nuova Richiesta");
+        // div1.append(button);
         if(user.permissions.canCreateUser){
             button = $("<button>").addClass("btn").addClass("btn-primary").addClass("btn-block").addClass('users-form-btn').attr({"onClick":'$("#insertUser").fadeIn()','id':'userInsertButton'}).text("Nuovo Utente");
             div1.append(button);

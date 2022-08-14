@@ -36,7 +36,9 @@ function calcolaGiorni(data) {
 }
 
 function checkIfComplete() {
-    if (toBeCompleted.fasi && toBeCompleted.richieste) {
+    let out = true;
+    Object.keys(toBeCompleted).forEach(p=>{out=out&&toBeCompleted[p]});
+    if (out) {
         window.dispatchEvent(new CustomEvent("dataLoaded"));
     } else {
         setTimeout(checkIfComplete, 200);
@@ -55,12 +57,15 @@ function checkIfUpdated() {
 
 function loadData() {
     toBeCompleted = {
-        fasi: false,
+        priorita: false,
+        tipologie: false,
         richieste: false
     };
-    fasi = null;
+    priorita = null;
+    tipologie = null;
     richieste = [];
-    getFasi(toBeCompleted);
+    getPriorita(toBeCompleted);
+    getTipologie(toBeCompleted);
     readRequests(toBeCompleted);
     setTimeout(checkIfComplete, 200);
 }

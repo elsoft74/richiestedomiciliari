@@ -322,6 +322,14 @@
             return true; // va implementato un check sul ruolo sulla base del json memorizzato
         }
 
+        public static function checkCanCreateRequest($role_id){
+            return true; // va implementato un check sul ruolo sulla base del json memorizzato
+        }
+
+        public static function checkCanUpdateRequest($role_id){
+            return true; // va implementato un check sul ruolo sulla base del json memorizzato
+        }
+
         public static function checkToken($token){
             return ($token=="123456"); // va implementata una generazione token con controllo di scadenza e restituito un oggetto con anche i dati quali lo username
         }

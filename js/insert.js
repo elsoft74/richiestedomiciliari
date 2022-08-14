@@ -7,17 +7,19 @@ function buildInsertForm(target) {
             fun1="inserisci()";
             fun2="cleanInsert()";
             attrs={
-                id:"id",
+                idAssistito:"idAssistito",
                 nome:"nome",
                 cognome:"cognome",
-                codiceFiscale:"codiceFiscale",
                 email:"email",
-                numero:"numero",
-                data2:"dataUltimaComunicazione",
-                data1:"data",
-                fase:"fase",
-                motivo:"motivo",
-                note:"note",
+                indirizzo:"indirizzo",
+                codiceFiscale:"codiceFiscale",
+                noteAssistito:"noteAssistito",
+                telefono:"telefono",
+                idRichiesta:"idRichiesta",
+                idTipologia:"idTipologia",
+                idPriorita:"idPriorita",
+                data:"data",
+                noteRichiesta:"noteRichiesta",
                 titleId:"modalTitle",
                 titleText:"Inserisci nuova richiesta"
             }
@@ -28,17 +30,19 @@ function buildInsertForm(target) {
             fun1="aggiorna()";
             fun2="cleanEdit()";
             attrs={
-                id:"editId",
-                nome:"editNome",
-                cognome:"editCognome",
-                codiceFiscale:"editCodiceFiscale",
-                email:"editEmail",
-                numero:"editNumero",
-                data1:"editData",
-                data2:"editDataUltimaComunicazione",
-                fase:"editFase",
-                motivo:"editMotivo",
-                note:"editNote",
+                idAssistito:"idAssistitoEdit",
+                nome:"nomeEdit",
+                cognome:"cognomeEdit",
+                email:"emailEdit",
+                indirizzo:"indirizzoEdit",
+                codiceFiscale:"codiceFiscaleEdit",
+                noteAssistito:"noteAssistitoEdit",
+                telefono:"telefonoEdit",
+                idRichiesta:"idRichiestaEdit",
+                idTipologia:"idTipologiaEdit",
+                idPriorita:"idPrioritaEdit",
+                data:"dataEdit",
+                noteRichiesta:"noteRichiestaEdit",
                 titleId:"editModalTitle",
                 titleText:"Modifica richiesta"
             }
@@ -62,39 +66,64 @@ function buildInsertForm(target) {
 
         let form = $("<form>");
         let divFormGroup = $("<div>").addClass("form-group");
-        el = $("<input>").attr({ "type": "hidden", "id":attrs.id });
+        el = $("<input>").attr({ "type": "hidden", "id":attrs.idAssistito });
         divFormGroup.append(el);
-        el = $("<label>").attr({ "for": "nome" }).text("Nome");
+        el = $("<input>").attr({ "type": "hidden", "id":attrs.idRichiesta });
         divFormGroup.append(el);
-        el = $("<input>").addClass("form-control").attr({ "type": "text", "id": attrs.nome });
+        el = $("<label>").attr({ "for": attrs.nome  }).text("Nome");
         divFormGroup.append(el);
-    
-        el = $("<label>").attr({ "for": "cognome" }).text("Cognome");
-        divFormGroup.append(el);
-        el = $("<input>").addClass("form-control").attr({ "type": "text", "id": attrs.cognome });
+        el = $("<input>").addClass("form-richiesta").addClass("form-control").attr({ "type": "text", "id": attrs.nome }).prop("readonly",true);
         divFormGroup.append(el);
     
-        el = $("<label>").attr({ "for": "codiceFiscale" }).text("Codice Fiscale");
+        el = $("<label>").attr({ "for": attrs.cognome }).text("Cognome");
         divFormGroup.append(el);
-        el = $("<input>").addClass("form-control").attr({ "type": "text", "id": attrs.codiceFiscale });
+        el = $("<input>").addClass("form-richiesta").addClass("form-control").attr({ "type": "text", "id": attrs.cognome  }).prop("readonly",true);
+        divFormGroup.append(el);
+    
+        el = $("<label>").attr({ "for": attrs.codiceFiscale  }).text("Codice Fiscale");
+        divFormGroup.append(el);
+        el = $("<input>").addClass("form-richiesta").addClass("form-control").attr({ "type": "text", "id": attrs.codiceFiscale }).prop("readonly",true);
         divFormGroup.append(el);
         form.append(divFormGroup);
 
         divFormGroup = $("<div>").addClass("form-group");
-        el = $("<label>").attr({ "for": "email" }).text("e-mail");
+        el = $("<label>").attr({ "for": attrs.email }).text("e-mail");
         divFormGroup.append(el);
-        el = $("<input>").addClass("form-control").attr({ "type": "email", "id": attrs.email });
+        el = $("<input>").addClass("form-richiesta").addClass("form-control").attr({ "type": "email", "id": attrs.email }).prop("readonly",true);
         divFormGroup.append(el);
     
-        el = $("<label>").attr({ "for": "numero" }).text("Numero sanzione");
+        el = $("<label>").attr({ "for": attrs.telefono }).text("Telefono");
         divFormGroup.append(el);
-        el = $("<input>").addClass("form-control").attr({ "type": "text", "id": attrs.numero });
+        el = $("<input>").addClass("form-richiesta").addClass("form-control").attr({ "type": "text", "id": attrs.telefono }).prop("readonly",true);
         divFormGroup.append(el);
+
+        el = $("<label>").attr({ "for": attrs.idTipologia }).text("Tipo di richiesta");
+        divFormGroup.append(el);
+        el = $("<select>").addClass("form-richiesta").addClass("form-control").attr({"id": attrs.idTipologia });
+        if(tipologie!=null){
+            tipologie.forEach(element => {
+                let option = $("<option>").attr({ "value": element.id}).text(element.descrizione);
+                el.append(option);
+            });
+        }
+        divFormGroup.append(el);
+
+        el = $("<label>").attr({ "for": attrs.idPriorita }).text("Priorità");
+        divFormGroup.append(el);
+        el = $("<select>").addClass("form-richiesta").addClass("form-control").attr({"id": attrs.idPriorita });
+        if(priorita!=null){
+            priorita.forEach(element => {
+                let option = $("<option>").attr({ "value": element.id}).text(element.descrizione);
+                el.append(option);
+            });
+        }
+        divFormGroup.append(el);
+
     
         let div4 = $("<div>").addClass("col").addClass("date");
-        el = $("<label>").text("Data Ricezione istanza");
+        el = $("<label>").text("Data Programmazione");
         div4.append(el);
-        el = $("<input>").addClass("form-control").attr({ "type": "date", "id": attrs.data1 });
+        el = $("<input>").addClass("form-richiesta").addClass("form-control").attr({ "type": "date", "id": attrs.data });
         div4.append(el);
         let div5 = $("<div>").addClass("input-group-addon");
         el = $("<span>").addClass("glyphicon glyphicon-th");
@@ -102,38 +131,14 @@ function buildInsertForm(target) {
         div4.append(div5);
         divFormGroup.append(div4);
         
-        div4 = $("<div>").addClass("col").addClass("date");
-        el = $("<label>").text("Data nostra risposta");
-        div4.append(el);
-        el = $("<input>").addClass("form-control").attr({ "type": "date", "id": attrs.data2 });
-        div4.append(el);
-        div5.append(el);
-        div4.append(div5);
-        divFormGroup.append(div4);
-        
+       
         
         form.append(divFormGroup);
 
         divFormGroup = $("<div>").addClass("form-group");
-        el = $("<label>").attr({ "for": "fase" }).text("Fase");
+        el = $("<label>").attr({ "for": attrs.noteRichiesta}).text("Note Richiesta");
         divFormGroup.append(el);
-        el = $("<select>").addClass("form-control").attr({ "id": attrs.fase });
-        fasi.forEach(element => {
-            let option = $("<option>").attr({ "value": element.id }).text(element.descrizione);
-            el.append(option);
-        });
-        divFormGroup.append(el);
-    
-        el = $("<label>").attr({ "for": "motivo" }).text("Motivo");
-        divFormGroup.append(el);
-        el = $("<input>").addClass("form-control").attr({ "type": "text", "id": attrs.motivo });
-        divFormGroup.append(el);
-        form.append(divFormGroup);
-
-        divFormGroup = $("<div>").addClass("form-group");
-        el = $("<label>").attr({ "for": "note" }).text("Note");
-        divFormGroup.append(el);
-        el = $("<textarea>").addClass("form-control").attr({ "type": "text", "id": attrs.note });
+        el = $("<textarea>").addClass("form-richiesta").addClass("form-control").attr({ "type": "text", "id": attrs.noteRichiesta });
         divFormGroup.append(el);
         form.append(divFormGroup);
 
@@ -152,16 +157,7 @@ function buildInsertForm(target) {
 }
 
 function cleanInsert() {
-    $("#id").val('')
-    $("#nome").val("");
-    $("#cognome").val("");
-    $("#codiceFiscale").val("");
-    $("#email").val("");
-    $("#numero").val("");
-    $("#data").val("");
-    $("#fase").val("");
-    $("#motivo").val("");
-    $("#note").val("");
+    $(".form-richiesta").val('');
     $("#insert").fadeOut();
 }
 
