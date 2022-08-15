@@ -40,7 +40,9 @@ function showRequests(richieste, user) {
                     { title: "Telefono", field: "telefono", editor: false, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-symbols-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
                     { title: "e-mail", field: "email", editor: false, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-symbols-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
                     { title: "Indirizzo", field: "indirizzo", editor: false, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-symbols-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
-                    { title: "Note",width: 10, field: "noteAssistito", editor: false/*, formatter: "textarea" */, cellClick: cellPopupFormatterNoteAssistito },
+                    { title: "Note", field: "noteAssistito", editor: false/*, formatter: "textarea" */, cellClick: cellPopupFormatterNoteAssistito, formatter: function (cell, formatterParams, onRendered) {
+                        return (cell.getValue()==null)?'':'<span class="material-symbols-outlined">notes</span>';
+                    }},
                 ]
             }, {
                 title: "Richiesta", columns: [
@@ -55,8 +57,13 @@ function showRequests(richieste, user) {
                             return (cell.getValue()==null)?'':'<span class="material-symbols-outlined" style="color: green">edit</span>';
                         },
                     },
+                    {
+                        title: "", field: "idRichiesta", width: 10, hozAlign: "center", editor: false, visible: checkUserPermission(user, "canDeleteRequest"), cellClick: checkUserPermission(user, "canEditRequest") ? showRequestUpdate : null, formatter: function (cell, formatterParams, onRendered) {
+                            return (cell.getValue()==null)?'':'<span class="material-symbols-outlined" style="color: red">delete</span>';
+                        },
+                    },
                     { title: "#", field: "idRichiesta", editor: false, hozAlign: "center", visible: checkUserPermission(user, "canViewId") },
-                    { title: "Tipo", field: "idTipologia", editor: false, hozAlign: "center", formatter: function (cell, formatterParams, onRendered) {
+                    { title: "Tipo", field: "idTipologia", editor: false, hozAlign: "center", headerFilter: emptyHeaderFilter, headerFilterFunc: "like",  formatter: function (cell, formatterParams, onRendered) {
                         out ="";
                         tipologie.forEach(element => {
                             if (element.id==cell.getValue()){
@@ -64,7 +71,7 @@ function showRequests(richieste, user) {
                             }
                         });
                         return out;
-                    }, headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
+                    }},
                     { title: "Priorità", field: "idPriorita", editor: false, hozAlign: "center",formatter: function (cell, formatterParams, onRendered) {
                         out ="";
                         priorita.forEach(element => {
@@ -82,7 +89,9 @@ function showRequests(richieste, user) {
                             timezone: "Europe/Rome",
                         }
                     },
-                    { title: "Note",width: 10, field: "noteRichiesta", editor: false/*, formatter: "textarea" */, cellClick: cellPopupFormatterNoteRichiesta },
+                    { title: "Note", field: "noteRichiesta", editor: false/*, formatter: "textarea" */, cellClick: cellPopupFormatterNoteRichiesta, formatter: function (cell, formatterParams, onRendered) {
+                        return (cell.getValue()==null)?'':'<span class="material-symbols-outlined">notes</span>';
+                    }},
                     // (user.permissions.canViewDetails) ?
                     //     {
                     //         title: "Creata",
@@ -425,18 +434,14 @@ var emptyHeaderFilter = function () {
 
 var cellPopupFormatterNoteAssistito = function (e, row, onRendered) {
     var data = row.getData();
-    cellPopupFormatter("Note per: " + data.cognome + " " + data.nome, data.noteAssistito);
+    cellPopupFormatter(data.noteAssistito);
 };
 
 var cellPopupFormatterNoteRichiesta = function (e, row, onRendered) {
     var data = row.getData();
-    cellPopupFormatter("Note: " + data.noteRichiesta);
+    cellPopupFormatter(data.noteRichiesta);
 };
 
-var cellPopupFormatterMotivo = function (e, row, onRendered) {
-    var data = row.getData();
-    cellPopupFormatter("Motivo per: " + data.cognome + " " + data.nome, data.motivo);
-};
 
 var cellPopupFormatter = function (title, text) {
     Swal.fire({
