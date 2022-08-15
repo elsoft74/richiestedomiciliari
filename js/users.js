@@ -216,3 +216,126 @@ function aggiornaUser() {
     }
 
 }
+
+function buildUserInsertForm(target) {
+
+    let canBuild=false;
+    switch(target){
+        case "insertUser":
+            tar="#insertUser";
+            fun1="inserisciUser()";
+            fun2="cleanUserInsert()";
+            attrs={
+                id:"idUser",
+                nome:"nomeUser",
+                cognome:"cognomeUser",
+                username:"usernameUser",
+                email:"emailUser",
+                roleId:"roleIdUser",
+                password:"passwordUser",
+                titleId:"insertModalTitle",
+                titleText:"Inserisci nuovo utente"
+            }
+            canBuild=true;
+            break;
+        case "editUser":
+            tar="#editUser";
+            fun1="aggiornaUser()";
+            fun2="cleanUserEdit()";
+            attrs={
+                id:"editIdUser",
+                nome:"editNomeUser",
+                cognome:"editCognomeUser",
+                username:"editUsernameUser",
+                email:"editEmailUser",
+                roleId:"editRoleIdUser",
+                password:"editPasswordUser",
+                isActive:"editIsActivedUser",
+                titleId:"editModalTitle",
+                titleText:"Modifica utente"
+            }
+            canBuild=true;
+            break;
+    }
+
+    if (canBuild) {
+        let modal = $(tar).addClass("modal")/*.addClass("fade")*/.attr({"id":target,"tabindex":"-1", "role":"dialog", "aria-labelledby":attrs.titleId, "aria-hidden":"true"});
+        let modalDialog = $("<div>").addClass("modal-dialog").attr({"role":"document"});
+        let modalContent = $("<div>").addClass("modal-content");
+        let modalHeader = $("<div>").addClass("modal-header");
+        let modalBody = $("<div>").addClass("modal-body");
+        let modalFooter = $("<div>").addClass("modal-footer");
+        
+        let el = $("<h5>").addClass("modal-title").attr({"id":attrs.titleId}).html(attrs.titleText);
+        modalHeader.append(el);
+        modalContent.append(modalHeader);
+
+        let form = $("<form>");
+        let divFormGroup = $("<div>").addClass("form-group");
+        el = $("<input>").attr({ "type": "hidden", "id":attrs.id });
+        divFormGroup.append(el);
+        el = $("<label>").attr({ "for": attrs.nome }).text("Nome");
+        divFormGroup.append(el);
+        el = $("<input>").addClass('user-input-form').addClass("form-control").attr({ "type": "text", "id": attrs.nome });
+        divFormGroup.append(el);
+    
+        el = $("<label>").attr({ "for": attrs.cognome }).text("Cognome");
+        divFormGroup.append(el);
+        el = $("<input>").addClass('user-input-form').addClass("form-control").attr({ "type": "text", "id": attrs.cognome });
+        divFormGroup.append(el);
+    
+        el = $("<label>").attr({ "for": attrs.username }).text("Nome utente");
+        divFormGroup.append(el);
+        el = $("<input>").addClass('user-input-form').addClass("form-control").attr({ "type": "text", "id": attrs.username });
+        divFormGroup.append(el);
+        el = $("<label>").attr({ "for": attrs.password }).text("Password - In modifica lasciare vuota per non cambiarla");
+        divFormGroup.append(el);
+        el = $("<input>").addClass('user-input-form').addClass("form-control").attr({ "type": "text", "id": attrs.password });
+        divFormGroup.append(el);
+        form.append(divFormGroup);
+
+        divFormGroup = $("<div>").addClass("form-group");
+        el = $("<label>").attr({ "for": attrs.email }).text("e-mail");
+        divFormGroup.append(el);
+        el = $("<input>").addClass('user-input-form').addClass("form-control").attr({ "type": "email", "id": attrs.email });
+        divFormGroup.append(el);
+    
+        el = $("<label>").attr({ "for": attrs.roleId }).text("Ruolo");
+        divFormGroup.append(el);
+        el = $("<input>").addClass('user-input-form').addClass("form-control").attr({ "type": "text", "id": attrs.roleId });
+        divFormGroup.append(el);
+    
+        let div4 = $("<div>").addClass("col");
+        if(attrs.hasOwnProperty('isActive')){
+            el = $("<label>").attr({ "for": attrs.isActive }).text("Attivo");
+            div4.append(el);
+            el = $("<input>").addClass('user-input-form').addClass("form-control").attr({ "type": "text", "id": attrs.isActive });
+            div4.append(el);
+        }
+        let div5 = $("<div>").addClass("input-group-addon");
+        el = $("<span>").addClass("glyphicon glyphicon-th");
+        div5.append(el);
+        div4.append(div5);
+        divFormGroup.append(div4);
+        
+        
+        form.append(divFormGroup);
+
+        modalBody.append(form);
+        modalContent.append(modalBody);
+
+        el = $("<button>").addClass("btn").addClass("btn-primary").text("Conferma").attr({ "onClick": fun1 });
+        modalFooter.append(el);
+        el = $("<button>").addClass("btn").addClass("btn-secondary").text("Annulla").attr({"onClick": fun2/*"data-dismiss":"modal"*/});
+        modalFooter.append(el);
+        modalContent.append(modalFooter);
+
+        modalDialog.append(modalContent);
+        modal.append(modalDialog);
+    }
+}
+
+function cleanUserInsert() {
+    $(".user-input-form").val('');
+    $("#insertUser").fadeOut();
+}
