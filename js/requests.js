@@ -40,9 +40,11 @@ function showRequests(richieste, user) {
                     { title: "Telefono", field: "telefono", editor: false, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-symbols-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
                     { title: "e-mail", field: "email", editor: false, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-symbols-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
                     { title: "Indirizzo", field: "indirizzo", editor: false, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-symbols-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
-                    { title: "Note", field: "noteAssistito", editor: false/*, formatter: "textarea" */, cellClick: cellPopupFormatterNoteAssistito, formatter: function (cell, formatterParams, onRendered) {
-                        return (cell.getValue()==null)?'':'<span class="material-symbols-outlined">notes</span>';
-                    }},
+                    {
+                        title: "Note", field: "noteAssistito", editor: false/*, formatter: "textarea" */, cellClick: cellPopupFormatterNoteAssistito, formatter: function (cell, formatterParams, onRendered) {
+                            return (cell.getValue() == null) ? '' : '<span class="material-symbols-outlined">notes</span>';
+                        }
+                    },
                 ]
             }, {
                 title: "Richiesta", columns: [
@@ -53,34 +55,38 @@ function showRequests(richieste, user) {
                         },
                     },
                     {
-                        title: "", field: "idRichiesta", width: 10, hozAlign: "center", editor: false, visible: checkUserPermission(user, "canEditRequest"), cellClick: checkUserPermission(user, "canEditRequest") ? showRequestUpdate : null, formatter: function (cell, formatterParams, onRendered) {
-                            return (cell.getValue()==null)?'':'<span class="material-symbols-outlined" style="color: green">edit</span>';
+                        title: "", field: "idRichiesta", width: 10, hozAlign: "center", editor: false, visible: checkUserPermission(user, "canEditRequest"), cellClick: checkUserPermission(user, "canEditRequest") ? showElementUpdate : null, formatter: function (cell, formatterParams, onRendered) {
+                            return (cell.getValue() == null) ? '' : '<span class="material-symbols-outlined" style="color: green">edit</span>';
                         },
                     },
                     {
-                        title: "", field: "idRichiesta", width: 10, hozAlign: "center", editor: false, visible: checkUserPermission(user, "canDeleteRequest"), cellClick: checkUserPermission(user, "canEditRequest") ? showRequestUpdate : null, formatter: function (cell, formatterParams, onRendered) {
-                            return (cell.getValue()==null)?'':'<span class="material-symbols-outlined" style="color: red">delete</span>';
+                        title: "", field: "idRichiesta", width: 10, hozAlign: "center", editor: false, visible: checkUserPermission(user, "canDeleteRequest"), cellClick: checkUserPermission(user, "canEditRequest") ? deleteElement : null, formatter: function (cell, formatterParams, onRendered) {
+                            return (cell.getValue() == null) ? '' : '<span class="material-symbols-outlined" style="color: red">delete</span>';
                         },
                     },
                     { title: "#", field: "idRichiesta", editor: false, hozAlign: "center", visible: checkUserPermission(user, "canViewId") },
-                    { title: "Tipo", field: "idTipologia", editor: false, hozAlign: "center", headerFilter: emptyHeaderFilter, headerFilterFunc: "like",  formatter: function (cell, formatterParams, onRendered) {
-                        out ="";
-                        tipologie.forEach(element => {
-                            if (element.id==cell.getValue()){
-                                out = element.descrizione;
-                            }
-                        });
-                        return out;
-                    }},
-                    { title: "Priorità", field: "idPriorita", editor: false, hozAlign: "center",formatter: function (cell, formatterParams, onRendered) {
-                        out ="";
-                        priorita.forEach(element => {
-                            if (element.id==cell.getValue()){
-                                out = element.descrizione;
-                            }
-                        });
-                        return out;
-                    }, headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
+                    {
+                        title: "Tipo", field: "idTipologia", editor: false, hozAlign: "center", headerFilter: emptyHeaderFilter, headerFilterFunc: "like", formatter: function (cell, formatterParams, onRendered) {
+                            out = "";
+                            tipologie.forEach(element => {
+                                if (element.id == cell.getValue()) {
+                                    out = element.descrizione;
+                                }
+                            });
+                            return out;
+                        }
+                    },
+                    {
+                        title: "Priorità", field: "idPriorita", editor: false, hozAlign: "center", formatter: function (cell, formatterParams, onRendered) {
+                            out = "";
+                            priorita.forEach(element => {
+                                if (element.id == cell.getValue()) {
+                                    out = element.descrizione;
+                                }
+                            });
+                            return out;
+                        }, headerFilter: emptyHeaderFilter, headerFilterFunc: "like"
+                    },
                     {
                         title: "Data", field: "data", editor: false, hozAlign: "center", formatter: "datetime", formatterParams: {
                             //inputFormat:"YYY-MM-DD HH:mm:ss",
@@ -89,9 +95,11 @@ function showRequests(richieste, user) {
                             timezone: "Europe/Rome",
                         }
                     },
-                    { title: "Note", field: "noteRichiesta", editor: false/*, formatter: "textarea" */, cellClick: cellPopupFormatterNoteRichiesta, formatter: function (cell, formatterParams, onRendered) {
-                        return (cell.getValue()==null)?'':'<span class="material-symbols-outlined">notes</span>';
-                    }},
+                    {
+                        title: "Note", field: "noteRichiesta", editor: false/*, formatter: "textarea" */, cellClick: cellPopupFormatterNoteRichiesta, formatter: function (cell, formatterParams, onRendered) {
+                            return (cell.getValue() == null) ? '' : '<span class="material-symbols-outlined">notes</span>';
+                        }
+                    },
                     // (user.permissions.canViewDetails) ?
                     //     {
                     //         title: "Creata",
@@ -134,45 +142,6 @@ function showRequests(richieste, user) {
     }
 
 }
-
-// function updateTableData() {
-//     var table = Tabulator.findTable("#main")[0];
-//     if (table != null || table != undefined) {
-//         console.log("Scrivo i dati aggiornati");
-//         table.updateOrAddData(richieste);
-//         var deleted = localStorage.getItem("deleted");
-//         if (deleted != null || deleted != undefined) {
-//             table.deleteRow(deleted);
-//             localStorage.removeItem("deleted");
-//         }
-//         setTimeout(checkIfUpdated, 1000);
-//     }
-// }
-
-// function checkIfAreUpdatedData() {
-//     let xhr = new XMLHttpRequest();
-//     let url = "be/getlastupdatetime.php";
-//     xhr.open("POST", url, true);
-//     xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-//     xhr.onreadystatechange = function () {
-//         if (xhr.readyState === 4 && xhr.status === 200) {
-//             result = JSON.parse(xhr.responseText);
-//             if (result.status == "OK") {
-//                 console.log("lu:" + result.data);
-//                 console.log("lr:" + localStorage.getItem("lastRead"));
-//                 var isChanged = (new Date(localStorage.getItem("lastRead")) - new Date(result.data)) < 0;
-//                 if (isChanged) {
-//                     toBeCompleted.richieste = false;
-//                     readRequests(toBeCompleted);
-//                     setTimeout(checkIfUpdated, 1000);
-//                 } else {
-//                     setTimeout(checkIfAreUpdatedData, 1000);
-//                 }
-//             }
-//         }
-//     }
-//     xhr.send("table=richieste");
-// }
 
 
 function inserisci() {
@@ -237,81 +206,83 @@ function inserisci() {
 }
 
 function aggiorna() {
-    let richiesta = {};
-    richiesta.id = $("#editId").val().trim();
-    richiesta.nome = $("#editNome").val().trim();
-    richiesta.cognome = $("#editCognome").val().trim();
-    richiesta.codiceFiscale = $("#editCodiceFiscale").val().trim();
-    richiesta.email = $("#editEmail").val().trim();
-    richiesta.numero = $("#editNumero").val().trim();
-    richiesta.dataRic = $("#editData").val();
-    richiesta.dataUltimaCom = ($("#editDataUltimaComunicazione").val() == '') ? null : $("#editDataUltimaComunicazione").val();
-    richiesta.fase = $("#editFase").val();
-    richiesta.motivo = $("#editMotivo").val().trim();
-    richiesta.note = $("#editNote").val().trim();
-    richiesta.lastUpdateBy = "" + lu.id;
+    let lu = localStorage.getItem("ricdomloggeduser");
+    if (lu != null) {
+        loggedUser = JSON.parse(lu);
+        let username = loggedUser.username;
+        let token = "123456";
+        let richiesta = {};
+        richiesta.id = $("#idRichiestaEdit").val();
+        richiesta.idTipologia = $("#idTipologiaEdit").val();
+        richiesta.idPriorita = $("#idPrioritaEdit").val();
+        richiesta.data = $("#dataEdit").val();
+        richiesta.note = $("#noteRichiestaEdit").val();
+        richiesta.lastUpdateBy = "" + loggedUser.id;
 
-    let err = checkDatiObbligatori(richiesta);
+        let err = checkDatiObbligatori(richiesta);
 
-    if (err != '') {
-        Swal.fire({
-            text: err,
-            icon: 'error',
-            showCancelButton: false,
-            confirmButtonColor: '#3085d6',
-            confirmButtonText: 'Ok'
-        })
-    } else {
+        if (err != '') {
+            Swal.fire({
+                text: err,
+                icon: 'error',
+                showCancelButton: false,
+                confirmButtonColor: '#3085d6',
+                confirmButtonText: 'Ok'
+            })
+        } else {
 
-        let xhr = new XMLHttpRequest();
-        let url = "be/updateRequest.php";
-        xhr.open("POST", url, true);
-        xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-        xhr.onreadystatechange = function () {
-            if (xhr.readyState === 4 && xhr.status === 200) {
-                result = JSON.parse(xhr.responseText);
-                if (result.status == "OK") {
-                    Swal.fire({
-                        text: "Operazione completata.",
-                        icon: 'info',
-                        showCancelButton: false,
-                        confirmButtonColor: '#3085d6',
-                        confirmButtonText: 'Ok'
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            cleanEdit();
-                            //location.reload();
-                        }
-                    })
-                } else {
-                    Swal.fire({
-                        text: "Impossibile completare l'operazione",
-                        icon: 'error',
-                        showCancelButton: false,
-                        confirmButtonColor: '#3085d6',
-                        confirmButtonText: 'Ok'
-                    })
+            let xhr = new XMLHttpRequest();
+            let url = "be/updateRequest.php";
+            xhr.open("POST", url, true);
+            xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    result = JSON.parse(xhr.responseText);
+                    if (result.status == "OK") {
+                        Swal.fire({
+                            text: "Operazione completata.",
+                            icon: 'info',
+                            showCancelButton: false,
+                            confirmButtonColor: '#3085d6',
+                            confirmButtonText: 'Ok'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                cleanEdit();
+                                location.reload();
+                            }
+                        })
+                    } else {
+                        Swal.fire({
+                            text: "Impossibile completare l'operazione",
+                            icon: 'error',
+                            showCancelButton: false,
+                            confirmButtonColor: '#3085d6',
+                            confirmButtonText: 'Ok'
+                        })
+                    }
                 }
             }
+            xhr.send("username=" + username + "&token=" + token + "&richiesta=" + JSON.stringify(richiesta));
         }
-        xhr.send("richiesta=" + JSON.stringify(richiesta));
     }
 }
 
 var showElementUpdate = function (e, row) {
     $("#edit").fadeIn();
     var element = row.getData();
-    $("#editId").val(element.id);
-    $("#editNome").val(element.nome);
-    $("#editCognome").val(element.cognome);
-    $("#editCodiceFiscale").val(element.codiceFiscale);
-    $("#editEmail").val(element.email);
-    $("#editNumero").val(element.numero);
-    $("#editData").val(((new luxon.DateTime.fromSQL(element.dataRic)).toFormat("yyyy-MM-dd")));
-    $("#editDataUltimaComunicazione").val(((new luxon.DateTime.fromSQL(element.dataUltimaCom)).toFormat("yyyy-MM-dd")));
-    $("#editFase").val(element.fase);
-    $("#editMotivo").val(element.motivo);
-    $("#editNote").val(element.note);
+    $("#idAssistitoEdito").val(element.idAssistito);
+    $("#nomeEdit").val(element.nome);
+    $("#cognomeEdit").val(element.cognome);
+    $("#emailEdit").val(element.email);
+    $("#indirizzoEdit").val(element.indirizzo);
+    $("#codiceFiscaleEdit").val(element.codiceFiscale);
+    $("#noteAssistitoEdit").val(element.noteAssistito);
+    $("#telefonoEdit").val(element.telefono);
+    $("#idRichiestaEdit").val(element.idRichiesta);
+    $("#idTipologiaEdit").val(element.idTipologia);
+    $("#idPrioritaEdit").val(element.idPriorita);
+    $("#dataEdit").val(((new luxon.DateTime.fromSQL(element.data)).toFormat("yyyy-MM-dd")));
+    $("#noteRichiestaEdit").val(element.noteRichiesta);
 }
 
 var deleteElement = function (e, row) {
@@ -327,40 +298,47 @@ var deleteElement = function (e, row) {
         confirmButtonText: 'Conferma'
     }).then((result) => {
         if (result.isConfirmed) {
-            let richiesta = {};
-            richiesta.id = element.idRichiesta;
-            richiesta.deletedBy = "" + lu.id;
+            let lu = localStorage.getItem("ricdomloggeduser");
+            if (lu != null) {
+                loggedUser = JSON.parse(lu);
+                let username = loggedUser.username;
+                let token = "123456";
+                let richiesta = {};
+                richiesta.id = element.idRichiesta;
+                richiesta.deletedBy = "" + loggedUser.id;
 
-            let xhr = new XMLHttpRequest();
-            let url = "be/deleteRequest.php";
-            xhr.open("POST", url, true);
-            xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-            xhr.onreadystatechange = function () {
-                result = JSON.parse(xhr.responseText);
-                if (result.status == "OK") {
-                    Swal.fire({
-                        text: "Operazione completata.",
-                        icon: 'info',
-                        showCancelButton: false,
-                        confirmButtonColor: '#3085d6',
-                        confirmButtonText: 'Ok'
-                    })/*.then((result) => {
+                let xhr = new XMLHttpRequest();
+                let url = "be/deleteRequest.php";
+                xhr.open("POST", url, true);
+                xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+                xhr.onreadystatechange = function () {
+                    result = JSON.parse(xhr.responseText);
+                    if (result.status == "OK") {
+                        Swal.fire({
+                            text: "Operazione completata.",
+                            icon: 'info',
+                            showCancelButton: false,
+                            confirmButtonColor: '#3085d6',
+                            confirmButtonText: 'Ok'
+                        }).then((result) => {
                         if (result.isConfirmed) {
                             location.reload();
                         }
-                    })*/
-                } else {
-                    Swal.fire({
-                        text: "Impossibile completare l'operazione",
-                        icon: 'error',
-                        showCancelButton: false,
-                        confirmButtonColor: '#3085d6',
-                        confirmButtonText: 'Ok'
                     })
+                    } else {
+                        Swal.fire({
+                            text: "Impossibile completare l'operazione",
+                            icon: 'error',
+                            showCancelButton: false,
+                            confirmButtonColor: '#3085d6',
+                            confirmButtonText: 'Ok'
+                        })
+                    }
                 }
+                xhr.send("username=" + username + "&token=" + token + "&richiesta=" + JSON.stringify(richiesta));
             }
-            xhr.send("richiesta=" + JSON.stringify(richiesta));
         }
+
     })
 }
 
@@ -501,13 +479,13 @@ var newRequest = function (e, row) {
 
 }
 
-var checkIfRequestExist = function(e,row){
+var checkIfRequestExist = function (e, row) {
     var element = row.getData();
     alert(element.idRichiesta != null);
     return (element.idRichiesta != null);
 }
 
-var showRequestUpdate = function(e,row){
+var showRequestUpdate = function (e, row) {
     var element = row.getData();
     alert(JSON.stringify(element));
 }

@@ -14,6 +14,8 @@ class Richiesta
     public $createdBy;
     public $lastUpdate;
     public $lastUpdateBy;
+    public $deletedDate;
+    public $deletedBy;
 
     public function setId($val){
         $this->id=$val;
@@ -101,6 +103,22 @@ class Richiesta
 
     public function getLastUpdateBy(){
         return $this->lastUpdateBy;
+    }
+
+    public function setDeletedDate($val){
+        $this->deletedDate=$val;
+    }
+
+    public function getDeletedDate(){
+        return $this->deletedDate;
+    }
+
+    public function setDeletedBy($val){
+        $this->deletedBy=$val;
+    }
+
+    public function getDeletedBy(){
+        return $this->deletedBy;
     }
 
 
@@ -291,57 +309,40 @@ class Richiesta
         return $out;
     }
 
-    public function update()
+    public function update($username,$token)
     {
         $out = new stdClass();
         $out->status = "KO";
-        // $out->fase = "pre-try";
-        // file_put_contents("log/dbtest.log","[".(new DateTime("now"))->format("Y-m-d H:i")."] ".print_r($this)."\n",FILE_APPEND);
         try {
             if ($this->getId() != null) {
-                // $out->fase = "post-try";
-                if ("0000-00-00 00:00:00" == $this->dataRic){
-                    $this->dataRic = null;
-                }
+                
                 $conn = DB::conn();
                 if ($conn != null) {
                     try {
                         $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-                        $query = "UPDATE `richieste` 
-                            SET `nome`=:nome,
-                            `cognome`=:cognome,
-                            `codicefiscale`=:codiceFiscale,
-                            `email`=:email,
-                            `numero`=:numero,
-                            `data_ric`=:data_ric,
-                            `data_ultima_com`=:data_ultima_com,
-                            `fase`=:fase,
-                            `motivo`=:motivo,
-                            `note`=:note,
-                            `last_update`=:last_update,
-                            `updated_by`=:updated_by,
-                            `deleted_by`=:deleted_by,
-                            `deleted_date`=:deleted_date,
-                            `is_active`=:is_active
+                        $query="SELECT is_active, role_id FROM `users` AS u WHERE u.username=:username";
+                        $stmt = $conn->prepare($query);
+                        $stmt->bindParam(':username',$username,PDO::PARAM_STR);
+                        $stmt->execute();
+                        $res=$stmt->fetch(PDO::FETCH_ASSOC);
+                        if (User::checkToken($token) && $res && $res['is_active']==1 AND User::checkCanUpdateRequest($res['role_id'])){
+                            $query = "UPDATE `richieste` SET
+                            id_tipologia=:id_tipologia,
+                            id_priorita=:id_priorita,
+                            data=:data,
+                            note=:note,
+                            last_update=:last_update,
+                            last_update_by=:last_update_by
                             WHERE `id`=:id";
 
                         $stmt = $conn->prepare($query);
 
-                        $stmt->bindParam(':nome', $this->nome, PDO::PARAM_STR);
-                        $stmt->bindParam(':cognome', $this->cognome, PDO::PARAM_STR);
-                        $stmt->bindParam(':codiceFiscale', $this->codiceFiscale, PDO::PARAM_STR);
-                        $stmt->bindParam(':email', $this->email, PDO::PARAM_STR);
-                        $stmt->bindParam(':numero', $this->numero, PDO::PARAM_STR);
-                        $stmt->bindParam(':data_ric', $this->dataRic, PDO::PARAM_STR);
-                        $stmt->bindParam(':data_ultima_com', $this->dataUltimaCom, PDO::PARAM_STR);
-                        $stmt->bindParam(':fase', $this->fase, PDO::PARAM_INT);
-                        $stmt->bindParam(':motivo', $this->motivo, PDO::PARAM_STR);
+                        $stmt->bindParam(':id_tipologia', $this->idTipologia, PDO::PARAM_INT);
+                        $stmt->bindParam(':id_priorita', $this->idPriorita, PDO::PARAM_INT);
+                        $stmt->bindParam(':data', $this->data, PDO::PARAM_STR);
                         $stmt->bindParam(':note', $this->note, PDO::PARAM_STR);
                         $stmt->bindParam(':last_update', $this->lastUpdate, PDO::PARAM_STR);
-                        $stmt->bindParam(':updated_by', $this->lastUpdateBy, PDO::PARAM_INT);
-                        $stmt->bindParam(':deleted_by', $this->deletedBy, PDO::PARAM_INT);
-                        $stmt->bindParam(':deleted_date', $this->deletedDate, PDO::PARAM_STR);
-                        $stmt->bindParam(':is_active', $this->isActive, PDO::PARAM_INT);
+                        $stmt->bindParam(':last_update_by', $this->lastUpdateBy, PDO::PARAM_INT);
                         $stmt->bindParam(':id', $this->id, PDO::PARAM_INT);
 
                         $stmt->execute();
@@ -352,6 +353,10 @@ class Richiesta
                         }
 
                         $out->status = "OK";
+                        } else {
+                            throw new Exception("OPERAZIONE-NON-PERMESSA");
+                        } 
+                        
                     } catch (Exception $ex) {
                         $out->status="KO";
                         $out->error = $ex->getMessage();
@@ -367,7 +372,65 @@ class Richiesta
             $out->status="KO";
             $out->error = $ex->getMessage();
         }
-        // file_put_contents("log/dbtest.log","[".(new DateTime("now"))->format("Y-m-d H:i")."] ".print_r($out)."\n",FILE_APPEND);
+        return $out;
+    }
+
+    public function delete($username,$token)
+    {
+        $out = new stdClass();
+        $out->status = "KO";
+        try {
+            if ($this->getId() != null) {
+                
+                $conn = DB::conn();
+                if ($conn != null) {
+                    try {
+                        $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+                        $query="SELECT is_active, role_id FROM `users` AS u WHERE u.username=:username";
+                        $stmt = $conn->prepare($query);
+                        $stmt->bindParam(':username',$username,PDO::PARAM_STR);
+                        $stmt->execute();
+                        $res=$stmt->fetch(PDO::FETCH_ASSOC);
+                        if (User::checkToken($token) && $res && $res['is_active']==1 AND User::checkCanDeleteRequest($res['role_id'])){
+                            $query = "UPDATE `richieste` SET
+                            is_active=0,
+                            deleted_date=:deleted_date,
+                            deleted_by=:deleted_by
+                            WHERE `id`=:id";
+
+                        $stmt = $conn->prepare($query);
+
+                        $stmt->bindParam(':deleted_date', $this->deletedDate, PDO::PARAM_STR);
+                        $stmt->bindParam(':deleted_by', $this->deletedBy, PDO::PARAM_INT);
+                        $stmt->bindParam(':id', $this->id, PDO::PARAM_INT);
+
+                        $stmt->execute();
+                        $out->num = $stmt->rowCount();
+
+                        if ($out->num != 1) {
+                            throw new Exception("UPDATE-ERROR");
+                        }
+
+                        $out->status = "OK";
+                        } else {
+                            throw new Exception("OPERAZIONE-NON-PERMESSA");
+                        } 
+                        
+                    } catch (Exception $ex) {
+                        $out->status="KO";
+                        $out->error = $ex->getMessage();
+                    }
+                } else {
+                    throw new Exception("DB-CONNECTION-ERROR");
+                }
+            } else {
+                throw new Exception("EMPTY-REQUEST");
+            }
+        } catch (Exception $ex) {
+            $conn = null;
+            $out->status="KO";
+            $out->error = $ex->getMessage();
+        }
         return $out;
     }
 }
