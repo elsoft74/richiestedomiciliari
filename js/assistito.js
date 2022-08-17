@@ -161,7 +161,7 @@ function inserisciAssistito() {
                         }).then((result) => {
                             if (result.isConfirmed) {
                                 cleanAssistitoInsert();
-                                showRequests(richieste, lu);
+                                showRequests(richieste, loggedUser);
                             }
                         })
                     } else {
@@ -229,7 +229,7 @@ function aggiornaAssistito() {
                         }).then((result) => {
                             if (result.isConfirmed) {
                                 cleanAssistitoEdit();
-                                showRequests(richieste, lu);
+                                showRequests(richieste, loggedUser);
                             }
                         })
                     } else {
