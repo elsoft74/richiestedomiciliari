@@ -15,6 +15,7 @@ function buildAssistitoInsertForm(target) {
                 email:"emailAssistito",
                 indirizzo:"indirizzoAssistito",
                 note:"noteAssistito",
+                nascita:"nascitaAssistito",
                 titleId:"insertAssistitoModalTitle",
                 titleText:"Inserisci nuovo assistito"
             }
@@ -33,6 +34,7 @@ function buildAssistitoInsertForm(target) {
                 email:"emailAssistitoEdit",
                 indirizzo:"indirizzoAssistitoEdit",
                 note:"noteAssistitoEdit",
+                nascita:"nascitaAssistitoEdit",
                 titleId:"editAssistitoModalTitle",
                 titleText:"Modifica assistito"
             }
@@ -64,6 +66,11 @@ function buildAssistitoInsertForm(target) {
         el = $("<label>").attr({ "for": attrs.cognome }).text("Cognome");
         divFormGroup.append(el);
         el = $("<input>").addClass('assitito-input-form').addClass("form-control").attr({ "type": "text", "id": attrs.cognome });
+        divFormGroup.append(el);
+
+        el = $("<label>").attr({ "for": attrs.nascita }).text("Data di nascita");
+        divFormGroup.append(el);
+        el = $("<input>").addClass('assitito-input-form').addClass("form-control").attr({ "type": "date", "id": attrs.nascita });
         divFormGroup.append(el);
     
         el = $("<label>").attr({ "for": attrs.codiceFiscale }).text("Codice Fiscale");
@@ -131,6 +138,7 @@ function inserisciAssistito() {
         assistito.email = $("#emailAssistito").val();
         assistito.indirizzo = $("#indirizzoAssistito").val().toUpperCase();
         assistito.note = $("#noteAssistito").val();
+        assistito.nascita = $("#nascitaAssistito").val();
         let err="";
         err+=(assistito.nome=="")?"Nome vuoto\n":"";
         err+=(assistito.cognome=="")?"Cognome vuoto\n":"";
@@ -198,6 +206,7 @@ function aggiornaAssistito() {
         assistito.email = $("#emailAssistitoEdit").val();
         assistito.indirizzo = $("#indirizzoAssistitoEdit").val().toUpperCase();
         assistito.note = $("#noteAssistitoEdit").val();
+        assistito.nascita = $("#nascitaAssistitoEdit").val();
         let err="";
         err+=(assistito.nome=="")?"Nome vuoto\n":"";
         err+=(assistito.cognome=="")?"Cognome vuoto\n":"";

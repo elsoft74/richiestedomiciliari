@@ -22,6 +22,7 @@
             $assistito->setEmail($tmp->email);
             $assistito->setIndirizzo($tmp->indirizzo);
             $assistito->setNote($tmp->note);
+            $assistito->setNascita($tmp->nascita);
             
             $out=$assistito->update($username,$token);
             //$ric->getDetails();

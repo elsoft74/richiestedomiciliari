@@ -80,7 +80,7 @@ var showUserUpdate = function (e, row) {
     $("#editUsernameUser").val(element.username);
     $("#editEmailUser").val(element.email);
     $("#editRoleIdUser").val(element.role_id);
-    $("#editIsActivedUser").val(element.is_active);
+    $("#editIsActiveUser").prop("checked",element.is_active);
 }
 
 function inserisciUser() {
@@ -165,7 +165,7 @@ function aggiornaUser() {
         user.email = $("#editEmailUser").val();
         user.password = $("#editPasswordUser").val();
         user.roleId = $("#editRoleIdUser").val();
-        user.isActive = $("#editIsActivedUser").val();
+        user.isActive = ($("#editIsActiveUser").prop("checked"))?1:0;
         let err="";
         err+=(user.nome=="")?"Nome vuoto\n":"";
         err+=(user.cognome=="")?"Cognome vuoto\n":"";
@@ -250,7 +250,7 @@ function buildUserInsertForm(target) {
                 email:"editEmailUser",
                 roleId:"editRoleIdUser",
                 password:"editPasswordUser",
-                isActive:"editIsActivedUser",
+                isActive:"editIsActiveUser",
                 titleId:"editModalTitle",
                 titleText:"Modifica utente"
             }

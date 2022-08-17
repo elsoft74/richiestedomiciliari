@@ -5,6 +5,7 @@
         public $nome;
         public $cognome;
         public $telefono;
+        public $nascita;
         public $email;
         public $indirizzo;
         public $codicefiscale;
@@ -38,6 +39,9 @@
         function setIsActive($val){
             $this->isactive=$val;
         }
+        function setNascita($val){
+            $this->nascita=$val;
+        }
 
         function getId(){
             return $this->id;
@@ -65,6 +69,9 @@
         }
         function getIsActive(){
             return $this->isactive;
+        }
+        function getNascita(){
+            return $this->nascita;
         }
 
         public static function getAssistiti($username,$token){
@@ -97,6 +104,7 @@
                                 $assistito->setCodiceFiscale($res['codicefiscale']);
                                 $assistito->setNote($res['note']);
                                 $assistito->setIsActive($res['is_active']==1);
+                                $assistito->setNascita($res['nascita']);
                                 array_push($out->data,$assistito);
                             }
                             $out->status="OK";
@@ -138,7 +146,7 @@
                             $stmt->execute();
                             $results=$stmt->fetch(PDO::FETCH_ASSOC);
                             if($results && $results['presente']==0){
-                                $query="INSERT INTO `assistiti` (nome,cognome,codicefiscale,telefono,email,indirizzo,note) VALUES (:nome,:cognome,:codicefiscale,:telefono,:email,:indirizzo,:note)";
+                                $query="INSERT INTO `assistiti` (nome,cognome,codicefiscale,telefono,email,indirizzo,note,nascita) VALUES (:nome,:cognome,:codicefiscale,:telefono,:email,:indirizzo,:note,:nascita)";
                                 $stmt = $conn->prepare($query);
                                 $stmt->bindParam(':nome',$this->getNome(),PDO::PARAM_STR);
                                 $stmt->bindParam(':cognome',$this->getCognome(),PDO::PARAM_STR);
@@ -147,6 +155,7 @@
                                 $stmt->bindParam(':email',$this->getEmail(),PDO::PARAM_STR);
                                 $stmt->bindParam(':indirizzo',$this->getIndirizzo(),PDO::PARAM_STR);
                                 $stmt->bindParam(':note',$this->getNote(),PDO::PARAM_STR);
+                                $stmt->bindParam(':nascita',$this->getNascita(),PDO::PARAM_STR);
                                 $stmt->execute();
                                 $this->setId($conn->lastInsertId());
                                     if ($this->getId()!=0){
@@ -203,7 +212,8 @@
                                 telefono=:telefono,
                                 email=:email,
                                 indirizzo=:indirizzo,
-                                note=:note
+                                note=:note,
+                                nascita=:nascita
                                 WHERE id=:id";
                                 $stmt = $conn->prepare($query);
                                 $stmt->bindParam(':nome',$this->nome,PDO::PARAM_STR);
@@ -213,6 +223,7 @@
                                 $stmt->bindParam(':email',$this->email,PDO::PARAM_STR);
                                 $stmt->bindParam(':indirizzo',$this->indirizzo,PDO::PARAM_STR);
                                 $stmt->bindParam(':note',$this->note,PDO::PARAM_STR);
+                                $stmt->bindParam(':nascita',$this->nascita,PDO::PARAM_STR);
                                 $stmt->bindParam(':id',$this->id,PDO::PARAM_INT);
                                 $stmt->execute();
                                 if ($stmt->rowCount()==1){

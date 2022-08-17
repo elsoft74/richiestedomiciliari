@@ -180,6 +180,7 @@ class Richiesta
                     a.note AS note_assistito,
                     a.is_active AS assistito_is_active,
                     a.telefono AS telefono,
+                    a.nascita AS nascita,
                     r.id as id_richiesta,
                     r.id_tipologia AS id_tipologia,
                     r.id_priorita AS id_priorita,
@@ -216,6 +217,7 @@ class Richiesta
                         $tmp->indirizzo=$r['indirizzo'];
                         $tmp->codiceFiscale=$r['codicefiscale'];
                         $tmp->noteAssistito=$r['note_assistito'];
+                        $tmp->nascita=$r['nascita'];
                         $tmp->assistitoIsActive=$r['assistito_is_active'];
                         $tmp->idRichiesta=$r['id_richiesta'];
                         $tmp->idTipologia=$r['id_tipologia'];

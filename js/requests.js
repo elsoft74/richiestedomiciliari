@@ -19,118 +19,127 @@ function showRequests(richieste, user) {
         //     { column: "dataRic", dir: "asc" },
         // ],
         columns: [                 //define the table columns
+
+
             {
-                title: "Assistito", columns: [
-                    { title: "#", field: "idAssistito", width: 10, editor: false, hozAlign: "center", visible: checkUserPermission(user, "canViewId") },
-                    {
-                        title: "", width: 10, hozAlign: "center", editor: false, visible: checkUserPermission(user, "canEditAssistito"), cellClick: checkUserPermission(user, "canEditAssistito") ? showAssistitoUpdate : null, formatter: function (cell, formatterParams, onRendered) {
+                title: "Data\nPrestazione", field: "data", editor: false, hozAlign: "center", formatter: "datetime", formatterParams: {
+                    //inputFormat:"YYY-MM-DD HH:mm:ss",
+                    outputFormat: "dd-MM-yyyy",
+                    invalidPlaceholder: "(data non valida)",
+                    timezone: "Europe/Rome",
+                }
+            },
 
-                            return '<span class="material-symbols-outlined" style="color: green">edit</span>';
-                        },
-                    },
-                    {
-                        title: "", width: 10, hozAlign: "center", editor: false, visible: checkUserPermission(user, "canDeleteAssistito"), cellClick: checkUserPermission(user, "canDeleteAssistito") ? deleteElement : null, formatter: function (cell, formatterParams, onRendered) {
+            { title: "#", field: "idAssistito", width: 10, editor: false, hozAlign: "center", visible: checkUserPermission(user, "canViewId") },
+            {
+                title: "", width: 10, hozAlign: "center", editor: false, visible: checkUserPermission(user, "canEditAssistito"), cellClick: checkUserPermission(user, "canEditAssistito") ? showAssistitoUpdate : null, formatter: function (cell, formatterParams, onRendered) {
 
-                            return '<span class="material-symbols-outlined" style="color: red">delete</span>';
-                        },
-                    },
-                    { title: "Nome", field: "nome", editor: false },
-                    { title: "Cognome", field: "cognome", editor: false, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-symbols-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
-                    { title: "Codice Fiscale", field: "codiceFiscale", editor: false, hozAlign: "center", headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-symbols-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
-                    { title: "Telefono", field: "telefono", editor: false, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-symbols-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
-                    { title: "e-mail", field: "email", editor: false, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-symbols-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
-                    { title: "Indirizzo", field: "indirizzo", editor: false, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-symbols-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
-                    {
-                        title: "Note", field: "noteAssistito", editor: false/*, formatter: "textarea" */, cellClick: cellPopupFormatterNoteAssistito, formatter: function (cell, formatterParams, onRendered) {
-                            return (cell.getValue() == null) ? '' : '<span class="material-symbols-outlined">notes</span>';
-                        }
-                    },
-                ]
-            }, {
-                title: "Richiesta", columns: [
-                    {
-                        title: "", width: 10, hozAlign: "center", editor: false, visible: checkUserPermission(user, "canCreateRequest"), cellClick: checkUserPermission(user, "canCreateRequest") ? newRequest : null, formatter: function (cell, formatterParams, onRendered) {
+                    return '<span class="material-symbols-outlined" style="color: green">edit</span>';
+                },
+            },
+            {
+                title: "", width: 10, hozAlign: "center", editor: false, visible: checkUserPermission(user, "canDeleteAssistito"), cellClick: checkUserPermission(user, "canDeleteAssistito") ? deleteElement : null, formatter: function (cell, formatterParams, onRendered) {
 
-                            return '<span class="material-symbols-outlined" style="color: green">add</span>';
-                        },
-                    },
-                    {
-                        title: "", field: "idRichiesta", width: 10, hozAlign: "center", editor: false, visible: checkUserPermission(user, "canEditRequest"), cellClick: checkUserPermission(user, "canEditRequest") ? showElementUpdate : null, formatter: function (cell, formatterParams, onRendered) {
-                            return (cell.getValue() == null) ? '' : '<span class="material-symbols-outlined" style="color: green">edit</span>';
-                        },
-                    },
-                    {
-                        title: "", field: "idRichiesta", width: 10, hozAlign: "center", editor: false, visible: checkUserPermission(user, "canDeleteRequest"), cellClick: checkUserPermission(user, "canEditRequest") ? deleteElement : null, formatter: function (cell, formatterParams, onRendered) {
-                            return (cell.getValue() == null) ? '' : '<span class="material-symbols-outlined" style="color: red">delete</span>';
-                        },
-                    },
-                    { title: "#", field: "idRichiesta", editor: false, hozAlign: "center", visible: checkUserPermission(user, "canViewId") },
-                    {
-                        title: "Tipo", field: "idTipologia", editor: false, hozAlign: "center", headerFilter: emptyHeaderFilter, headerFilterFunc: "like", formatter: function (cell, formatterParams, onRendered) {
-                            out = "";
-                            tipologie.forEach(element => {
-                                if (element.id == cell.getValue()) {
-                                    out = element.descrizione;
-                                }
-                            });
-                            return out;
-                        }
-                    },
-                    {
-                        title: "Priorità", field: "idPriorita", editor: false, hozAlign: "center", formatter: function (cell, formatterParams, onRendered) {
-                            out = "";
-                            priorita.forEach(element => {
-                                if (element.id == cell.getValue()) {
-                                    out = element.descrizione;
-                                }
-                            });
-                            return out;
-                        }, headerFilter: emptyHeaderFilter, headerFilterFunc: "like"
-                    },
-                    {
-                        title: "Data", field: "data", editor: false, hozAlign: "center", formatter: "datetime", formatterParams: {
-                            //inputFormat:"YYY-MM-DD HH:mm:ss",
-                            outputFormat: "dd-MM-yyyy",
-                            invalidPlaceholder: "(data non valida)",
-                            timezone: "Europe/Rome",
-                        }
-                    },
-                    {
-                        title: "Note", field: "noteRichiesta", editor: false/*, formatter: "textarea" */, cellClick: cellPopupFormatterNoteRichiesta, formatter: function (cell, formatterParams, onRendered) {
-                            return (cell.getValue() == null) ? '' : '<span class="material-symbols-outlined">notes</span>';
-                        }
-                    },
-                    // (user.permissions.canViewDetails) ?
-                    //     {
-                    //         title: "Creata",
-                    //         visible: user.permissions.canViewDetails,
-                    //         columns: [{
-                    //             title: "il", field: "created", editor: false, hozAlign: "center", formatter: "datetime", formatterParams: {
-                    //                 //inputFormat:"YYY-MM-DD HH:mm:ss",
-                    //                 outputFormat: "dd-MM-yyyy HH:mm:ss",
-                    //                 invalidPlaceholder: "(data non valida)",
-                    //                 timezone: "Europe/Rome",
-                    //             }
-                    //         },
-                    //         { title: "da", field: "createdByNomeCognome", editor: false },]
-                    //     } : { visible: false },
-                    // (user.permissions.canViewDetails) ?
-                    //     {
-                    //         title: "Aggiornata",
-                    //         visible: user.permissions.canViewDetails,
-                    //         columns: [{
-                    //             title: "il", field: "lastUpdate", editor: false, hozAlign: "center", formatter: "datetime", formatterParams: {
-                    //                 //inputFormat:"YYY-MM-DD HH:mm:ss",
-                    //                 outputFormat: "dd-MM-yyyy HH:mm:ss",
-                    //                 invalidPlaceholder: "(data non valida)",
-                    //                 timezone: "Europe/Rome",
-                    //             }
-                    //         },
-                    //         { title: "da", field: "lastUpdateByNomeCognome", editor: false },]
-                    //     } : { visible: false }
+                    return '<span class="material-symbols-outlined" style="color: red">delete</span>';
+                },
+            },
+            { title: "Cognome", field: "cognome", editor: false, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-symbols-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
+            { title: "Nome", field: "nome", editor: false },
+            {
+                title: "Nascita", field: "nascita", editor: false, formatter: "datetime", formatterParams: {
+                    //inputFormat:"YYY-MM-DD HH:mm:ss",
+                    outputFormat: "dd-MM-yyyy",
+                    invalidPlaceholder: "(data non valida)",
+                    timezone: "Europe/Rome",
+                }
+            },
+            { title: "Codice Fiscale", field: "codiceFiscale", editor: false, hozAlign: "center", headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-symbols-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
+            { title: "Telefono", field: "telefono", editor: false, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-symbols-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
+            { title: "e-mail", field: "email", editor: false, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-symbols-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
+            { title: "Indirizzo", field: "indirizzo", editor: false, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-symbols-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
+            {
+                title: "Note", field: "noteAssistito", editor: false/*, formatter: "textarea" */, cellClick: cellPopupFormatterNoteAssistito, formatter: function (cell, formatterParams, onRendered) {
+                    return (cell.getValue() == null) ? '' : '<span class="material-symbols-outlined">notes</span>';
+                }
+            },
 
-                ],
-            }]
+
+            {
+                title: "", width: 10, hozAlign: "center", editor: false, visible: checkUserPermission(user, "canCreateRequest"), cellClick: checkUserPermission(user, "canCreateRequest") ? newRequest : null, formatter: function (cell, formatterParams, onRendered) {
+
+                    return '<span class="material-symbols-outlined" style="color: green">add</span>';
+                },
+            },
+            {
+                title: "", field: "idRichiesta", width: 10, hozAlign: "center", editor: false, visible: checkUserPermission(user, "canEditRequest"), cellClick: checkUserPermission(user, "canEditRequest") ? showElementUpdate : null, formatter: function (cell, formatterParams, onRendered) {
+                    return (cell.getValue() == null) ? '' : '<span class="material-symbols-outlined" style="color: green">edit</span>';
+                },
+            },
+            {
+                title: "", field: "idRichiesta", width: 10, hozAlign: "center", editor: false, visible: checkUserPermission(user, "canDeleteRequest"), cellClick: checkUserPermission(user, "canEditRequest") ? deleteElement : null, formatter: function (cell, formatterParams, onRendered) {
+                    return (cell.getValue() == null) ? '' : '<span class="material-symbols-outlined" style="color: red">delete</span>';
+                },
+            },
+            { title: "#", field: "idRichiesta", editor: false, hozAlign: "center", visible: checkUserPermission(user, "canViewId") },
+            {
+                title: "Tipo", field: "idTipologia", editor: false, hozAlign: "center", headerFilter: emptyHeaderFilter, headerFilterFunc: "like", formatter: function (cell, formatterParams, onRendered) {
+                    out = "";
+                    tipologie.forEach(element => {
+                        if (element.id == cell.getValue()) {
+                            out = element.descrizione;
+                        }
+                    });
+                    return out;
+                }
+            },
+            {
+                title: "Priorità", field: "idPriorita", editor: false, hozAlign: "center", formatter: function (cell, formatterParams, onRendered) {
+                    out = "";
+                    priorita.forEach(element => {
+                        if (element.id == cell.getValue()) {
+                            out = element.descrizione;
+                        }
+                    });
+                    return out;
+                }, headerFilter: emptyHeaderFilter, headerFilterFunc: "like"
+            },
+
+            {
+                title: "Note", field: "noteRichiesta", editor: false/*, formatter: "textarea" */, cellClick: cellPopupFormatterNoteRichiesta, formatter: function (cell, formatterParams, onRendered) {
+                    return (cell.getValue() == null) ? '' : '<span class="material-symbols-outlined">notes</span>';
+                }
+            },
+            // (user.permissions.canViewDetails) ?
+            //     {
+            //         title: "Creata",
+            //         visible: user.permissions.canViewDetails,
+            //         columns: [{
+            //             title: "il", field: "created", editor: false, hozAlign: "center", formatter: "datetime", formatterParams: {
+            //                 //inputFormat:"YYY-MM-DD HH:mm:ss",
+            //                 outputFormat: "dd-MM-yyyy HH:mm:ss",
+            //                 invalidPlaceholder: "(data non valida)",
+            //                 timezone: "Europe/Rome",
+            //             }
+            //         },
+            //         { title: "da", field: "createdByNomeCognome", editor: false },]
+            //     } : { visible: false },
+            // (user.permissions.canViewDetails) ?
+            //     {
+            //         title: "Aggiornata",
+            //         visible: user.permissions.canViewDetails,
+            //         columns: [{
+            //             title: "il", field: "lastUpdate", editor: false, hozAlign: "center", formatter: "datetime", formatterParams: {
+            //                 //inputFormat:"YYY-MM-DD HH:mm:ss",
+            //                 outputFormat: "dd-MM-yyyy HH:mm:ss",
+            //                 invalidPlaceholder: "(data non valida)",
+            //                 timezone: "Europe/Rome",
+            //             }
+            //         },
+            //         { title: "da", field: "lastUpdateByNomeCognome", editor: false },]
+            //     } : { visible: false }
+
+
+        ]
     });
 
     if (checkUserPermission(user, "canExport")) {
@@ -321,10 +330,10 @@ var deleteElement = function (e, row) {
                             confirmButtonColor: '#3085d6',
                             confirmButtonText: 'Ok'
                         }).then((result) => {
-                        if (result.isConfirmed) {
-                            location.reload();
-                        }
-                    })
+                            if (result.isConfirmed) {
+                                location.reload();
+                            }
+                        })
                     } else {
                         Swal.fire({
                             text: "Impossibile completare l'operazione",
