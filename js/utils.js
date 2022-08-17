@@ -59,12 +59,15 @@ function loadData() {
     toBeCompleted = {
         priorita: false,
         tipologie: false,
-        richieste: false
+        richieste: false,
+        ruoli: false
     };
     priorita = null;
     tipologie = null;
+    ruoli = null;
     richieste = [];
     getPriorita(toBeCompleted);
+    getRuoli(toBeCompleted);
     getTipologie(toBeCompleted);
     readRequests(toBeCompleted);
     setTimeout(checkIfComplete, 200);

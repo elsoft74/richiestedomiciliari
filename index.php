@@ -19,6 +19,7 @@
     <script type="text/javascript" src="js/menu.js"></script>
     <script type="text/javascript" src="js/priorita.js"></script>
     <script type="text/javascript" src="js/tipologia.js"></script>
+    <script type="text/javascript" src="js/ruolo.js"></script>
     <script type="text/javascript" src="js/login.js"></script>
     <script type="text/javascript" src="js/insert.js"></script>
     <script type="text/javascript" src="js/edit.js"></script>

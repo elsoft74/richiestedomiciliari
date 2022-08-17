@@ -302,14 +302,20 @@ function buildUserInsertForm(target) {
     
         el = $("<label>").attr({ "for": attrs.roleId }).text("Ruolo");
         divFormGroup.append(el);
-        el = $("<input>").addClass('user-input-form').addClass("form-control").attr({ "type": "text", "id": attrs.roleId });
+        el = $("<select>").addClass('user-input-form').addClass("form-control").attr({ "id": attrs.roleId });
+        if(ruoli!=null){
+            ruoli.forEach(element => {
+                let option = $("<option>").attr({ "value": element.id}).text(element.descrizione);
+                el.append(option);
+            });
+        }
         divFormGroup.append(el);
     
         let div4 = $("<div>").addClass("col");
         if(attrs.hasOwnProperty('isActive')){
-            el = $("<label>").attr({ "for": attrs.isActive }).text("Attivo");
+            el = $("<label>").addClass('form-check-label').attr({ "for": attrs.isActive }).text("Attivo");
             div4.append(el);
-            el = $("<input>").addClass('user-input-form').addClass("form-control").attr({ "type": "text", "id": attrs.isActive });
+            el = $("<input>").addClass('form-check-input').attr({ "type": "checkbox", "id": attrs.isActive });
             div4.append(el);
         }
         let div5 = $("<div>").addClass("input-group-addon");
