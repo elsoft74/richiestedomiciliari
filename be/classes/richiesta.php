@@ -7,6 +7,7 @@ class Richiesta
     public $idAssistito;
     public $idTipologia;
     public $idPriorita;
+    public $idUsca;
     public $data;
     public $note;
     public $isactive;
@@ -47,6 +48,14 @@ class Richiesta
 
     public function getIdPriorita(){
         return $this->idPriorita;
+    }
+
+    public function setIdUsca($val){
+        $this->idUsca=$val;
+    }
+
+    public function getIdUsca(){
+        return $this->idUsca;
     }
 
     public function setData($val){

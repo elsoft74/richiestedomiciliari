@@ -56,9 +56,25 @@ function showUsersTable(users) {
                 { title: "Nome", field: "nome", editor: false },
                 { title: "Cognome", field: "cognome", editor: false },
                 { title: "e-mail", field: "email", editor: false },
-                { title: "USCA", field: "id_usca", editor: false },
-                { title: "Ruolo", field: "role_id", editor: false },
-                { title: "Attivo", field: "is_active", editor: false },
+                { title: "USCA", field: "id_usca", editor: false,formatter: function (cell, formatterParams, onRendered) {
+                    out = "";
+                    usca.forEach(element => {
+                        if (element.id == cell.getValue()) {
+                            out = element.descrizione;
+                        }
+                    });
+                    return out;
+                } },
+                { title: "Ruolo", field: "role_id", editor: false, formatter: function (cell, formatterParams, onRendered) {
+                    out = "";
+                    ruoli.forEach(element => {
+                        if (element.id == cell.getValue()) {
+                            out = element.descrizione;
+                        }
+                    });
+                    return out;
+                } },
+                { title: "Attivo", field: "is_active", editor: false, formatter:"tickCross" },
             ],
         });
     } else {
