@@ -21,7 +21,7 @@
             $newUser->setPassword($tmp->password);
             $newUser->setRoleId($tmp->roleId);
             $newUser->setUsername($tmp->username);
-            
+            $newUser->setIdUsca($tmp->idUsca);
             $out=$newUser->insert($username,$token);
             //$ric->getDetails();
             $out->debug=print_r($tmp,true);

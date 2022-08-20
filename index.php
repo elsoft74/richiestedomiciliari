@@ -25,6 +25,7 @@
     <script type="text/javascript" src="js/edit.js"></script>
     <script type="text/javascript" src="js/users.js"></script>
     <script type="text/javascript" src="js/assistito.js"></script>
+    <script type="text/javascript" src="js/usca.js"></script>
     <!-- <script type="text/javascript" src="js/sweetalert2.all.min.js"></script> -->
     <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 

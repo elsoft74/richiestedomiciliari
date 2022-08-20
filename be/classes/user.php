@@ -9,6 +9,7 @@
         public $is_active;
         public $permissions;
         public $email;
+        public $id_usca;
         
         public function setUserName($val){
             $this->username=$val;
@@ -74,6 +75,14 @@
             return $this->id;
         }
 
+        public function setIdUsca($val){
+            $this->id_usca=$val;
+        }
+
+        public function getIdUsca(){
+            return $this->id_usca;
+        }
+
         function __construct() {
             $this->id = null;
             $this->password = null;
@@ -86,7 +95,7 @@
                 $conn=DB::conn();
                 if ($conn!=null){
                     try {
-                        $query="SELECT u.id AS id, u.nome AS nome, u.cognome AS cognome, u.role_id AS role_id, u.is_active AS is_active, r.permissions AS permissions, u.email AS email FROM `users` AS u JOIN `roles` AS r ON u.role_id=r.id WHERE `username`=:username AND `password`=:password";
+                        $query="SELECT u.id AS id, u.nome AS nome, u.cognome AS cognome, u.role_id AS role_id, u.is_active AS is_active, r.permissions AS permissions, u.email AS email, u.id_usca AS id_usca FROM `users` AS u JOIN `roles` AS r ON u.role_id=r.id WHERE `username`=:username AND `password`=:password";
                         
                         $stmt = $conn->prepare($query);
                         $stmt->bindParam(':username',$this->username,PDO::PARAM_STR);
@@ -106,6 +115,7 @@
                                 $this->is_active=$res["is_active"];
                                 $this->email=$res["email"];
                                 $this->permissions=json_decode($res["permissions"]);
+                                $this->id_usca=$res["id_usca"];
                                 $out->status="OK";
                                 $out->data=$this;
                             }
@@ -145,7 +155,8 @@
                             u.cognome AS cognome,
                             u.role_id AS role_id,
                             u.email AS email,
-                            u.is_active as is_active
+                            u.is_active AS is_active,
+                            u.id_usca AS id_usca
                             FROM `users` AS u JOIN `roles` AS r ON u.role_id=r.id ";
                             
                             $stmt = $conn->prepare($query);
@@ -160,6 +171,7 @@
                                 $user->setRoleId($res['role_id']);
                                 $user->setEmail($res['email']);
                                 $user->setIsActive($res['is_active']==1);
+                                $user->setIdUsca($res['id_usca']);
                                 array_push($out->data,$user);
                             }
                             $out->status="OK";
@@ -201,7 +213,7 @@
                             $stmt->execute();
                             $res=$stmt->fetch(PDO::FETCH_ASSOC);
                             if($res && $res['presente']==0){
-                                $query="INSERT INTO `users` (nome,cognome,username,email,password,role_id) VALUES (:nome,:cognome,:username,:email,:password,:role_id)";
+                                $query="INSERT INTO `users` (nome,cognome,username,email,password,role_id,id_usca) VALUES (:nome,:cognome,:username,:email,:password,:role_id,:id_usca)";
                                 $stmt = $conn->prepare($query);
                                 $stmt->bindParam(':nome',$this->nome,PDO::PARAM_STR);
                                 $stmt->bindParam(':cognome',$this->cognome,PDO::PARAM_STR);
@@ -209,6 +221,7 @@
                                 $stmt->bindParam(':email',$this->email,PDO::PARAM_STR);
                                 $stmt->bindParam(':password',$this->password,PDO::PARAM_STR);
                                 $stmt->bindParam(':role_id',$this->role_id,PDO::PARAM_INT);
+                                $stmt->bindParam(':id_usca',$this->id_usca,PDO::PARAM_INT);
                                 $stmt->execute();
                                 $this->setId($conn->lastInsertId());
                                 if ($this->getId()!=0){
@@ -265,7 +278,8 @@
                                 username = :username,
                                 email = :email,
                                 role_id = :role_id,
-                                is_active = :is_active";
+                                is_active = :is_active,
+                                id_usca = :id_usca";
                                 $query.=($this->getPassword()!=null)?", password=:password":"";
                                 $query.=" WHERE id=:id";
                                 $stmt = $conn->prepare($query);
@@ -279,6 +293,7 @@
                                 }
                                 $stmt->bindParam(':role_id',$this->role_id,PDO::PARAM_INT);
                                 $stmt->bindParam(':is_active',$this->is_active,PDO::PARAM_INT);
+                                $stmt->bindParam(':id_usca',$this->id_usca,PDO::PARAM_INT);
                                 $stmt->execute();
                                 if ($stmt->rowCount()==1){
                                     $out->status="OK";

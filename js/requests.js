@@ -82,7 +82,7 @@ function showRequests(richieste, user) {
             },
             { title: "#", field: "idRichiesta", editor: false, hozAlign: "center", visible: checkUserPermission(user, "canViewId") },
             {
-                title: "Tipo", field: "idTipologia", editor: false, hozAlign: "center", headerFilter: emptyHeaderFilter, headerFilterFunc: "like", formatter: function (cell, formatterParams, onRendered) {
+                title: "Tipo", field: "idTipologia", editor: false, hozAlign: "center", formatter: function (cell, formatterParams, onRendered) {
                     out = "";
                     tipologie.forEach(element => {
                         if (element.id == cell.getValue()) {
@@ -90,7 +90,7 @@ function showRequests(richieste, user) {
                         }
                     });
                     return out;
-                }
+                }, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-symbols-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like"
             },
             {
                 title: "Priorità", field: "idPriorita", editor: false, hozAlign: "center", formatter: function (cell, formatterParams, onRendered) {
@@ -101,7 +101,7 @@ function showRequests(richieste, user) {
                         }
                     });
                     return out;
-                }, headerFilter: emptyHeaderFilter, headerFilterFunc: "like"
+                }, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-symbols-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" 
             },
 
             {
@@ -109,36 +109,12 @@ function showRequests(richieste, user) {
                     return (cell.getValue() == null) ? '' : '<span class="material-symbols-outlined">notes</span>';
                 }
             },
-            // (user.permissions.canViewDetails) ?
-            //     {
-            //         title: "Creata",
-            //         visible: user.permissions.canViewDetails,
-            //         columns: [{
-            //             title: "il", field: "created", editor: false, hozAlign: "center", formatter: "datetime", formatterParams: {
-            //                 //inputFormat:"YYY-MM-DD HH:mm:ss",
-            //                 outputFormat: "dd-MM-yyyy HH:mm:ss",
-            //                 invalidPlaceholder: "(data non valida)",
-            //                 timezone: "Europe/Rome",
-            //             }
-            //         },
-            //         { title: "da", field: "createdByNomeCognome", editor: false },]
-            //     } : { visible: false },
-            // (user.permissions.canViewDetails) ?
-            //     {
-            //         title: "Aggiornata",
-            //         visible: user.permissions.canViewDetails,
-            //         columns: [{
-            //             title: "il", field: "lastUpdate", editor: false, hozAlign: "center", formatter: "datetime", formatterParams: {
-            //                 //inputFormat:"YYY-MM-DD HH:mm:ss",
-            //                 outputFormat: "dd-MM-yyyy HH:mm:ss",
-            //                 invalidPlaceholder: "(data non valida)",
-            //                 timezone: "Europe/Rome",
-            //             }
-            //         },
-            //         { title: "da", field: "lastUpdateByNomeCognome", editor: false },]
-            //     } : { visible: false }
-
-
+            (checkUserPermission(user, "canViewDetails")) ?
+            {
+                title: "Dettagli", editor: false/*, formatter: "textarea" */, cellClick: cellPopupFormatterDettagliRichiesta, formatter: function (cell, formatterParams, onRendered) {
+                    return (cell.getValue() == null) ? '' : '<span class="material-symbols-outlined">edit</span>';
+                }
+            }: { visible: false },
         ]
     });
 
@@ -488,13 +464,14 @@ var newRequest = function (e, row) {
 
 }
 
-var checkIfRequestExist = function (e, row) {
-    var element = row.getData();
-    alert(element.idRichiesta != null);
-    return (element.idRichiesta != null);
-}
 
-var showRequestUpdate = function (e, row) {
+var cellPopupFormatterDettagliRichiesta = function (e, row) {
     var element = row.getData();
-    alert(JSON.stringify(element));
+    Swal.fire({
+        html: "<p>Scheda creata il: "+element.created+" da "+ element.createdByNomeCognome+"</p>"+((element.lastUpdate!=null)?"<p>Modificata il: "+element.lastUpdate+" da "+ element.lastUpdateByNomeCognome+"</p>":""),
+        icon: 'info',
+        showCancelButton: false,
+        confirmButtonColor: '#3085d6',
+        confirmButtonText: 'Ok'
+    });
 }

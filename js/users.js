@@ -56,6 +56,7 @@ function showUsersTable(users) {
                 { title: "Nome", field: "nome", editor: false },
                 { title: "Cognome", field: "cognome", editor: false },
                 { title: "e-mail", field: "email", editor: false },
+                { title: "USCA", field: "id_usca", editor: false },
                 { title: "Ruolo", field: "role_id", editor: false },
                 { title: "Attivo", field: "is_active", editor: false },
             ],
@@ -80,6 +81,7 @@ var showUserUpdate = function (e, row) {
     $("#editUsernameUser").val(element.username);
     $("#editEmailUser").val(element.email);
     $("#editRoleIdUser").val(element.role_id);
+    $("#editIdUscaUser").val(element.id_usca);
     $("#editIsActiveUser").prop("checked",element.is_active);
 }
 
@@ -98,6 +100,7 @@ function inserisciUser() {
         user.email = $("#emailUser").val();
         user.password = $("#passwordUser").val();
         user.roleId = $("#roleIdUser").val();
+        user.idUsca = $("#idUscaUser").val();
         let err="";
         err+=(user.nome=="")?"Nome vuoto\n":"";
         err+=(user.cognome=="")?"Cognome vuoto\n":"";
@@ -105,6 +108,7 @@ function inserisciUser() {
         err+=(user.email=="")?"E-mail vuota\n":"";
         err+=(user.password=="")?"Password vuota\n":"";
         err+=(user.roleId=="")?"Ruolo non selezionato\n":"";
+        err+=(user.idUsca==null)?"Usca non selezionata\n":"";
         if (err=="") {
             xhr.open("POST", url, true);
             xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
@@ -166,6 +170,7 @@ function aggiornaUser() {
         user.password = $("#editPasswordUser").val();
         user.roleId = $("#editRoleIdUser").val();
         user.isActive = ($("#editIsActiveUser").prop("checked"))?1:0;
+        user.idUsca = $("#editIdUscaUser").val();
         let err="";
         err+=(user.nome=="")?"Nome vuoto\n":"";
         err+=(user.cognome=="")?"Cognome vuoto\n":"";
@@ -232,6 +237,7 @@ function buildUserInsertForm(target) {
                 username:"usernameUser",
                 email:"emailUser",
                 roleId:"roleIdUser",
+                idUsca:"idUscaUser",
                 password:"passwordUser",
                 titleId:"insertModalTitle",
                 titleText:"Inserisci nuovo utente"
@@ -249,6 +255,7 @@ function buildUserInsertForm(target) {
                 username:"editUsernameUser",
                 email:"editEmailUser",
                 roleId:"editRoleIdUser",
+                idUsca:"editIdUscaUser",
                 password:"editPasswordUser",
                 isActive:"editIsActiveUser",
                 titleId:"editModalTitle",
@@ -299,7 +306,9 @@ function buildUserInsertForm(target) {
         divFormGroup.append(el);
         el = $("<input>").addClass('user-input-form').addClass("form-control").attr({ "type": "email", "id": attrs.email });
         divFormGroup.append(el);
+        form.append(divFormGroup);
     
+        divFormGroup = $("<div>").addClass("form-group");
         el = $("<label>").attr({ "for": attrs.roleId }).text("Ruolo");
         divFormGroup.append(el);
         el = $("<select>").addClass('user-input-form').addClass("form-control").attr({ "id": attrs.roleId });
@@ -310,6 +319,20 @@ function buildUserInsertForm(target) {
             });
         }
         divFormGroup.append(el);
+        form.append(divFormGroup);
+
+        divFormGroup = $("<div>").addClass("form-group");
+        el = $("<label>").attr({ "for": attrs.idUsca }).text("USCA di appartenenza");
+        divFormGroup.append(el);
+        el = $("<select>").addClass('user-input-form').addClass("form-control").attr({ "id": attrs.idUsca });
+        if(usca!=null){
+            usca.forEach(element => {
+                let option = $("<option>").attr({ "value": element.id}).text(element.descrizione);
+                el.append(option);
+            });
+        }
+        divFormGroup.append(el);
+        form.append(divFormGroup);
     
         let div4 = $("<div>").addClass("col");
         if(attrs.hasOwnProperty('isActive')){

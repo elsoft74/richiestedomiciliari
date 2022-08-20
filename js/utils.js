@@ -60,15 +60,18 @@ function loadData() {
         priorita: false,
         tipologie: false,
         richieste: false,
-        ruoli: false
+        ruoli: false,
+        usca: false
     };
     priorita = null;
     tipologie = null;
+    usca = null;
     ruoli = null;
     richieste = [];
     getPriorita(toBeCompleted);
     getRuoli(toBeCompleted);
     getTipologie(toBeCompleted);
+    getUsca(toBeCompleted);
     readRequests(toBeCompleted);
     setTimeout(checkIfComplete, 200);
 }

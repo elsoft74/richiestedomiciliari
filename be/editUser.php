@@ -24,6 +24,7 @@
             $user->setRoleId($tmp->roleId);
             $user->setUsername($tmp->username);
             $user->setIsActive($tmp->isActive);
+            $user->setIdUsca($tmp->idUsca);
             
             $out=$user->update($username,$token);
             //$ric->getDetails();
