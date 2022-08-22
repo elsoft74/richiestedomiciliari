@@ -109,6 +109,18 @@ function showRequests(richieste, user) {
                     return (cell.getValue() == null) ? '' : '<span class="material-symbols-outlined">notes</span>';
                 }
             },
+            (checkUserPermission(user, "canViewAllRequests")) ?
+            {
+                title: "Usca",field: "idUsca", editor: false/*, formatter: "textarea" */, cellClick: cellPopupFormatterDettagliRichiesta, formatter: function (cell, formatterParams, onRendered) {
+                    out = "";
+                    usca.forEach(element => {
+                        if (element.id == cell.getValue()) {
+                            out = element.descrizione;
+                        }
+                    });
+                    return out;
+                }
+            }: { visible: false },
             (checkUserPermission(user, "canViewDetails")) ?
             {
                 title: "Dettagli", editor: false/*, formatter: "textarea" */, cellClick: cellPopupFormatterDettagliRichiesta, formatter: function (cell, formatterParams, onRendered) {

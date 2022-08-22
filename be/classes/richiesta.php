@@ -193,6 +193,7 @@ class Richiesta
                     r.id as id_richiesta,
                     r.id_tipologia AS id_tipologia,
                     r.id_priorita AS id_priorita,
+                    r.id_usca AS id_usca,
                     r.data AS data,
                     r.note AS note_richiesta,
                     r.is_active AS richiesta_is_active,
@@ -231,6 +232,7 @@ class Richiesta
                         $tmp->idRichiesta=$r['id_richiesta'];
                         $tmp->idTipologia=$r['id_tipologia'];
                         $tmp->idPriorita=$r['id_priorita'];
+                        $tmp->idUsca=$r['id_usca'];
                         $tmp->data=$r['data'];
                         $tmp->noteRichiesta=$r['note_richiesta'];
                         $tmp->richiestaIsActive=$r['richiesta_is_active'];
@@ -263,22 +265,25 @@ class Richiesta
             $conn = DB::conn();
             if ($conn != null) {
                 try {
-                    $query="SELECT is_active, role_id FROM `users` AS u WHERE u.username=:username";
+                    $query="SELECT is_active, role_id, id_usca FROM `users` AS u WHERE u.username=:username";
                         $stmt = $conn->prepare($query);
                         $stmt->bindParam(':username',$username,PDO::PARAM_STR);
                         $stmt->execute();
                         $res=$stmt->fetch(PDO::FETCH_ASSOC);
                         if (User::checkToken($token) && $res && $res['is_active']==1 AND User::checkCanCreateRequest($res['role_id'])){
+                            $this->idUsca=$res['id_usca'];
                             $query = "INSERT INTO `richieste` (
                                 `id_assistito`,
                                 `id_tipologia`,
                                 `id_priorita`,
+                                `id_usca`,
                                 `data`,
                                 `note`,
                                 `created_by`
                             ) VALUES (:id_assistito,
                                 :id_tipologia,
                                 :id_priorita,
+                                :id_usca,
                                 :data,
                                 :note,
                                 :created_by)";
@@ -287,6 +292,7 @@ class Richiesta
                             $stmt->bindParam(':id_assistito', $this->idAssistito, PDO::PARAM_INT);
                             $stmt->bindParam(':id_tipologia', $this->idTipologia, PDO::PARAM_INT);
                             $stmt->bindParam(':id_priorita', $this->idPriorita, PDO::PARAM_INT);
+                            $stmt->bindParam(':id_usca', $this->idUsca, PDO::PARAM_INT);
                             $stmt->bindParam(':data', $this->data, PDO::PARAM_STR);
                             $stmt->bindParam(':note', $this->note, PDO::PARAM_STR);
                             $stmt->bindParam(':created_by', $this->createdBy, PDO::PARAM_INT);
