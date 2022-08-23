@@ -57,6 +57,18 @@ function showRequests(richieste, user) {
             { title: "Telefono", field: "telefono", editor: false, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-symbols-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
             { title: "e-mail", field: "email", editor: false, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-symbols-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
             { title: "Indirizzo", field: "indirizzo", editor: false, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-symbols-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
+            // (checkUserPermission(user, "canViewAllRequests")) ?
+             {
+                title: "Usca",field: "idUsca", editor: false/*, formatter: "textarea" */, cellClick: cellPopupFormatterDettagliRichiesta, formatter: function (cell, formatterParams, onRendered) {
+                    out = "";
+                    usca.forEach(element => {
+                        if (element.id == cell.getValue()) {
+                            out = element.descrizione;
+                        }
+                    });
+                    return out;
+                }, headerFilter: emptyHeaderFilter, headerFilterFunc: "like"
+            },//: { visible: false },
             {
                 title: "Note", field: "noteAssistito", editor: false/*, formatter: "textarea" */, cellClick: cellPopupFormatterNoteAssistito, formatter: function (cell, formatterParams, onRendered) {
                     return (cell.getValue() == null) ? '' : '<span class="material-symbols-outlined">notes</span>';
@@ -109,18 +121,6 @@ function showRequests(richieste, user) {
                     return (cell.getValue() == null) ? '' : '<span class="material-symbols-outlined">notes</span>';
                 }
             },
-            (checkUserPermission(user, "canViewAllRequests")) ?
-            {
-                title: "Usca",field: "idUsca", editor: false/*, formatter: "textarea" */, cellClick: cellPopupFormatterDettagliRichiesta, formatter: function (cell, formatterParams, onRendered) {
-                    out = "";
-                    usca.forEach(element => {
-                        if (element.id == cell.getValue()) {
-                            out = element.descrizione;
-                        }
-                    });
-                    return out;
-                }
-            }: { visible: false },
             (checkUserPermission(user, "canViewDetails")) ?
             {
                 title: "Dettagli", editor: false/*, formatter: "textarea" */, cellClick: cellPopupFormatterDettagliRichiesta, formatter: function (cell, formatterParams, onRendered) {

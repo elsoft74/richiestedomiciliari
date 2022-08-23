@@ -8,6 +8,7 @@ function buildAssistitoInsertForm(target) {
             fun2="cleanAssistitoInsert()";
             attrs={
                 id:"idAssistito",
+                idUsca:"idUscaAssistito",
                 nome:"nomeAssistito",
                 cognome:"cognomeAssistito",
                 codiceFiscale:"codiceFiscaleAssistito",
@@ -27,6 +28,7 @@ function buildAssistitoInsertForm(target) {
             fun2="cleanAssistitoEdit()";
             attrs={
                 id:"idAssistitoEdit",
+                idUsca:"idUscaAssistitoEdit",
                 nome:"nomeAssistitoEdit",
                 cognome:"cognomeAssistitoEdit",
                 codiceFiscale:"codiceFiscaleAssistitoEdit",
@@ -93,6 +95,17 @@ function buildAssistitoInsertForm(target) {
         divFormGroup.append(el);
         el = $("<input>").addClass('assitito-input-form').addClass("form-control").attr({ "type": "text", "id": attrs.indirizzo });
         divFormGroup.append(el);
+
+        el = $("<label>").attr({ "for": attrs.idUsca }).text("USCA di competenza");
+        divFormGroup.append(el);
+        el = $("<select>").addClass("form-richiesta").addClass("form-control").attr({"id": attrs.idUsca });
+        if(usca!=null){
+            usca.forEach(element => {
+                let option = $("<option>").attr({ "value": element.id}).text(element.descrizione);
+                el.append(option);
+            });
+        }
+        divFormGroup.append(el);
     
         let div4 = $("<div>").addClass("col");
         el = $("<label>").attr({ "for": attrs.note }).text("Note");
@@ -139,12 +152,14 @@ function inserisciAssistito() {
         assistito.indirizzo = $("#indirizzoAssistito").val().toUpperCase();
         assistito.note = $("#noteAssistito").val();
         assistito.nascita = $("#nascitaAssistito").val();
+        assistito.idUsca = $("#idUscaAssistito").val();
         let err="";
         err+=(assistito.nome=="")?"Nome vuoto\n":"";
         err+=(assistito.cognome=="")?"Cognome vuoto\n":"";
         err+=(assistito.codiceFiscale=="")?"Codice Fiscale vuoto\n":"";
         err+=(assistito.email=="" && assistito.telefono=="")?"E-mail e Telefono vuoti\n":"";
         err+=(assistito.indirizzo=="")?"Indirizzo vuoto\n":"";
+        err+=(assistito.nascita=="")?"Data di nascita non valida\n":"";
         if (err=="") {
             xhr.open("POST", url, true);
             xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
@@ -207,12 +222,15 @@ function aggiornaAssistito() {
         assistito.indirizzo = $("#indirizzoAssistitoEdit").val().toUpperCase();
         assistito.note = $("#noteAssistitoEdit").val();
         assistito.nascita = $("#nascitaAssistitoEdit").val();
+        assistito.idUsca = $("#idUscaAssistitoEdit").val();
         let err="";
         err+=(assistito.nome=="")?"Nome vuoto\n":"";
         err+=(assistito.cognome=="")?"Cognome vuoto\n":"";
         err+=(assistito.codiceFiscale=="")?"Codice Fiscale vuoto\n":"";
         err+=(assistito.email=="" && assistito.telefono=="")?"E-mail e Telefono vuoti\n":"";
         err+=(assistito.indirizzo=="")?"Indirizzo vuoto\n":"";
+        err+=(assistito.idUsca==null)?"USCA non selezionata\n":"";
+        err+=(assistito.nascita=="")?"Data di nascita non valida\n":"";
         if (err=="") {
             xhr.open("POST", url, true);
             xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
@@ -261,6 +279,7 @@ var showAssistitoUpdate = function (e, row) {
     $("#editAssistito").fadeIn();
     var element = row.getData();
     $("#idAssistitoEdit").val(element.idAssistito);
+    $("#idUscaAssistitoEdit").val(element.idUsca);
     $("#nomeAssistitoEdit").val(element.nome);
     $("#cognomeAssistitoEdit").val(element.cognome);
     $("#codiceFiscaleAssistitoEdit").val(element.codiceFiscale);
@@ -268,6 +287,7 @@ var showAssistitoUpdate = function (e, row) {
     $("#emailAssistitoEdit").val(element.email);
     $("#indirizzoAssistitoEdit").val(element.indirizzo);
     $("#noteAssistitoEdit").val(element.noteAssistito);
+    $("#nascitaAssistitoEdit").val(((new luxon.DateTime.fromSQL(element.nascita)).toFormat("yyyy-MM-dd")));
 }
 
 function buildAssistitoEditForm(target){

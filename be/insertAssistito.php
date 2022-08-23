@@ -15,6 +15,7 @@
         if ($tmp != null/* && $user != null*/) {
             $assistito = new Assistito();
             $assistito->setNome($tmp->nome);
+            $assistito->setIdUsca($tmp->idUsca);
             $assistito->setCognome($tmp->cognome);
             $assistito->setCodiceFiscale($tmp->codiceFiscale);
             $assistito->setTelefono($tmp->telefono);

@@ -7,7 +7,6 @@ class Richiesta
     public $idAssistito;
     public $idTipologia;
     public $idPriorita;
-    public $idUsca;
     public $data;
     public $note;
     public $isactive;
@@ -48,14 +47,6 @@ class Richiesta
 
     public function getIdPriorita(){
         return $this->idPriorita;
-    }
-
-    public function setIdUsca($val){
-        $this->idUsca=$val;
-    }
-
-    public function getIdUsca(){
-        return $this->idUsca;
     }
 
     public function setData($val){
@@ -190,10 +181,10 @@ class Richiesta
                     a.is_active AS assistito_is_active,
                     a.telefono AS telefono,
                     a.nascita AS nascita,
+                    a.id_usca AS id_usca,
                     r.id as id_richiesta,
                     r.id_tipologia AS id_tipologia,
                     r.id_priorita AS id_priorita,
-                    r.id_usca AS id_usca,
                     r.data AS data,
                     r.note AS note_richiesta,
                     r.is_active AS richiesta_is_active,
