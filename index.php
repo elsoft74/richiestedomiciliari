@@ -3,7 +3,7 @@
 <head>
     <link href="bootstrap/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3">
     <script src="bootstrap/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"></script>
-    <!-- <script type="text/javascript" src="https://oss.sheetjs.com/sheetjs/xlsx.full.min.js"></script> -->
+    <script type="text/javascript" src="https://oss.sheetjs.com/sheetjs/xlsx.full.min.js"></script>
     <link rel="stylesheet" href="https://fonts.sandbox.google.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
     <link href="css/tabulator.min.css" rel="stylesheet">
     <link href="css/tabulator_materialize.min.css" rel="stylesheet">
@@ -26,6 +26,7 @@
     <script type="text/javascript" src="js/users.js"></script>
     <script type="text/javascript" src="js/assistito.js"></script>
     <script type="text/javascript" src="js/usca.js"></script>
+    <script type="text/javascript" src="js/swabs.js"></script>
     <!-- <script type="text/javascript" src="js/sweetalert2.all.min.js"></script> -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.4.29/dist/sweetalert2.all.min.js"></script>
 
@@ -34,6 +35,7 @@
 <body>
     <div id="menu"></div>
     <div id="main" class="sections"></div>
+    <div id="mainSwabs" class="sections"></div>
     <div id="insert"></div>
     <div id="insertUser"></div>
     <div id="insertAssistito"></div>
@@ -56,6 +58,7 @@
             buildAssistitoEditForm("editAssistito");
             showMenu(lu);
             showRequests(richieste, lu);
+            showSwabs(swabs,lu);
         });
         //window.addEventListener('dataUpdated', updateTableData); 
         window.onload = function() {

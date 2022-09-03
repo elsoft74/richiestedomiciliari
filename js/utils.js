@@ -37,7 +37,7 @@ function calcolaGiorni(data) {
 
 function checkIfComplete() {
     let out = true;
-    Object.keys(toBeCompleted).forEach(p=>{out=out&&toBeCompleted[p]});
+    Object.keys(toBeCompleted).forEach(p => { out = out && toBeCompleted[p] });
     if (out) {
         window.dispatchEvent(new CustomEvent("dataLoaded"));
     } else {
@@ -55,11 +55,40 @@ function checkIfUpdated() {
     }
 }
 
+function checkNewData() {
+    let activity = localStorage.getItem("activity");
+    let xhr = new XMLHttpRequest();
+    let url = "be/checkNewData.php";
+    let lastRead = localStorage.getItem("lastRead");
+    xhr.open("POST", url, true);
+    xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState === 4 && xhr.status === 200) {
+            result = JSON.parse(xhr.responseText);
+            if (result.status == "OK") {
+                if (result.data) {
+                    console.log("Nuovi Dati");
+                    updateTableData();
+                } else {
+                    if ("requests" == activity || "tamponi" == activity) {
+                        setTimeout(checkNewData, 5000);
+                    }
+                }
+            }
+            else {
+                console.log("checkNewData:" + result.error);
+            }
+        }
+    }
+    xhr.send("lastRead=" + lastRead);
+}
+
 function loadData() {
     toBeCompleted = {
         priorita: false,
         tipologie: false,
         richieste: false,
+        swabs: false,
         ruoli: false,
         usca: false
     };
@@ -72,7 +101,9 @@ function loadData() {
     getRuoli(toBeCompleted);
     getTipologie(toBeCompleted);
     getUsca(toBeCompleted);
-    readRequests(toBeCompleted);
+    //readRequests(toBeCompleted);
+    //readSwabs(toBeCompleted);
+    getData(toBeCompleted);
     setTimeout(checkIfComplete, 200);
 }
 
@@ -90,10 +121,51 @@ function formattaData(data, lung) { // lung se impostato a true fa ottenere una 
     return out;
 }
 
-function hideAll(){
+function hideAll() {
     $(".sections").hide();
 }
 
-function checkUserPermission(user,permissionToCheck){
+function checkUserPermission(user, permissionToCheck) {
     return (user.permissions.hasOwnProperty(permissionToCheck) && user.permissions[permissionToCheck]);
+}
+
+function getData(toBeCompleted) {
+    var table = Tabulator.findTable("#main")[0];
+    var rowCount = 0;
+    if (table != null && table != undefined) {
+        rowCount = table.getDataCount();
+    }
+    if (rowCount == 0) {
+        localStorage.setItem("lastRead", null);
+    }
+    let xhr = new XMLHttpRequest();
+    let url = "be/getdata.php";
+    xhr.open("POST", url, true);
+    xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    let ready = false;
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState === 4 && xhr.status === 200) {
+            result = JSON.parse(xhr.responseText);
+            if (result.status == "OK") {
+                richieste = result.requests;
+                toBeCompleted.richieste = true;
+                swabs = result.swabs;
+                toBeCompleted.swabs = true;
+                if (result.hasOwnProperty("lastRead")) {
+                    localStorage.setItem("lastRead", result.lastRead);
+                }
+                //setTimeout(checkIfAreUpdatedData, 1000);
+            } else {
+                Swal.fire({
+                    text: "Impossibile recuperare l'elenco delle richieste.",
+                    icon: 'error',
+                    showCancelButton: false,
+                    confirmButtonColor: '#3085d6',
+                    confirmButtonText: 'Ok'
+                })
+            }
+        }
+    }
+    //xhr.send();
+    xhr.send("lastRead=" + localStorage.getItem("lastRead"));
 }

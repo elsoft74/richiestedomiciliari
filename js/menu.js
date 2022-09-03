@@ -1,6 +1,7 @@
 function showMenu(user) {
     $("#menu").html("");
     if (user != null) {
+        let activity = localStorage.getItem("activity");
         let row = $("<div>").addClass("row");
         let div1 = $("<div>").addClass("col-10");
         let div2 = $("<div>").addClass("col-1");
@@ -23,12 +24,42 @@ function showMenu(user) {
             div1.append(button);
             button = $("<button>").addClass("btn").addClass("btn-primary").addClass("btn-block").addClass('requests-form-btn').attr({"onClick":'showUsers()','id':'showUserButton'}).text("Utenti");
             div1.append(button);
-            button = $("<button>").addClass("btn").addClass("btn-primary").addClass("btn-block").addClass('users-form-btn').attr({"onClick":'showRequests(richieste, lu)','id':'showRequestsButton'}).text("Richieste");
+            button = $("<button>").addClass('btn btn-primary btn-block swabs-form-btn users-form-btn').attr({"onClick":'showRequests(richieste, lu)','id':'showRequestsButton'}).text("Richieste");
             div1.append(button);
-        }        
+        }
+        var mostraStorico = localStorage.getItem("mostraStorico");
+        if (mostraStorico==null) {
+            mostraStorico = false;
+        }
+        // var mostraTamponi = localStorage.getItem("mostraTamponi");
+        // if (mostraTamponi==null) {
+        //     mostraTamponi = false;
+        // }
+        // if ("tamponi" == activity || "requests" == activity){
+            button = $("<button>").addClass('btn btn-primary btn-block requests-form-btn').attr({"onClick":'mostraStorico()','id':'mostraStoricoButton'}).text(mostraStorico?"Solo Attuali":"Con Archiviate");
+            div1.append(button);
+            button = $("<button>").addClass('btn btn-primary btn-block users-form-btn request-form-btn').attr({"onClick":'mostraTamponi()','id':'mostraTamponiButton'}).text("Tamponi");
+            div1.append(button);
+        // }         
         row.append(div1);
         row.append(div2);
         row.append(div3);
         $("#menu").append(row);
     }
+}
+
+function mostraStorico(){
+    var mostraStorico = localStorage.getItem("mostraStorico");
+        if (mostraStorico==null) {
+            mostraStorico = false;
+        } else {
+            mostraStorico = !mostraStorico;
+        }
+    localStorage.setItem("mostraStorico",mostraStorico);
+    location.reload();
+}
+
+function mostraTamponi(){
+    $("#main").fadeOut();
+    $("#mainSwabs").fadeIn();
 }

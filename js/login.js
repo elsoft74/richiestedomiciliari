@@ -11,6 +11,8 @@ function login() {
             if (result.status == "OK") {
                 lu = result.data;
                 localStorage.setItem("ricdomloggeduser", JSON.stringify(lu));
+                localStorage.setItem("mostraStorico",false);
+                localStorage.setItem("mostraTamponi",false);
                 location.reload();
             } else {
                 Swal.fire({
@@ -29,6 +31,8 @@ function login() {
 function logout() {
     localStorage.removeItem("ricdomloggeduser");
     localStorage.removeItem("lastRead");
+    localStorage.removeItem("mostraStorico");
+    localStorage.removeItem("mostraTamponi");
     $("#username").val("");
     $("#password").val("");
     location.reload();

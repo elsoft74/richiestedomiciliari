@@ -1,7 +1,7 @@
 function showUsers() {
-    $("#main").html("");
-    $(".requests-form-btn").hide();
-    $(".users-form-btn").show();
+    $(".requests-form-btn").fadeOut();
+    $(".swabs-form-btn").fadeOut();
+    $(".users-form-btn").fadeIn();
     getUsers();
 }
 
@@ -77,6 +77,7 @@ function showUsersTable(users) {
                 { title: "Attivo", field: "is_active", editor: false, formatter:"tickCross" },
             ],
         });
+        localStorage.setItem("activity","users");
     } else {
         Swal.fire({
             text: result.error,

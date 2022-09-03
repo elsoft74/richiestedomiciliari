@@ -1,8 +1,8 @@
 function showRequests(richieste, user) {
     $("#main").html("");
-    $("#users").html("");
-    $(".requests-form-btn").show();
-    $(".users-form-btn").hide();
+    // $("#users").html("");
+    // $(".requests-form-btn").show();
+    // $(".users-form-btn").hide();
 
     var table = new Tabulator("#main", {
         data: richieste,           //load row data from array
@@ -22,7 +22,7 @@ function showRequests(richieste, user) {
 
 
             {
-                title: "Data\nPrestazione", field: "data", editor: false, hozAlign: "center", formatter: "datetime", formatterParams: {
+                title: "Programmata per:", field: "data", editor: false, hozAlign: "center", formatter: "datetime", formatterParams: {
                     //inputFormat:"YYY-MM-DD HH:mm:ss",
                     outputFormat: "dd-MM-yyyy",
                     invalidPlaceholder: "(data non valida)",
@@ -58,19 +58,14 @@ function showRequests(richieste, user) {
             { title: "e-mail", field: "email", editor: false, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-symbols-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
             { title: "Indirizzo", field: "indirizzo", editor: false, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-symbols-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
             // (checkUserPermission(user, "canViewAllRequests")) ?
-             {
-                title: "Usca",field: "idUsca", editor: false/*, formatter: "textarea" */, cellClick: cellPopupFormatterDettagliRichiesta, formatter: function (cell, formatterParams, onRendered) {
-                    out = "";
-                    usca.forEach(element => {
-                        if (element.id == cell.getValue()) {
-                            out = element.descrizione;
-                        }
-                    });
-                    return out;
-                }, headerFilter: emptyHeaderFilter, headerFilterFunc: "like"
-            },//: { visible: false },
             {
-                title: "Note", field: "noteAssistito", editor: false/*, formatter: "textarea" */, cellClick: cellPopupFormatterNoteAssistito, formatter: function (cell, formatterParams, onRendered) {
+                title: "idUsca", field: "idUsca", visible: false
+            },
+            {
+                title: "Usca", field: "usca", editor: false, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-symbols-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like"
+            },
+            {
+                title: "Note", field: "noteAssistito", editor: false, cellClick: cellPopupFormatterNoteAssistito, formatter: function (cell, formatterParams, onRendered) {
                     return (cell.getValue() == null) ? '' : '<span class="material-symbols-outlined">notes</span>';
                 }
             },
@@ -113,7 +108,7 @@ function showRequests(richieste, user) {
                         }
                     });
                     return out;
-                }, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-symbols-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" 
+                }, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-symbols-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like"
             },
 
             {
@@ -122,24 +117,25 @@ function showRequests(richieste, user) {
                 }
             },
             (checkUserPermission(user, "canViewDetails")) ?
-            {
-                title: "Dettagli", editor: false/*, formatter: "textarea" */, cellClick: cellPopupFormatterDettagliRichiesta, formatter: function (cell, formatterParams, onRendered) {
-                    return (cell.getValue() == null) ? '' : '<span class="material-symbols-outlined">edit</span>';
-                }
-            }: { visible: false },
+                {
+                    title: "Dettagli", editor: false/*, formatter: "textarea" */, cellClick: cellPopupFormatterDettagliRichiesta, formatter: function (cell, formatterParams, onRendered) {
+                        return (cell.getValue() == null) ? '' : '<span class="material-symbols-outlined">edit</span>';
+                    }
+                } : { visible: false },
         ]
     });
 
     if (checkUserPermission(user, "canExport")) {
-        let button = $("<button>").addClass("btn btn-primary btn-block").attr({ "id": "dataDownLoadButton" }).html("Scarica tabella");
+        let button = $("<button>").addClass("btn btn-primary btn-block requests-form-btn").attr({ "id": "dataDownLoadButton" }).html("Scarica richieste");
         $("#menubuttons").append(button);
         document.getElementById("dataDownLoadButton").addEventListener("click", function () {
-            table.download("xlsx", "data.xlsx", { sheetName: "Export" });
+            table.download("xlsx", "richieste.xlsx", { sheetName: "Export" });
         });
     }
+    localStorage.setItem("activity","requests");
+    setTimeout(checkNewData, 200);
 
 }
-
 
 function inserisci() {
     let lu = localStorage.getItem("ricdomloggeduser");
@@ -359,7 +355,9 @@ function readRequests(toBeCompleted) {
             if (result.status == "OK") {
                 richieste = result.data;
                 toBeCompleted.richieste = true;
-                localStorage.setItem("lastRead", result.lastRead);
+                if (result.hasOwnProperty("lastRead")) {
+                    localStorage.setItem("lastRead", result.lastRead);
+                }
                 if (result.hasOwnProperty("deleted")) {
                     localStorage.setItem("deleted", result.deleted);
                 }
@@ -480,10 +478,36 @@ var newRequest = function (e, row) {
 var cellPopupFormatterDettagliRichiesta = function (e, row) {
     var element = row.getData();
     Swal.fire({
-        html: "<p>Scheda creata il: "+element.created+" da "+ element.createdByNomeCognome+"</p>"+((element.lastUpdate!=null)?"<p>Modificata il: "+element.lastUpdate+" da "+ element.lastUpdateByNomeCognome+"</p>":""),
+        html: "<p>Scheda creata il: " + element.created + " da " + element.createdByNomeCognome + "</p>" + ((element.lastUpdate != null) ? "<p>Modificata il: " + element.lastUpdate + " da " + element.lastUpdateByNomeCognome + "</p>" : ""),
         icon: 'info',
         showCancelButton: false,
         confirmButtonColor: '#3085d6',
         confirmButtonText: 'Ok'
     });
+}
+
+
+function updateTableData() {
+    var table = Tabulator.findTable("#main")[0];
+    waitingForData = true;
+    if (table != null || table != undefined) {
+        console.log("Scrivo i dati aggiornati");
+        if (!waitingForData){
+            toBeCompleted.richieste=false;
+            readRequests(toBeCompleted);
+            setTimeout(updateTableData, 200);
+        }
+        if (toBeCompleted.richieste){
+            waitingForData = false;
+            table.updateOrAddData(richieste);
+            var deleted=localStorage.getItem("deleted");
+            if(deleted != null || deleted!=undefined){
+                table.deleteRow(deleted);
+                localStorage.removeItem("deleted");
+            }   
+        } else {
+
+        }
+        setTimeout(checkNewData, 200);
+    }
 }
