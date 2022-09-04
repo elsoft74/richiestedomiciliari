@@ -5,7 +5,7 @@ function buildEditForm(target){
 
 function cleanEdit() {
     $(".richiesta-input-form").val('')
-    $("#edit").fadeOut();
+    $("#edit").hide();
 }
 
 function buildUserEditForm(target){
@@ -14,5 +14,5 @@ function buildUserEditForm(target){
 
 function cleanUserEdit() {
     $('.user-input-form').val('');
-    $("#editUser").fadeOut();
+    $("#editUser").hide();
 }

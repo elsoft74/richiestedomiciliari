@@ -15,32 +15,24 @@ function showMenu(user) {
         div3.attr("id", "loginbutton");
         div3.append(button);
         div2.text(user.nome + " " + user.cognome);
-        button = $("<button>").addClass("btn").addClass("btn-primary").addClass("btn-block").addClass('requests-form-btn').attr({"onClick":'$("#insertAssistito").fadeIn()','id':'requestInsertButton'}).text("Nuovo Assistito");
+        button = $("<button>").addClass("btn").addClass("btn-primary").addClass("btn-block").addClass('requests-form').attr({"onClick":'$("#insertAssistito").show()','id':'requestInsertButton'}).text("Nuovo Assistito");
         div1.append(button);
-        // button = $("<button>").addClass("btn").addClass("btn-primary").addClass("btn-block").addClass('requests-form-btn').attr({"onClick":'$("#insert").fadeIn()','id':'requestInsertButton'}).text("Nuova Richiesta");
-        // div1.append(button);
         if(user.permissions.canCreateUser){
-            button = $("<button>").addClass("btn").addClass("btn-primary").addClass("btn-block").addClass('users-form-btn').attr({"onClick":'$("#insertUser").fadeIn()','id':'userInsertButton'}).text("Nuovo Utente");
+            button = $("<button>").addClass('btn btn-primary btn-block users-form').attr({"onClick":'$("#insertUser").show()','id':'userInsertButton'}).text("Nuovo Utente");
             div1.append(button);
-            button = $("<button>").addClass("btn").addClass("btn-primary").addClass("btn-block").addClass('requests-form-btn').attr({"onClick":'showUsers()','id':'showUserButton'}).text("Utenti");
-            div1.append(button);
-            button = $("<button>").addClass('btn btn-primary btn-block swabs-form-btn users-form-btn').attr({"onClick":'showRequests(richieste, lu)','id':'showRequestsButton'}).text("Richieste");
+            button = $("<button>").addClass('btn btn-primary btn-block swabs-form requests-form').attr({"onClick":'showUsers()','id':'showUserButton'}).text("Utenti");
             div1.append(button);
         }
         var mostraStorico = localStorage.getItem("mostraStorico");
         if (mostraStorico==null) {
             mostraStorico = false;
         }
-        // var mostraTamponi = localStorage.getItem("mostraTamponi");
-        // if (mostraTamponi==null) {
-        //     mostraTamponi = false;
-        // }
-        // if ("tamponi" == activity || "requests" == activity){
-            button = $("<button>").addClass('btn btn-primary btn-block requests-form-btn').attr({"onClick":'mostraStorico()','id':'mostraStoricoButton'}).text(mostraStorico?"Solo Attuali":"Con Archiviate");
-            div1.append(button);
-            button = $("<button>").addClass('btn btn-primary btn-block users-form-btn request-form-btn').attr({"onClick":'mostraTamponi()','id':'mostraTamponiButton'}).text("Tamponi");
-            div1.append(button);
-        // }         
+        button = $("<button>").addClass('btn btn-primary btn-block swabs-form users-form').attr({"onClick":'changeActivity("requests")','id':'showRequestsButton'}).text("Richieste");
+        div1.append(button);
+        button = $("<button>").addClass('btn btn-primary btn-block requests-form').attr({"onClick":'mostraStorico()','id':'mostraStoricoButton'}).text(mostraStorico?"Solo Attuali":"Con Archiviate");
+        div1.append(button);
+        button = $("<button>").addClass('btn btn-primary btn-block users-form requests-form').attr({"onClick":'changeActivity("swabs")','id':'mostraTamponiButton'}).text("Tamponi");
+        div1.append(button);
         row.append(div1);
         row.append(div2);
         row.append(div3);
@@ -57,9 +49,4 @@ function mostraStorico(){
         }
     localStorage.setItem("mostraStorico",mostraStorico);
     location.reload();
-}
-
-function mostraTamponi(){
-    $("#main").fadeOut();
-    $("#mainSwabs").fadeIn();
 }

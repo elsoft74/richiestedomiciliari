@@ -158,7 +158,7 @@ class Richiesta
         }
     }
 
-    public static function getRequestes()
+    public static function getRequestes($arc)
     {
         //$val null o "A" restituisce tutte le richieste Attive
         //$val "T" restituisce tutte le richieste
@@ -193,15 +193,21 @@ class Richiesta
                     r.created_by AS created_by,
                     r.last_update AS last_update,
                     r.last_update_by AS last_update_by,
-                    u.descrizione AS usca
+                    u.descrizione AS usca,
+                    t.descrizione AS tipologia,
+                    p.descrizione AS priorita
                     FROM `assistiti` AS a LEFT JOIN `richieste` AS r ON a.id=r.id_assistito
-                    JOIN `usca` AS u ON a.id_usca=u.id 
+                    JOIN `usca` AS u ON a.id_usca=u.id
+                    JOIN `tipologie` AS t ON r.id_tipologia=t.id
+                    JOIN `priorita` AS p ON r.id_priorita=p.id
                     WHERE a.is_active=1";
                     */
 
-                    $query = "SELECT * FROM `vista_richieste` WHERE richiesta_is_active=1 OR richiesta_is_active IS null";
+                    $query = "SELECT * FROM `vista_richieste` WHERE (richiesta_is_active=1 OR richiesta_is_active IS null)";
+                    if (!$arc){
+                        $query.=" AND (data >= CURRENT_DATE() OR data is null)";
+                    }
                     
-
                     $stmt = $conn->prepare($query);
                     $stmt->execute();
 
@@ -230,6 +236,8 @@ class Richiesta
                         $tmp->last_update=$r['last_update'];
                         $tmp->lastUpdateByNomeCognome=$r['last_update_by'];
                         $tmp->usca=$r['usca'];
+                        $tmp->priorita=$r['priorita'];
+                        $tmp->tipologia=$r['tipologia'];
 
                         array_push($out->data, $tmp);
                     }

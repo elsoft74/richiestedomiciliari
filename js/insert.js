@@ -158,5 +158,5 @@ function buildInsertForm(target) {
 
 function cleanInsert() {
     $(".form-richiesta").val('');
-    $("#insert").fadeOut();
+    $("#insert").hide();
 }

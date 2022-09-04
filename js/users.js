@@ -1,7 +1,8 @@
 function showUsers() {
-    $(".requests-form-btn").fadeOut();
-    $(".swabs-form-btn").fadeOut();
-    $(".users-form-btn").fadeIn();
+    changeActivity("users");
+    // $(".requests-form").hide();
+    // $(".swabs-form").hide();
+    // $(".users-form").show();
     getUsers();
 }
 
@@ -32,9 +33,9 @@ function showUsersTable(users) {
 
         var table = new Tabulator("#users", {
             data: users.data,           //load row data from array
-            layout: "fitColumns",      //fit columns to width of table
-            responsiveLayout: "hide",  //hide columns that dont fit on the table
-            //tooltips: true,            //show tool tips on cells
+            layout: "fitData",      //fit columns to width of table
+            responsiveLayout: "collapse",  //hide columns that dont fit on the table
+                        //tooltips: true,            //show tool tips on cells
             addRowPos: "top",          //when adding a new row, add it to the top of the table
             history: true,             //allow undo and redo actions on the table
             pagination: "local",       //paginate the data
@@ -90,7 +91,7 @@ function showUsersTable(users) {
 }
 
 var showUserUpdate = function (e, row) {
-    $("#editUser").fadeIn();
+    $("#editUser").show();
     var element = row.getData();
     $("#editIdUser").val(element.id);
     $("#editNomeUser").val(element.nome);
@@ -383,5 +384,5 @@ function buildUserInsertForm(target) {
 
 function cleanUserInsert() {
     $(".user-input-form").val('');
-    $("#insertUser").fadeOut();
+    $("#insertUser").hide();
 }

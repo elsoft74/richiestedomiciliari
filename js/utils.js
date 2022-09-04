@@ -169,3 +169,24 @@ function getData(toBeCompleted) {
     //xhr.send();
     xhr.send("lastRead=" + localStorage.getItem("lastRead"));
 }
+
+function changeActivity(val){
+    let actual = localStorage.getItem("activity");
+    if(actual!=val){
+        $(".swabs-form").hide();
+        $(".users-form").hide();
+        $(".requests-form").hide();
+        switch(val){
+            case "requests":
+                $(".requests-form").show();
+                break;
+            case "swabs":
+                $(".swabs-form").show();
+                break;
+            case "users":
+                $(".users-form").show();
+                break;
+        }
+        localStorage.setItem("activity",val);
+    }
+}

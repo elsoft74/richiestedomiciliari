@@ -276,7 +276,7 @@ function aggiornaAssistito() {
 }
 
 var showAssistitoUpdate = function (e, row) {
-    $("#editAssistito").fadeIn();
+    $("#editAssistito").show();
     var element = row.getData();
     $("#idAssistitoEdit").val(element.idAssistito);
     $("#idUscaAssistitoEdit").val(element.idUsca);
@@ -296,10 +296,10 @@ function buildAssistitoEditForm(target){
 
 function cleanAssistitoEdit() {
     $(".assitito-input-form").val('');
-    $("#editAssistito").fadeOut();
+    $("#editAssistito").hide();
 }
 
 function cleanAssistitoInsert() {
     $(".assitito-input-form").val('');
-    $("#insertAssistito").fadeOut();
+    $("#insertAssistito").hide();
 }

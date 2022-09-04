@@ -6,4 +6,5 @@
     include_once("classes/db.php");
     include_once("classes/user.php");
     include_once("classes/richiesta.php");
-    print(json_encode(Richiesta::getRequestes()));
+    $arc=(array_key_exists("arc",$_POST) && $_POST["arc"]=="true");
+    print(json_encode(Richiesta::getRequestes($arc)));

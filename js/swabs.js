@@ -1,14 +1,14 @@
 function showSwabs(swabs, user) {
     $("#mainSwabs").html("");
-    // $("#users").fadeOut();
-    // $(".requests-form-btn").fadeIn();
-    // $(".users-form-btn").fadeOut();
+    // $(".users-form").hide();
+    // $(".requests-form").hide();
+    // $(".swabs-form").show();
 
     var table = new Tabulator("#mainSwabs", {
         data: swabs,           //load row data from array
         layout: "fitData",      //fit columns to width of table
-        responsiveLayout: "hide",  //hide columns that dont fit on the table
-        //tooltips: true,            //show tool tips on cells
+        responsiveLayout: "collapse",  //hide columns that dont fit on the table
+                //tooltips: true,            //show tool tips on cells
         addRowPos: "top",          //when adding a new row, add it to the top of the table
         history: true,             //allow undo and redo actions on the table
         pagination: "local",       //paginate the data
@@ -73,7 +73,7 @@ function showSwabs(swabs, user) {
             { title: "e-mail", field: "email", editor: false, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-symbols-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
             { title: "Indirizzo", field: "indirizzo", editor: false, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-symbols-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
             {
-                title: "Usca", field: "usca", editor: false, hozAlign: "center", formatter:"text", headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-symbols-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like"
+                title: "Usca", field: "usca", editor: false, hozAlign: "center", headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-symbols-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like"
             },
             {
                 title: "Note", field: "noteAssistito", editor: false/*, formatter: "textarea" */, cellClick: cellPopupFormatterNoteAssistito, formatter: function (cell, formatterParams, onRendered) {
@@ -113,7 +113,7 @@ function showSwabs(swabs, user) {
     });
 
     if (checkUserPermission(user, "canExport")) {
-        let button = $("<button>").addClass("btn btn-primary btn-block swabs-form-btn").attr({ "id": "swabsDownLoadButton" }).html("Scarica tamponi");
+        let button = $("<button>").addClass("btn btn-primary btn-block swabs-form").attr({ "id": "swabsDownLoadButton" }).html("Scarica tamponi");
         $("#menubuttons").append(button);
         document.getElementById("swabsDownLoadButton").addEventListener("click", function () {
             table.download("xlsx", "tamponi.xlsx", { sheetName: "Export" });

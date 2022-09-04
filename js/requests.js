@@ -1,13 +1,16 @@
 function showRequests(richieste, user) {
     $("#main").html("");
+    // $(".swabs-form").hide();
+    // $(".users-form").hide();
+    // $(".requests-form").show();
     // $("#users").html("");
-    // $(".requests-form-btn").show();
-    // $(".users-form-btn").hide();
+    // $(".requests-form").show();
+    // $(".users-form").hide();
 
     var table = new Tabulator("#main", {
         data: richieste,           //load row data from array
         layout: "fitData",      //fit columns to width of table
-        responsiveLayout: "hide",  //hide columns that dont fit on the table
+        responsiveLayout: "collapse",  //hide columns that dont fit on the table
         //tooltips: true,            //show tool tips on cells
         addRowPos: "top",          //when adding a new row, add it to the top of the table
         history: true,             //allow undo and redo actions on the table
@@ -18,6 +21,13 @@ function showRequests(richieste, user) {
         // initialSort: [             //set the initial sort order of the data
         //     { column: "dataRic", dir: "asc" },
         // ],
+        downloadConfig: {
+            columnHeaders: true, //do not include column headers in downloaded table
+            columnGroups: false, //do not include column groups in column headers for downloaded table
+            rowGroups: false, //do not include row groups in downloaded table
+            columnCalcs: false, //do not include column calcs in downloaded table
+            dataTree: false, //do not include data tree in downloaded table
+        },
         columns: [                 //define the table columns
 
 
@@ -32,17 +42,22 @@ function showRequests(richieste, user) {
 
             { title: "#", field: "idAssistito", width: 10, editor: false, hozAlign: "center", visible: checkUserPermission(user, "canViewId") },
             {
-                title: "", width: 10, hozAlign: "center", editor: false, visible: checkUserPermission(user, "canEditAssistito"), cellClick: checkUserPermission(user, "canEditAssistito") ? showAssistitoUpdate : null, formatter: function (cell, formatterParams, onRendered) {
+                columns: [
+                    {
+                        title: "", width: 10, hozAlign: "center", editor: false, visible: checkUserPermission(user, "canEditAssistito"), cellClick: checkUserPermission(user, "canEditAssistito") ? showAssistitoUpdate : null, formatter: function (cell, formatterParams, onRendered) {
 
-                    return '<span class="material-symbols-outlined" style="color: green">edit</span>';
-                },
-            },
-            {
-                title: "", width: 10, hozAlign: "center", editor: false, visible: checkUserPermission(user, "canDeleteAssistito"), cellClick: checkUserPermission(user, "canDeleteAssistito") ? deleteElement : null, formatter: function (cell, formatterParams, onRendered) {
+                            return '<span class="material-symbols-outlined" style="color: green">edit</span>';
+                        }, headerSort: false
+                    },
+                    {
+                        title: "", width: 10, hozAlign: "center", editor: false, visible: checkUserPermission(user, "canDeleteAssistito"), cellClick: checkUserPermission(user, "canDeleteAssistito") ? deleteElement : null, formatter: function (cell, formatterParams, onRendered) {
 
-                    return '<span class="material-symbols-outlined" style="color: red">delete</span>';
-                },
+                            return '<span class="material-symbols-outlined" style="color: red">delete</span>';
+                        }, headerSort: false
+                    },
+                ]
             },
+
             { title: "Cognome", field: "cognome", editor: false, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-symbols-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
             { title: "Nome", field: "nome", editor: false },
             {
@@ -59,80 +74,76 @@ function showRequests(richieste, user) {
             { title: "Indirizzo", field: "indirizzo", editor: false, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-symbols-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
             // (checkUserPermission(user, "canViewAllRequests")) ?
             {
-                title: "idUsca", field: "idUsca", visible: false
-            },
-            {
                 title: "Usca", field: "usca", editor: false, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-symbols-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like"
             },
             {
                 title: "Note", field: "noteAssistito", editor: false, cellClick: cellPopupFormatterNoteAssistito, formatter: function (cell, formatterParams, onRendered) {
                     return (cell.getValue() == null) ? '' : '<span class="material-symbols-outlined">notes</span>';
-                }
+                }, headerSort: false
+            },
+            {
+                columns:[
+                    {
+                        title: "", width: 10, hozAlign: "center", editor: false, visible: checkUserPermission(user, "canCreateRequest"), cellClick: checkUserPermission(user, "canCreateRequest") ? newRequest : null, formatter: function (cell, formatterParams, onRendered) {
+        
+                            return '<span class="material-symbols-outlined" style="color: green">add</span>';
+                        }, headerSort: false
+                    },
+                    {
+                        title: "", field: "idRichiesta", width: 10, hozAlign: "center", editor: false, visible: checkUserPermission(user, "canEditRequest"), cellClick: checkUserPermission(user, "canEditRequest") ? showElementUpdate : null, formatter: function (cell, formatterParams, onRendered) {
+                            return (cell.getValue() == null) ? '' : '<span class="material-symbols-outlined" style="color: green">edit</span>';
+                        }, headerSort: false
+                    },
+                    {
+                        title: "", field: "idRichiesta", width: 10, hozAlign: "center", editor: false, visible: checkUserPermission(user, "canDeleteRequest"), cellClick: checkUserPermission(user, "canEditRequest") ? deleteElement : null, formatter: function (cell, formatterParams, onRendered) {
+                            return (cell.getValue() == null) ? '' : '<span class="material-symbols-outlined" style="color: red">delete</span>';
+                        }, headerSort: false
+                    },
+                ]
+            },
+            {
+                columns: [
+                    { title: "#", field: "idRichiesta", editor: false, hozAlign: "center", visible: checkUserPermission(user, "canViewId") },
+                    {
+                        title: "", field: "idTipologia", editor: false, visible: false
+                    },
+                    {
+                        title: "", field: "idPriorita", editor: false, visible: false
+                    },
+                    {
+                        title: "idUsca", field: "idUsca", visible: false
+                    },
+                ]
             },
 
-
             {
-                title: "", width: 10, hozAlign: "center", editor: false, visible: checkUserPermission(user, "canCreateRequest"), cellClick: checkUserPermission(user, "canCreateRequest") ? newRequest : null, formatter: function (cell, formatterParams, onRendered) {
-
-                    return '<span class="material-symbols-outlined" style="color: green">add</span>';
-                },
+                title: "Tipo", field: "tipologia", editor: false, hozAlign: "center", headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-symbols-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like"
             },
             {
-                title: "", field: "idRichiesta", width: 10, hozAlign: "center", editor: false, visible: checkUserPermission(user, "canEditRequest"), cellClick: checkUserPermission(user, "canEditRequest") ? showElementUpdate : null, formatter: function (cell, formatterParams, onRendered) {
-                    return (cell.getValue() == null) ? '' : '<span class="material-symbols-outlined" style="color: green">edit</span>';
-                },
-            },
-            {
-                title: "", field: "idRichiesta", width: 10, hozAlign: "center", editor: false, visible: checkUserPermission(user, "canDeleteRequest"), cellClick: checkUserPermission(user, "canEditRequest") ? deleteElement : null, formatter: function (cell, formatterParams, onRendered) {
-                    return (cell.getValue() == null) ? '' : '<span class="material-symbols-outlined" style="color: red">delete</span>';
-                },
-            },
-            { title: "#", field: "idRichiesta", editor: false, hozAlign: "center", visible: checkUserPermission(user, "canViewId") },
-            {
-                title: "Tipo", field: "idTipologia", editor: false, hozAlign: "center", formatter: function (cell, formatterParams, onRendered) {
-                    out = "";
-                    tipologie.forEach(element => {
-                        if (element.id == cell.getValue()) {
-                            out = element.descrizione;
-                        }
-                    });
-                    return out;
-                }, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-symbols-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like"
-            },
-            {
-                title: "Priorità", field: "idPriorita", editor: false, hozAlign: "center", formatter: function (cell, formatterParams, onRendered) {
-                    out = "";
-                    priorita.forEach(element => {
-                        if (element.id == cell.getValue()) {
-                            out = element.descrizione;
-                        }
-                    });
-                    return out;
-                }, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-symbols-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like"
+                title: "Priorità", field: "priorita", editor: false, hozAlign: "center", headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-symbols-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like"
             },
 
             {
                 title: "Note", field: "noteRichiesta", editor: false/*, formatter: "textarea" */, cellClick: cellPopupFormatterNoteRichiesta, formatter: function (cell, formatterParams, onRendered) {
                     return (cell.getValue() == null) ? '' : '<span class="material-symbols-outlined">notes</span>';
-                }
+                }, headerSort: false
             },
-            (checkUserPermission(user, "canViewDetails")) ?
-                {
-                    title: "Dettagli", editor: false/*, formatter: "textarea" */, cellClick: cellPopupFormatterDettagliRichiesta, formatter: function (cell, formatterParams, onRendered) {
-                        return (cell.getValue() == null) ? '' : '<span class="material-symbols-outlined">edit</span>';
-                    }
-                } : { visible: false },
+            // (checkUserPermission(user, "canViewDetails")) ?
+            //     {
+            //         title: "Dettagli", editor: false/*, formatter: "textarea" */, cellClick: cellPopupFormatterDettagliRichiesta, formatter: function (cell, formatterParams, onRendered) {
+            //             return (cell.getValue() == null) ? '' : '<span class="material-symbols-outlined">edit</span>';
+            //         }
+            //     } : { visible: false },
         ]
     });
 
     if (checkUserPermission(user, "canExport")) {
-        let button = $("<button>").addClass("btn btn-primary btn-block requests-form-btn").attr({ "id": "dataDownLoadButton" }).html("Scarica richieste");
+        let button = $("<button>").addClass("btn btn-primary btn-block requests-form").attr({ "id": "dataDownLoadButton" }).html("Scarica richieste");
         $("#menubuttons").append(button);
         document.getElementById("dataDownLoadButton").addEventListener("click", function () {
             table.download("xlsx", "richieste.xlsx", { sheetName: "Export" });
         });
     }
-    localStorage.setItem("activity","requests");
     setTimeout(checkNewData, 200);
 
 }
@@ -261,7 +272,7 @@ function aggiorna() {
 }
 
 var showElementUpdate = function (e, row) {
-    $("#edit").fadeIn();
+    $("#edit").show();
     var element = row.getData();
     $("#idAssistitoEdito").val(element.idAssistito);
     $("#nomeEdit").val(element.nome);
@@ -470,7 +481,7 @@ var newRequest = function (e, row) {
     $("#codiceFiscale").val(element.codiceFiscale);
     $("#noteAssistito").val(element.noteAssistito);
     $("#telefono").val(element.telefono);
-    $("#insert").fadeIn();
+    $("#insert").show();
 
 }
 
@@ -492,19 +503,19 @@ function updateTableData() {
     waitingForData = true;
     if (table != null || table != undefined) {
         console.log("Scrivo i dati aggiornati");
-        if (!waitingForData){
-            toBeCompleted.richieste=false;
+        if (!waitingForData) {
+            toBeCompleted.richieste = false;
             readRequests(toBeCompleted);
             setTimeout(updateTableData, 200);
         }
-        if (toBeCompleted.richieste){
+        if (toBeCompleted.richieste) {
             waitingForData = false;
             table.updateOrAddData(richieste);
-            var deleted=localStorage.getItem("deleted");
-            if(deleted != null || deleted!=undefined){
+            var deleted = localStorage.getItem("deleted");
+            if (deleted != null || deleted != undefined) {
                 table.deleteRow(deleted);
                 localStorage.removeItem("deleted");
-            }   
+            }
         } else {
 
         }

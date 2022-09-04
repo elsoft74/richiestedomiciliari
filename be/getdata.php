@@ -7,7 +7,9 @@
     include_once("classes/user.php");
     include_once("classes/tampone.php");
     include_once("classes/richiesta.php");
-    $requests=Richiesta::getRequestes();
+    $arc=(array_key_exists("arc",$_POST) && $_POST["arc"]=="true");
+    $arc = true;
+    $requests=Richiesta::getRequestes($arc);
     $swabs=Tampone::getSwabs();
     $out=new StdClass();
     $out->status=($swabs->status==$requests->status)?$swabs->status:"KO";

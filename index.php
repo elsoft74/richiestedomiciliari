@@ -34,13 +34,13 @@
 
 <body>
     <div id="menu"></div>
-    <div id="main" class="sections"></div>
-    <div id="mainSwabs" class="sections"></div>
+    <div id="main" class="sections requests-form"></div>
+    <div id="mainSwabs" class="sections swabs-form"></div>
     <div id="insert"></div>
     <div id="insertUser"></div>
     <div id="insertAssistito"></div>
     <div id="login" class="sections"></div>
-    <div id="users" class="sections"></div>
+    <div id="users" class="sections users-form"></div>
     <div id="edit"></div>
     <div id="editUser"></div>
     <div id="editAssistito"></div>
@@ -59,6 +59,7 @@
             showMenu(lu);
             showRequests(richieste, lu);
             showSwabs(swabs,lu);
+            changeActivity("requests");
         });
         //window.addEventListener('dataUpdated', updateTableData); 
         window.onload = function() {

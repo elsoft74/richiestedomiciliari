@@ -39,11 +39,11 @@ function logout() {
 }
 
 function showLogin() {
-    $("#login").fadeIn();
+    $("#login").show();
 }
 
 function hideLogin() {
-    $("#login").fadeOut();
+    $("#login").hide();
 }
 
 function buildLogin() {
