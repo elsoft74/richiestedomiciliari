@@ -193,6 +193,7 @@ class Richiesta
                     r.created_by AS created_by,
                     r.last_update AS last_update,
                     r.last_update_by AS last_update_by,
+                    r.is_archived AS is_archived,
                     u.descrizione AS usca,
                     t.descrizione AS tipologia,
                     p.descrizione AS priorita
@@ -205,7 +206,8 @@ class Richiesta
 
                     $query = "SELECT * FROM `vista_richieste` WHERE (richiesta_is_active=1 OR richiesta_is_active IS null)";
                     if (!$arc){
-                        $query.=" AND (data >= CURRENT_DATE() OR data is null)";
+                        //$query.=" AND (data >= CURRENT_DATE() OR data is null)";
+                        $query.=" AND (is_archived = 0 OR is_archived is null)";
                     }
                     
                     $stmt = $conn->prepare($query);
@@ -238,6 +240,7 @@ class Richiesta
                         $tmp->usca=$r['usca'];
                         $tmp->priorita=$r['priorita'];
                         $tmp->tipologia=$r['tipologia'];
+                        $tmp->isArchived=($r['is_archived']=="1");
 
                         array_push($out->data, $tmp);
                     }

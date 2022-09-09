@@ -6,6 +6,10 @@ function showRequests(richieste, user) {
     // $("#users").html("");
     // $(".requests-form").show();
     // $(".users-form").hide();
+    var mostraStorico = JSON.parse(localStorage.getItem("mostraStorico"));
+    if(mostraStorico==null){
+        mostraStorico = false;
+    }
 
     var table = new Tabulator("#main", {
         data: richieste,           //load row data from array
@@ -99,6 +103,11 @@ function showRequests(richieste, user) {
                             return (cell.getValue() == null) ? '' : '<span class="material-symbols-outlined" style="color: red">delete</span>';
                         }, headerSort: false
                     },
+                    {
+                        title: "", field: "isArchived", width: 10, hozAlign: "center", editor: false, visible: checkUserPermission(user, "canDeleteRequest"), cellClick: checkUserPermission(user, "canEditRequest") ? deleteElement : null, formatter: function (cell, formatterParams, onRendered) {
+                            return (cell.getValue()) ? '' : '<span class="material-symbols-outlined" style="color: green">inventory_2</span>';
+                        }, headerSort: false
+                    },
                 ]
             },
             {
@@ -128,6 +137,9 @@ function showRequests(richieste, user) {
                     return (cell.getValue() == null) ? '' : '<span class="material-symbols-outlined">notes</span>';
                 }, headerSort: false
             },
+            (mostraStorico)?{title: "Archiviata", field: "isArchived", editor: false, formatter: "textarea", hozAlign: "center", formatter: function (cell, formatterParams, onRendered) {
+                return (cell.getValue()) ? 'S' : 'N';
+            }, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-symbols-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like"}:{ visible: false },
             // (checkUserPermission(user, "canViewDetails")) ?
             //     {
             //         title: "Dettagli", editor: false/*, formatter: "textarea" */, cellClick: cellPopupFormatterDettagliRichiesta, formatter: function (cell, formatterParams, onRendered) {

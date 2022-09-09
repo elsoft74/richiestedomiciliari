@@ -131,6 +131,7 @@ function checkUserPermission(user, permissionToCheck) {
 
 function getData(toBeCompleted) {
     var table = Tabulator.findTable("#main")[0];
+    var arc = localStorage.getItem("mostraStorico");
     var rowCount = 0;
     if (table != null && table != undefined) {
         rowCount = table.getDataCount();
@@ -167,7 +168,7 @@ function getData(toBeCompleted) {
         }
     }
     //xhr.send();
-    xhr.send("lastRead=" + localStorage.getItem("lastRead"));
+    xhr.send("lastRead=" + localStorage.getItem("lastRead")+"&arc="+arc);
 }
 
 function changeActivity(val){

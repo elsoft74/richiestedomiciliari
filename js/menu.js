@@ -23,13 +23,13 @@ function showMenu(user) {
             button = $("<button>").addClass('btn btn-primary btn-block swabs-form requests-form').attr({"onClick":'showUsers()','id':'showUserButton'}).text("Utenti");
             div1.append(button);
         }
-        var mostraStorico = localStorage.getItem("mostraStorico");
+        var mostraStorico = JSON.parse(localStorage.getItem("mostraStorico"));
         if (mostraStorico==null) {
             mostraStorico = false;
         }
         button = $("<button>").addClass('btn btn-primary btn-block swabs-form users-form').attr({"onClick":'changeActivity("requests")','id':'showRequestsButton'}).text("Richieste");
         div1.append(button);
-        button = $("<button>").addClass('btn btn-primary btn-block requests-form').attr({"onClick":'mostraStorico()','id':'mostraStoricoButton'}).text(mostraStorico?"Solo Attuali":"Con Archiviate");
+        button = $("<button>").addClass('btn btn-primary btn-block requests-form').attr({"onClick":'mostraStorico()','id':'mostraStoricoButton'}).text(mostraStorico?"Solo Attuali":"Tutte");
         div1.append(button);
         button = $("<button>").addClass('btn btn-primary btn-block users-form requests-form').attr({"onClick":'changeActivity("swabs")','id':'mostraTamponiButton'}).text("Tamponi");
         div1.append(button);
@@ -41,7 +41,7 @@ function showMenu(user) {
 }
 
 function mostraStorico(){
-    var mostraStorico = localStorage.getItem("mostraStorico");
+    var mostraStorico = JSON.parse(localStorage.getItem("mostraStorico"));
         if (mostraStorico==null) {
             mostraStorico = false;
         } else {
