@@ -6,6 +6,7 @@ function buildInsertForm(target) {
             tar="#insert";
             fun1="inserisci()";
             fun2="cleanInsert()";
+            fun3="aggiungiNota";
             attrs={
                 idAssistito:"idAssistito",
                 nome:"nome",
@@ -20,6 +21,8 @@ function buildInsertForm(target) {
                 idPriorita:"idPriorita",
                 data:"data",
                 noteRichiesta:"noteRichiesta",
+                pulsante:"aggiungiNota",
+                pulsanteText:"Aggiungi nota",
                 titleId:"modalTitle",
                 titleText:"Inserisci nuova richiesta"
             }
@@ -29,6 +32,7 @@ function buildInsertForm(target) {
             tar="#edit";
             fun1="aggiorna()";
             fun2="cleanEdit()";
+            fun3="archiviaRichiesta";
             attrs={
                 idAssistito:"idAssistitoEdit",
                 nome:"nomeEdit",
@@ -43,6 +47,8 @@ function buildInsertForm(target) {
                 idPriorita:"idPrioritaEdit",
                 data:"dataEdit",
                 noteRichiesta:"noteRichiestaEdit",
+                pulsante:"archiviaRichiesta",
+                pulsanteText:"Archivia",
                 titleId:"editModalTitle",
                 titleText:"Modifica richiesta"
             }
@@ -136,9 +142,11 @@ function buildInsertForm(target) {
         form.append(divFormGroup);
 
         divFormGroup = $("<div>").addClass("form-group");
-        el = $("<label>").attr({ "for": attrs.noteRichiesta}).text("Note Richiesta");
+        el = $("<button>").addClass("btn").addClass("btn-primary").text(attrs.pulsanteText).attr({ "id":attrs.pulsante, "onClick": fun3 });
         divFormGroup.append(el);
-        el = $("<textarea>").addClass("form-richiesta").addClass("form-control").attr({ "type": "text", "id": attrs.noteRichiesta });
+        form.append(divFormGroup);
+
+        el = $("<textarea>").addClass("form-richiesta").addClass("form-control").attr({ "type": "hidden", "id": attrs.noteRichiesta });
         divFormGroup.append(el);
         form.append(divFormGroup);
 
