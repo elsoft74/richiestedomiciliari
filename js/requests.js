@@ -104,7 +104,7 @@ function showRequests(richieste, user) {
                         }, headerSort: false
                     },
                     {
-                        title: "", field: "isArchived", width: 10, hozAlign: "center", editor: false, visible: checkUserPermission(user, "canDeleteRequest"), cellClick: checkUserPermission(user, "canEditRequest") ? deleteElement : null, formatter: function (cell, formatterParams, onRendered) {
+                        title: "", field: "isArchived", width: 10, hozAlign: "center", editor: false, visible: checkUserPermission(user, "canArchiveRequest"), cellClick: checkUserPermission(user, "canEditRequest") ? archiveElement : null, formatter: function (cell, formatterParams, onRendered) {
                             return (cell.getValue()) ? '' : '<span class="material-symbols-outlined" style="color: green">inventory_2</span>';
                         }, headerSort: false
                     },
@@ -325,6 +325,63 @@ var deleteElement = function (e, row) {
 
                 let xhr = new XMLHttpRequest();
                 let url = "be/deleteRequest.php";
+                xhr.open("POST", url, true);
+                xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+                xhr.onreadystatechange = function () {
+                    result = JSON.parse(xhr.responseText);
+                    if (result.status == "OK") {
+                        Swal.fire({
+                            text: "Operazione completata.",
+                            icon: 'info',
+                            showCancelButton: false,
+                            confirmButtonColor: '#3085d6',
+                            confirmButtonText: 'Ok'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                location.reload();
+                            }
+                        })
+                    } else {
+                        Swal.fire({
+                            text: "Impossibile completare l'operazione",
+                            icon: 'error',
+                            showCancelButton: false,
+                            confirmButtonColor: '#3085d6',
+                            confirmButtonText: 'Ok'
+                        })
+                    }
+                }
+                xhr.send("username=" + username + "&token=" + token + "&richiesta=" + JSON.stringify(richiesta));
+            }
+        }
+
+    })
+}
+
+var archiveElement = function (e, row) {
+    var element = row.getData();
+    Swal.fire({
+        title: 'Sicuro?',
+        text: "Confermando archivierai la scheda con id " + element.idRichiesta + " di:" + element.nome + " " + element.cognome + "\n" + element.codiceFiscale + "\n" + "Prevista per il:" + element.data,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        cancelButtonText: 'Annulla',
+        confirmButtonText: 'Conferma'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            let lu = localStorage.getItem("ricdomloggeduser");
+            if (lu != null) {
+                loggedUser = JSON.parse(lu);
+                let username = loggedUser.username;
+                let token = "123456";
+                let richiesta = {};
+                richiesta.id = element.idRichiesta;
+                richiesta.archivedBy = "" + loggedUser.id;
+
+                let xhr = new XMLHttpRequest();
+                let url = "be/archiveRequest.php";
                 xhr.open("POST", url, true);
                 xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
                 xhr.onreadystatechange = function () {
