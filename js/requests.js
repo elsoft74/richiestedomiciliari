@@ -105,7 +105,7 @@ function showRequests(richieste, user) {
                     },
                     {
                         title: "", field: "isArchived", width: 10, hozAlign: "center", editor: false, visible: checkUserPermission(user, "canArchiveRequest"), cellClick: checkUserPermission(user, "canEditRequest") ? archiveElement : null, formatter: function (cell, formatterParams, onRendered) {
-                            return (cell.getValue()) ? '' : '<span class="material-symbols-outlined" style="color: green">inventory_2</span>';
+                            return (cell.getValue()!=null)?(cell.getValue() ? '' : '<span class="material-symbols-outlined" style="color: green">inventory_2</span>'):"";
                         }, headerSort: false
                     },
                 ]
@@ -138,7 +138,7 @@ function showRequests(richieste, user) {
                 }, headerSort: false
             },
             (mostraStorico)?{title: "Archiviata", field: "isArchived", editor: false, formatter: "textarea", hozAlign: "center", formatter: function (cell, formatterParams, onRendered) {
-                return (cell.getValue()) ? 'S' : 'N';
+                return (cell.getValue()!=null)?((cell.getValue()) ? 'S' : 'N'):"";
             }, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-symbols-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like"}:{ visible: false },
             // (checkUserPermission(user, "canViewDetails")) ?
             //     {
@@ -564,13 +564,6 @@ var cellPopupFormatterDettagliRichiesta = function (e, row) {
         confirmButtonColor: '#3085d6',
         confirmButtonText: 'Ok'
     });
-}
-
-var showArchived = function (e,row){
-    var element = row.getData();
-    console.log(element.idRichiesta+":"+element.isArchived);
-
-    return (element.idRichiesta !=null && element.isArchived);
 }
 
 

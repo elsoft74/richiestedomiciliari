@@ -300,7 +300,7 @@ class Richiesta
                         $tmp->usca=$r['usca'];
                         $tmp->priorita=null;
                         $tmp->tipologia=null;
-                        $tmp->isArchived=false;
+                        $tmp->isArchived=null;
 
                         array_push($out->data, $tmp);
                     }
