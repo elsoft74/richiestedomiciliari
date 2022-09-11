@@ -566,6 +566,13 @@ var cellPopupFormatterDettagliRichiesta = function (e, row) {
     });
 }
 
+var showArchived = function (e,row){
+    var element = row.getData();
+    console.log(element.idRichiesta+":"+element.isArchived);
+
+    return (element.idRichiesta !=null && element.isArchived);
+}
+
 
 function updateTableData() {
     var table = Tabulator.findTable("#main")[0];
