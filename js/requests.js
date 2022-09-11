@@ -41,7 +41,7 @@ function showRequests(richieste, user) {
                     outputFormat: "dd-MM-yyyy",
                     invalidPlaceholder: "(data non valida)",
                     timezone: "Europe/Rome",
-                }
+                }, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-symbols-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" 
             },
 
             { title: "#", field: "idAssistito", width: 10, editor: false, hozAlign: "center", visible: checkUserPermission(user, "canViewId") },
@@ -63,7 +63,7 @@ function showRequests(richieste, user) {
             },
 
             { title: "Cognome", field: "cognome", editor: false, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-symbols-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
-            { title: "Nome", field: "nome", editor: false },
+            { title: "Nome", field: "nome", editor: false, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-symbols-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like"  },
             {
                 title: "Nascita", field: "nascita", editor: false, formatter: "datetime", formatterParams: {
                     //inputFormat:"YYY-MM-DD HH:mm:ss",

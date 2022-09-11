@@ -278,7 +278,7 @@ function aggiornaAssistito() {
 var showAssistitoUpdate = function (e, row) {
     $("#editAssistito").show();
     var element = row.getData();
-    $("#idAssistitoEdit").val(element.idAssistito);
+    $("#idAssistito_Edit").val(element.idAssistito);
     $("#idUscaAssistitoEdit").val(element.idUsca);
     $("#nomeAssistitoEdit").val(element.nome);
     $("#cognomeAssistitoEdit").val(element.cognome);
