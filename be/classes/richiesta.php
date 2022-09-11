@@ -216,9 +216,9 @@ class Richiesta
                     t.descrizione AS tipologia,
                     p.descrizione AS priorita
                     FROM `assistiti` AS a LEFT JOIN `richieste` AS r ON a.id=r.id_assistito
-                    JOIN `usca` AS u ON a.id_usca=u.id
-                    JOIN `tipologie` AS t ON r.id_tipologia=t.id
-                    JOIN `priorita` AS p ON r.id_priorita=p.id
+                    LEFT JOIN `usca` AS u ON a.id_usca=u.id
+                    LEFT JOIN `tipologie` AS t ON r.id_tipologia=t.id
+                    LEFT JOIN `priorita` AS p ON r.id_priorita=p.id
                     WHERE a.is_active=1";
                     */
 

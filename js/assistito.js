@@ -7,7 +7,7 @@ function buildAssistitoInsertForm(target) {
             fun1="inserisciAssistito()";
             fun2="cleanAssistitoInsert()";
             attrs={
-                id:"idAssistito",
+                id:"idNuovoAssistito", // necessario per evitare id duplicati con la gestione richieste
                 idUsca:"idUscaAssistito",
                 nome:"nomeAssistito",
                 cognome:"cognomeAssistito",
@@ -27,7 +27,7 @@ function buildAssistitoInsertForm(target) {
             fun1="aggiornaAssistito()";
             fun2="cleanAssistitoEdit()";
             attrs={
-                id:"idAssistitoEdit",
+                id:"idAssistito_Edit", // necessario per evitare id duplicati con la gestione richieste
                 idUsca:"idUscaAssistitoEdit",
                 nome:"nomeAssistitoEdit",
                 cognome:"cognomeAssistitoEdit",
@@ -213,7 +213,7 @@ function aggiornaAssistito() {
         let xhr = new XMLHttpRequest();
         let url = "be/editAssistito.php";
         let assistito = {};
-        assistito.id = $("#idAssistitoEdit").val();
+        assistito.id = $("#idAssistito_Edit").val(); // necessario per evitare id duplicati con la gestione richieste
         assistito.nome = $("#nomeAssistitoEdit").val().toUpperCase();
         assistito.cognome = $("#cognomeAssistitoEdit").val().toUpperCase();
         assistito.codiceFiscale = $("#codiceFiscaleAssistitoEdit").val().toUpperCase();
