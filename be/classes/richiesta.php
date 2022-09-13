@@ -409,7 +409,6 @@ class Richiesta
                             id_tipologia=:id_tipologia,
                             id_priorita=:id_priorita,
                             data=:data,
-                            note=:note,
                             last_update=:last_update,
                             last_update_by=:last_update_by
                             WHERE `id`=:id";
@@ -419,7 +418,7 @@ class Richiesta
                         $stmt->bindParam(':id_tipologia', $this->idTipologia, PDO::PARAM_INT);
                         $stmt->bindParam(':id_priorita', $this->idPriorita, PDO::PARAM_INT);
                         $stmt->bindParam(':data', $this->data, PDO::PARAM_STR);
-                        $stmt->bindParam(':note', $this->note, PDO::PARAM_STR);
+                        // $stmt->bindParam(':note', $this->note, PDO::PARAM_STR);
                         $stmt->bindParam(':last_update', $this->lastUpdate, PDO::PARAM_STR);
                         $stmt->bindParam(':last_update_by', $this->lastUpdateBy, PDO::PARAM_INT);
                         $stmt->bindParam(':id', $this->id, PDO::PARAM_INT);
@@ -599,6 +598,66 @@ public function archive($username,$token)
 
                         $stmt->bindParam(':archived_date', $this->archivedDate, PDO::PARAM_STR);
                         $stmt->bindParam(':archived_by', $this->archivedBy, PDO::PARAM_INT);
+                        $stmt->bindParam(':id', $this->id, PDO::PARAM_INT);
+
+                        $stmt->execute();
+                        $out->num = $stmt->rowCount();
+
+                        if ($out->num != 1) {
+                            throw new Exception("UPDATE-ERROR");
+                        }
+
+                        $out->status = "OK";
+                        } else {
+                            throw new Exception("OPERAZIONE-NON-PERMESSA");
+                        } 
+                        
+                    } catch (Exception $ex) {
+                        $out->status="KO";
+                        $out->error = $ex->getMessage();
+                    }
+                } else {
+                    throw new Exception("DB-CONNECTION-ERROR");
+                }
+            } else {
+                throw new Exception("EMPTY-REQUEST");
+            }
+        } catch (Exception $ex) {
+            $conn = null;
+            $out->status="KO";
+            $out->error = $ex->getMessage();
+        }
+        return $out;
+    }
+
+    public function updateNote($username,$token)
+    {
+        $out = new stdClass();
+        $out->status = "KO";
+        try {
+            if ($this->getId() != null) {
+                
+                $conn = DB::conn();
+                if ($conn != null) {
+                    try {
+                        $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+                        $query="SELECT is_active, role_id FROM `users` AS u WHERE u.username=:username";
+                        $stmt = $conn->prepare($query);
+                        $stmt->bindParam(':username',$username,PDO::PARAM_STR);
+                        $stmt->execute();
+                        $res=$stmt->fetch(PDO::FETCH_ASSOC);
+                        if (User::checkToken($token) && $res && $res['is_active']==1 AND User::checkCanDeleteRequest($res['role_id'])){
+                            $query = "UPDATE `richieste` SET
+                            note=:note,
+                            last_update=:last_update,
+                            last_update_by=:last_update_by
+                            WHERE `id`=:id";
+
+                        $stmt = $conn->prepare($query);
+                        $note=json_encode($this->note);
+                        $stmt->bindParam(':note', $note, PDO::PARAM_STR);
+                        $stmt->bindParam(':last_update', $this->lastUpdate, PDO::PARAM_STR);
+                        $stmt->bindParam(':last_update_by', $this->lastUpdateBy, PDO::PARAM_INT);
                         $stmt->bindParam(':id', $this->id, PDO::PARAM_INT);
 
                         $stmt->execute();

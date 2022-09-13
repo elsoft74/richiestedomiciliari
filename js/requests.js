@@ -41,7 +41,7 @@ function showRequests(richieste, user) {
                     outputFormat: "dd-MM-yyyy",
                     invalidPlaceholder: "(data non valida)",
                     timezone: "Europe/Rome",
-                }, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-symbols-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like"
+                }, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like"
             },
 
             { title: "#", field: "idAssistito", width: 10, editor: false, hozAlign: "center", visible: checkUserPermission(user, "canViewId") },
@@ -50,25 +50,25 @@ function showRequests(richieste, user) {
                     {
                         title: "", width: 10, hozAlign: "center", editor: false, visible: checkUserPermission(user, "canEditAssistito"), cellClick: checkUserPermission(user, "canEditAssistito") ? showAssistitoUpdate : null, formatter: function (cell, formatterParams, onRendered) {
 
-                            return '<span class="material-symbols-outlined" style="color: green">edit</span>';
+                            return '<span class="material-icons-outlined" style="color: green">edit</span>';
                         }, headerSort: false
                     },
                     {
                         title: "", width: 10, hozAlign: "center", editor: false, visible: checkUserPermission(user, "canDeleteAssistito"), cellClick: checkUserPermission(user, "canDeleteAssistito") ? deleteElement : null, formatter: function (cell, formatterParams, onRendered) {
 
-                            return '<span class="material-symbols-outlined" style="color: red">delete</span>';
+                            return '<span class="material-icons-outlined" style="color: red">delete</span>';
                         }, headerSort: false
                     },
                     {
                         title: "Note", field: "noteAssistito", editor: false, cellClick: cellPopupFormatterNoteAssistito, formatter: function (cell, formatterParams, onRendered) {
-                            return (cell.getValue() == null) ? '' : '<span class="material-symbols-outlined">notes</span>';
+                            return (cell.getValue() == null) ? '' : '<span class="material-icons-outlined">notes</span>';
                         }, headerSort: false
                     },
                 ]
             },
 
-            { title: "Cognome", field: "cognome", editor: false, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-symbols-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
-            { title: "Nome", field: "nome", editor: false, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-symbols-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
+            { title: "Cognome", field: "cognome", editor: false, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
+            { title: "Nome", field: "nome", editor: false, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
             {
                 title: "Nascita", field: "nascita", editor: false, formatter: "datetime", formatterParams: {
                     //inputFormat:"YYY-MM-DD HH:mm:ss",
@@ -77,13 +77,13 @@ function showRequests(richieste, user) {
                     timezone: "Europe/Rome",
                 }
             },
-            { title: "Codice Fiscale", field: "codiceFiscale", editor: false, hozAlign: "center", headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-symbols-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
-            { title: "Telefono", field: "telefono", editor: false, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-symbols-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
-            { title: "e-mail", field: "email", editor: false, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-symbols-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
-            { title: "Indirizzo", width: 200, field: "indirizzo", formatter: "textarea", editor: false, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-symbols-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
+            { title: "Codice Fiscale", field: "codiceFiscale", editor: false, hozAlign: "center", headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
+            { title: "Telefono", field: "telefono", editor: false, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
+            { title: "e-mail", field: "email", editor: false, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
+            { title: "Indirizzo", width: 200, field: "indirizzo", formatter: "textarea", editor: false, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
             // (checkUserPermission(user, "canViewAllRequests")) ?
             {
-                title: "Usca", field: "usca", editor: false, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-symbols-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like"
+                title: "Usca", field: "usca", editor: false, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like"
             },
             
             {
@@ -91,27 +91,27 @@ function showRequests(richieste, user) {
                     {
                         title: "", width: 10, hozAlign: "center", editor: false, visible: checkUserPermission(user, "canCreateRequest"), cellClick: checkUserPermission(user, "canCreateRequest") ? newRequest : null, formatter: function (cell, formatterParams, onRendered) {
 
-                            return '<span class="material-symbols-outlined" style="color: green">add</span>';
+                            return '<span class="material-icons-outlined" style="color: green">add</span>';
                         }, headerSort: false
                     },
                     {
                         title: "", field: "idRichiesta", width: 10, hozAlign: "center", editor: false, visible: checkUserPermission(user, "canEditRequest"), cellClick: checkUserPermission(user, "canEditRequest") ? showElementUpdate : null, formatter: function (cell, formatterParams, onRendered) {
-                            return (cell.getValue() == null) ? '' : '<span class="material-symbols-outlined" style="color: green">edit</span>';
+                            return (cell.getValue() == null) ? '' : '<span class="material-icons-outlined" style="color: green">edit</span>';
                         }, headerSort: false
                     },
                     {
                         title: "", field: "idRichiesta", width: 10, hozAlign: "center", editor: false, visible: checkUserPermission(user, "canDeleteRequest"), cellClick: checkUserPermission(user, "canEditRequest") ? deleteElement : null, formatter: function (cell, formatterParams, onRendered) {
-                            return (cell.getValue() == null) ? '' : '<span class="material-symbols-outlined" style="color: red">delete</span>';
+                            return (cell.getValue() == null) ? '' : '<span class="material-icons-outlined" style="color: red">delete</span>';
                         }, headerSort: false
                     },
                     {
                         title: "", field: "isArchived", width: 10, hozAlign: "center", editor: false, visible: checkUserPermission(user, "canArchiveRequest"), cellClick: checkUserPermission(user, "canEditRequest") ? archiveElement : null, formatter: function (cell, formatterParams, onRendered) {
-                            return (cell.getValue() != null) ? (cell.getValue() ? '<span class="material-symbols-outlined" style="color: green">unarchive</span>' : '<span class="material-symbols-outlined" style="color: green">archive</span>') : "";
+                            return (cell.getValue() != null) ? (cell.getValue() ? '<span class="material-icons-outlined" style="color: green">unarchive</span>' : '<span class="material-icons-outlined" style="color: green">archive</span>') : "";
                         }, headerSort: false
                     },
                     {
                         title: "Note", field: "noteRichiesta", editor: false/*, formatter: "textarea" */, cellClick: buildNoteRichiestaModal, formatter: function (cell, formatterParams, onRendered) {
-                            return (cell.getValue() == null) ? '' : '<span class="material-symbols-outlined">notes</span>';
+                            return (cell.getValue() == null) ? '' : '<span class="material-icons-outlined">notes</span>';
                         }, headerSort: false
                     },
                 ]
@@ -132,21 +132,21 @@ function showRequests(richieste, user) {
             },
 
             {
-                title: "Tipo", field: "tipologia", editor: false, hozAlign: "center", headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-symbols-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like"
+                title: "Tipo", field: "tipologia", editor: false, hozAlign: "center", headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like"
             },
             {
-                title: "Priorità", field: "priorita", editor: false, hozAlign: "center", headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-symbols-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like"
+                title: "Priorità", field: "priorita", editor: false, hozAlign: "center", headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like"
             },
 
             (mostraStorico) ? {
                 title: "Archiviata", field: "isArchived", editor: false, formatter: "textarea", hozAlign: "center", formatter: function (cell, formatterParams, onRendered) {
                     return (cell.getValue() != null) ? ((cell.getValue()) ? 'S' : 'N') : "";
-                }, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-symbols-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like"
+                }, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like"
             } : { visible: false },
             // (checkUserPermission(user, "canViewDetails")) ?
             //     {
             //         title: "Dettagli", editor: false/*, formatter: "textarea" */, cellClick: cellPopupFormatterDettagliRichiesta, formatter: function (cell, formatterParams, onRendered) {
-            //             return (cell.getValue() == null) ? '' : '<span class="material-symbols-outlined">edit</span>';
+            //             return (cell.getValue() == null) ? '' : '<span class="material-icons-outlined">edit</span>';
             //         }
             //     } : { visible: false },
         ]
@@ -611,14 +611,13 @@ var buildNoteRichiestaModal = function(e,row) {
     modalContent.append(modalHeader);
 
     let form = $("<form>");
+    let div1=$("<div>");
     el = $("<input>").attr({ "type": "hidden", "id": "idRichiestaNuovaNota" }).val(data.idRichiesta);
     form.append(el);
     el = $("<input>").attr({ "type": "hidden", "id": "noteRichiestaAttuali" }).val(JSON.stringify(noteRichiesta));
     form.append(el);
     let div3 = $("<div>").addClass("col").attr({ "id": "elencoNote" });
     form.append(div3);
-    el = $("<button>").addClass("btn").addClass("btn-primary").text("Aggiungi nota").attr({ "id": "aggiungiNotaButton", "onClick": 'mostraFormNuovaNota()' });
-    form.append(el);
     div3 = $("<div>").addClass("col").attr({ "id": "nuovaNota" });
     let div4 = $("<div>").addClass("col").addClass("date");
     el = $("<label>").text("Data Nota").attr({ "for": "nuovaNotaDate" });
@@ -639,9 +638,12 @@ var buildNoteRichiestaModal = function(e,row) {
     div4.append(div5);
     div3.append(div4);
     form.append(div3);
+    div1.append(form);
+    el = $("<button>").addClass("btn").addClass("btn-primary").text("Aggiungi nota").attr({ "id": "aggiungiNotaButton", "onClick": 'mostraFormNuovaNota()' });
+    div1.append(el);
 
 
-    modalBody.append(form);
+    modalBody.append(div1);
     modalContent.append(modalBody);
 
     el = $("<button>").addClass("btn").addClass("btn-primary").text("Chiudi").attr({ "onClick": '$("#modalNoteRichiesta").hide()' });
@@ -666,7 +668,7 @@ var buildNoteRichiestaModal = function(e,row) {
                     outputFormat: "dd-MM-yyyy",
                     invalidPlaceholder: "(data non valida)",
                     timezone: "Europe/Rome",
-                }, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-symbols-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like"
+                }, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like"
             },
 
             { title: "Nota", field: "nota", editor: false, hozAlign: "center" },
@@ -682,7 +684,8 @@ function mostraFormNuovaNota() {
 }
 
 function salvaNote(){
-    var newNoteDate = $("#nuovaNotaDate").val();
+    event.preventDefault();
+    var newNoteDate = $("#nuovaNotaDate").val()+" 00:00:00";
     var newNoteText = $("#nuovaNotaText").val();
     if (newNoteDate!="" && newNoteText.trim()!=""){
         var actualNotes = JSON.parse($("#noteRichiestaAttuali").val());
@@ -690,7 +693,48 @@ function salvaNote(){
         newNoteObject.date = newNoteDate,
         newNoteObject.nota = newNoteText;
         actualNotes.push(newNoteObject);
-        alert(JSON.stringify(actualNotes));
+        let lu = localStorage.getItem("ricdomloggeduser");
+            if (lu != null) {
+                loggedUser = JSON.parse(lu);
+                let username = loggedUser.username;
+                let token = "123456";
+                let richiesta = {};
+                richiesta.id = $("#idRichiestaNuovaNota").val();
+                richiesta.note = actualNotes;
+                let xhr = new XMLHttpRequest();
+                let url = "be/updateRequestNote.php";
+                xhr.open("POST", url, true);
+                xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+                let ready = false;
+                xhr.onreadystatechange = function () {
+                    if (xhr.readyState === 4 && xhr.status === 200) {
+                        result = JSON.parse(xhr.responseText);
+                        if (result.status == "OK") {
+                            Swal.fire({
+                                text: "Operazione compeltata.",
+                                icon: 'info',
+                                showCancelButton: false,
+                                confirmButtonColor: '#3085d6',
+                                confirmButtonText: 'Ok'
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    $("#modalNoteRichiesta").hide();
+                                }
+                            })
+                        } else {
+                            Swal.fire({
+                                text: "Errore durante l'aggiornamento.",
+                                icon: 'error',
+                                showCancelButton: false,
+                                confirmButtonColor: '#3085d6',
+                                confirmButtonText: 'Ok'
+                            })
+                        }
+                    }
+                }
+                xhr.send("username=" + username + "&token=" + token + "&richiesta=" + JSON.stringify(richiesta));
+            }
+        
     } else {
         Swal.fire({
             text: "Data e testo sono obbligatori",

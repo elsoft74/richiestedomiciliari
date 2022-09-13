@@ -50,7 +50,7 @@ function showUsersTable(users) {
                 {
                     title: "", width: 10, hozAlign: "center", editor: false, cellClick: showUserUpdate, formatter: function (cell, formatterParams, onRendered) {
 
-                        return '<span class="material-symbols-outlined" style="color: green">edit</span>';
+                        return '<span class="material-icons-outlined" style="color: green">edit</span>';
                     },
                 },
                 { title: "Username", field: "username", editor: false },
