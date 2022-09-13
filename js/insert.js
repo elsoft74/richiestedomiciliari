@@ -146,7 +146,7 @@ function buildInsertForm(target) {
             form.append(divFormGroup);
         }
 
-        el = $("<textarea>").addClass("form-richiesta").addClass("form-control").attr({ "type": "text", "id": attrs.noteRichiesta }).prop("readonly", true);
+        el = $("<textarea>").addClass("form-richiesta").addClass("form-control").attr({ "type": "hidden", "id": attrs.noteRichiesta }).prop("readonly", true);
         divFormGroup.append(el);
         form.append(divFormGroup);
 

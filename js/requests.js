@@ -7,7 +7,7 @@ function showRequests(richieste, user) {
     // $(".requests-form").show();
     // $(".users-form").hide();
     var mostraStorico = JSON.parse(localStorage.getItem("mostraStorico"));
-    if(mostraStorico==null){
+    if (mostraStorico == null) {
         mostraStorico = false;
     }
 
@@ -41,7 +41,7 @@ function showRequests(richieste, user) {
                     outputFormat: "dd-MM-yyyy",
                     invalidPlaceholder: "(data non valida)",
                     timezone: "Europe/Rome",
-                }, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-symbols-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" 
+                }, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-symbols-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like"
             },
 
             { title: "#", field: "idAssistito", width: 10, editor: false, hozAlign: "center", visible: checkUserPermission(user, "canViewId") },
@@ -59,11 +59,16 @@ function showRequests(richieste, user) {
                             return '<span class="material-symbols-outlined" style="color: red">delete</span>';
                         }, headerSort: false
                     },
+                    {
+                        title: "Note", field: "noteAssistito", editor: false, cellClick: cellPopupFormatterNoteAssistito, formatter: function (cell, formatterParams, onRendered) {
+                            return (cell.getValue() == null) ? '' : '<span class="material-symbols-outlined">notes</span>';
+                        }, headerSort: false
+                    },
                 ]
             },
 
             { title: "Cognome", field: "cognome", editor: false, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-symbols-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
-            { title: "Nome", field: "nome", editor: false, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-symbols-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like"  },
+            { title: "Nome", field: "nome", editor: false, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-symbols-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
             {
                 title: "Nascita", field: "nascita", editor: false, formatter: "datetime", formatterParams: {
                     //inputFormat:"YYY-MM-DD HH:mm:ss",
@@ -75,21 +80,17 @@ function showRequests(richieste, user) {
             { title: "Codice Fiscale", field: "codiceFiscale", editor: false, hozAlign: "center", headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-symbols-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
             { title: "Telefono", field: "telefono", editor: false, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-symbols-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
             { title: "e-mail", field: "email", editor: false, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-symbols-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
-            { title: "Indirizzo", field: "indirizzo", editor: false, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-symbols-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
+            { title: "Indirizzo", width: 200, field: "indirizzo", formatter: "textarea", editor: false, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-symbols-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
             // (checkUserPermission(user, "canViewAllRequests")) ?
             {
                 title: "Usca", field: "usca", editor: false, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-symbols-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like"
             },
+            
             {
-                title: "Note", field: "noteAssistito", editor: false, cellClick: cellPopupFormatterNoteAssistito, formatter: function (cell, formatterParams, onRendered) {
-                    return (cell.getValue() == null) ? '' : '<span class="material-symbols-outlined">notes</span>';
-                }, headerSort: false
-            },
-            {
-                columns:[
+                columns: [
                     {
                         title: "", width: 10, hozAlign: "center", editor: false, visible: checkUserPermission(user, "canCreateRequest"), cellClick: checkUserPermission(user, "canCreateRequest") ? newRequest : null, formatter: function (cell, formatterParams, onRendered) {
-        
+
                             return '<span class="material-symbols-outlined" style="color: green">add</span>';
                         }, headerSort: false
                     },
@@ -105,7 +106,12 @@ function showRequests(richieste, user) {
                     },
                     {
                         title: "", field: "isArchived", width: 10, hozAlign: "center", editor: false, visible: checkUserPermission(user, "canArchiveRequest"), cellClick: checkUserPermission(user, "canEditRequest") ? archiveElement : null, formatter: function (cell, formatterParams, onRendered) {
-                            return (cell.getValue()!=null)?(cell.getValue() ? '' : '<span class="material-symbols-outlined" style="color: green">inventory_2</span>'):"";
+                            return (cell.getValue() != null) ? (cell.getValue() ? '' : '<span class="material-symbols-outlined" style="color: green">inventory_2</span>') : "";
+                        }, headerSort: false
+                    },
+                    {
+                        title: "Note", field: "noteRichiesta", editor: false/*, formatter: "textarea" */, cellClick: buildNoteRichiestaModal, formatter: function (cell, formatterParams, onRendered) {
+                            return (cell.getValue() == null) ? '' : '<span class="material-symbols-outlined">notes</span>';
                         }, headerSort: false
                     },
                 ]
@@ -120,7 +126,7 @@ function showRequests(richieste, user) {
                         title: "", field: "idPriorita", editor: false, visible: false
                     },
                     {
-                        title: "idUsca", field: "idUsca", visible: false
+                        title: "", field: "idUsca", visible: false
                     },
                 ]
             },
@@ -132,14 +138,11 @@ function showRequests(richieste, user) {
                 title: "Priorità", field: "priorita", editor: false, hozAlign: "center", headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-symbols-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like"
             },
 
-            {
-                title: "Note", field: "noteRichiesta", editor: false/*, formatter: "textarea" */, cellClick: cellPopupFormatterNoteRichiesta, formatter: function (cell, formatterParams, onRendered) {
-                    return (cell.getValue() == null) ? '' : '<span class="material-symbols-outlined">notes</span>';
-                }, headerSort: false
-            },
-            (mostraStorico)?{title: "Archiviata", field: "isArchived", editor: false, formatter: "textarea", hozAlign: "center", formatter: function (cell, formatterParams, onRendered) {
-                return (cell.getValue()!=null)?((cell.getValue()) ? 'S' : 'N'):"";
-            }, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-symbols-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like"}:{ visible: false },
+            (mostraStorico) ? {
+                title: "Archiviata", field: "isArchived", editor: false, formatter: "textarea", hozAlign: "center", formatter: function (cell, formatterParams, onRendered) {
+                    return (cell.getValue() != null) ? ((cell.getValue()) ? 'S' : 'N') : "";
+                }, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-symbols-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like"
+            } : { visible: false },
             // (checkUserPermission(user, "canViewDetails")) ?
             //     {
             //         title: "Dettagli", editor: false/*, formatter: "textarea" */, cellClick: cellPopupFormatterDettagliRichiesta, formatter: function (cell, formatterParams, onRendered) {
@@ -490,11 +493,6 @@ var cellPopupFormatterNoteAssistito = function (e, row, onRendered) {
     cellPopupFormatter(data.noteAssistito);
 };
 
-var cellPopupFormatterNoteRichiesta = function (e, row, onRendered) {
-    var data = row.getData();
-    cellPopupFormatter(data.noteRichiesta);
-};
-
 
 var cellPopupFormatter = function (title, text) {
     Swal.fire({
@@ -589,5 +587,117 @@ function updateTableData() {
 
         }
         setTimeout(checkNewData, 200);
+    }
+}
+
+var buildNoteRichiestaModal = function(e,row) {
+    var data = row.getData();
+    var noteRichiesta = null;
+    try {
+        noteRichiesta = JSON.parse(data.noteRichiesta);
+    } catch {
+        noteRichiesta = (data.noteRichiesta != null && data.noteRichiesta != "") ? [{ "date": "1970-01-01", "nota": data.noteRichiesta }] : [];
+    }
+    $("#modalNoteRichiesta").html("");
+    let modal = $("#modalNoteRichiesta").addClass("modal")/*.addClass("fade")*/.attr({ "tabindex": "-1", "role": "dialog", "aria-hidden": "true" });
+    let modalDialog = $("<div>").addClass("modal-dialog").attr({ "role": "document" });
+    let modalContent = $("<div>").addClass("modal-content");
+    let modalHeader = $("<div>").addClass("modal-header");
+    let modalBody = $("<div>").addClass("modal-body");
+    let modalFooter = $("<div>").addClass("modal-footer");
+
+    let el = $("<h5>").addClass("modal-title").html("Note richiesta");
+    modalHeader.append(el);
+    modalContent.append(modalHeader);
+
+    let form = $("<form>");
+    el = $("<input>").attr({ "type": "hidden", "id": "idRichiestaNuovaNota" }).val(data.idRichiesta);
+    form.append(el);
+    el = $("<input>").attr({ "type": "hidden", "id": "noteRichiestaAttuali" }).val(JSON.stringify(noteRichiesta));
+    form.append(el);
+    let div3 = $("<div>").addClass("col").attr({ "id": "elencoNote" });
+    form.append(div3);
+    el = $("<button>").addClass("btn").addClass("btn-primary").text("Aggiungi nota").attr({ "id": "aggiungiNotaButton", "onClick": 'mostraFormNuovaNota()' });
+    form.append(el);
+    div3 = $("<div>").addClass("col").attr({ "id": "nuovaNota" });
+    let div4 = $("<div>").addClass("col").addClass("date");
+    el = $("<label>").text("Data Nota").attr({ "for": "nuovaNotaDate" });
+    div4.append(el);
+    el = $("<input>").addClass("form-richiesta").addClass("form-control").attr({ "type": "date", "id": "nuovaNotaDate" });
+    div4.append(el);
+    let div5 = $("<div>").addClass("input-group-addon");
+    el = $("<span>").addClass("glyphicon glyphicon-th");
+    div5.append(el);
+    div4.append(div5);
+    div5 = $("<div>").addClass("form-group");
+    el = $("<label>").text("Data Nota").attr({ "for": "nuovaNotaText" });
+    div5.append(el);
+    el = $("<textarea>").addClass("form-richiesta").addClass("form-control").attr({ "type": "text", "id": "nuovaNotaText" });
+    div5.append(el);
+    el = $("<button>").addClass("btn").addClass("btn-primary").text("Salva").attr({ "id": "salvaNotaButton", "onClick": "salvaNote()" });
+    div5.append(el);
+    div4.append(div5);
+    div3.append(div4);
+    form.append(div3);
+
+
+    modalBody.append(form);
+    modalContent.append(modalBody);
+
+    el = $("<button>").addClass("btn").addClass("btn-primary").text("Chiudi").attr({ "onClick": '$("#modalNoteRichiesta").hide()' });
+    modalFooter.append(el);
+    modalContent.append(modalFooter);
+
+    modalDialog.append(modalContent);
+    modal.append(modalDialog);
+    var table = new Tabulator("#elencoNote", {
+        data: noteRichiesta,           //load row data from array
+        layout: "fitData",      //fit columns to width of table
+        responsiveLayout: "collapse",  //hide columns that dont fit on the table
+        addRowPos: "top",          //when adding a new row, add it to the top of the table
+        history: true,             //allow undo and redo actions on the table
+        pagination: "local",       //paginate the data
+        paginationSize: 12,         //allow 7 rows per page of data
+        paginationCounter: "rows", //display count of paginated rows in footer
+        movableColumns: true,      //allow column order to be changed
+        columns: [                 //define the table columns
+            {
+                title: "Data", field: "date", editor: false, hozAlign: "center", formatter: "datetime", formatterParams: {
+                    outputFormat: "dd-MM-yyyy",
+                    invalidPlaceholder: "(data non valida)",
+                    timezone: "Europe/Rome",
+                }, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-symbols-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like"
+            },
+
+            { title: "Nota", field: "nota", editor: false, hozAlign: "center" },
+        ]
+    });
+    $("#nuovaNota").hide();
+    $("#modalNoteRichiesta").show();
+}
+
+function mostraFormNuovaNota() {
+    $("#nuovaNota").show();
+    $("#aggiungiNotaButton").hide();
+}
+
+function salvaNote(){
+    var newNoteDate = $("#nuovaNotaDate").val();
+    var newNoteText = $("#nuovaNotaText").val();
+    if (newNoteDate!="" && newNoteText.trim()!=""){
+        var actualNotes = JSON.parse($("#noteRichiestaAttuali").val());
+        var newNoteObject = {};
+        newNoteObject.date = newNoteDate,
+        newNoteObject.nota = newNoteText;
+        actualNotes.push(newNoteObject);
+        alert(JSON.stringify(actualNotes));
+    } else {
+        Swal.fire({
+            text: "Data e testo sono obbligatori",
+            icon: 'error',
+            showCancelButton: false,
+            confirmButtonColor: '#3085d6',
+            confirmButtonText: 'Ok'
+        });
     }
 }
