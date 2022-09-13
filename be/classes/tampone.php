@@ -7,7 +7,7 @@ class Tampone
     public $idAssistito;
     public $dataEsecuzione;
     public $dataConsigliata;
-    public $isProgrammato;
+    public $idStatus;
     public $isactive;
     public $created;
     public $createdBy;
@@ -105,12 +105,20 @@ class Tampone
         return $this->deletedBy;
     }
 
-    public function setIsProgrammato($val){
-        $this->isProgrammato=$val;
+    public function setIdStatus($val){
+        $this->idStatus=$val;
     }
 
-    public function getIsProgrammato(){
-        return $this->isProgrammato;
+    public function getIdStatus(){
+        return $this->idStatus;
+    }
+
+    public function setStatus($val){
+        $this->status=$val;
+    }
+
+    public function getStatus(){
+        return $this->status;
     }
 
 
@@ -179,15 +187,17 @@ class Tampone
                     t.data_esecuzione AS data_esecuzione,
                     t.data_consigliata AS data_consigliata,
                     t.is_active AS tampone_is_active,
-                    t.is_programmed AS tampone_is_programmed,
+                    t.status AS id_status,
+                    s.descrizione AS status,
                     t.created AS created,
                     t.created_by AS created_by,
                     t.last_update AS last_update,
                     t.last_update_by AS last_update_by,
                     u.descrizione AS usca
-                    FROM `assistiti` AS a LEFT JOIN `tamponi` AS t ON a.id=t.id_assistito
-                    JOIN `usca` AS u ON a.id_usca=u.id
-                    WHERE a.is_active=1";
+                    FROM `assistiti` AS a JOIN `tamponi` AS t ON a.id=t.id_assistito
+                    LEFT JOIN `stati_tamponi` AS s ON t.status=s.id
+                    LEFT JOIN `usca` AS u ON a.id_usca=u.id
+                    WHERE a.is_active=1"
                     */
 
                     $query = "SELECT * FROM `vista_tamponi` WHERE tampone_is_active=1";
@@ -210,7 +220,8 @@ class Tampone
                         $tmp->nascita=$r['nascita'];
                         $tmp->assistitoIsActive=$r['assistito_is_active'];
                         $tmp->tamponeIsActive=$r['tampone_is_active'];
-                        $tmp->tamponeIsProgrammed=$r['tampone_is_programmed']=="1";
+                        $tmp->idStatus=$r['id_status'];
+                        $tmp->status=$r['status'];
                         $tmp->idTampone=$r['id_tampone'];
                         $tmp->dataEsecuzione=$r['data_esecuzione'];
                         $tmp->dataConsigliata=$r['data_consigliata'];

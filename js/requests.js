@@ -106,7 +106,7 @@ function showRequests(richieste, user) {
                     },
                     {
                         title: "", field: "isArchived", width: 10, hozAlign: "center", editor: false, visible: checkUserPermission(user, "canArchiveRequest"), cellClick: checkUserPermission(user, "canEditRequest") ? archiveElement : null, formatter: function (cell, formatterParams, onRendered) {
-                            return (cell.getValue() != null) ? (cell.getValue() ? '' : '<span class="material-symbols-outlined" style="color: green">inventory_2</span>') : "";
+                            return (cell.getValue() != null) ? (cell.getValue() ? '<span class="material-symbols-outlined" style="color: green">unarchive</span>' : '<span class="material-symbols-outlined" style="color: green">archive</span>') : "";
                         }, headerSort: false
                     },
                     {
@@ -365,7 +365,7 @@ var archiveElement = function (e, row) {
     var element = row.getData();
     Swal.fire({
         title: 'Sicuro?',
-        text: "Confermando archivierai la scheda con id " + element.idRichiesta + " di:" + element.nome + " " + element.cognome + "\n" + element.codiceFiscale + "\n" + "Prevista per il:" + element.data,
+        text: "Confermando "+((element.isArchived)?"ripristinerai":"archivierai")+" la scheda con id " + element.idRichiesta + " di:" + element.nome + " " + element.cognome + "\n" + element.codiceFiscale + "\n" + "Prevista per il:" + element.data,
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#3085d6',
@@ -384,7 +384,7 @@ var archiveElement = function (e, row) {
                 richiesta.archivedBy = "" + loggedUser.id;
 
                 let xhr = new XMLHttpRequest();
-                let url = "be/archiveRequest.php";
+                let url = (element.isArchived)?"be/unArchiveRequest.php":"be/archiveRequest.php";
                 xhr.open("POST", url, true);
                 xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
                 xhr.onreadystatechange = function () {

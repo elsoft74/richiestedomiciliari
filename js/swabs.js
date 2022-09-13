@@ -8,7 +8,7 @@ function showSwabs(swabs, user) {
         data: swabs,           //load row data from array
         layout: "fitData",      //fit columns to width of table
         responsiveLayout: "collapse",  //hide columns that dont fit on the table
-                //tooltips: true,            //show tool tips on cells
+        //tooltips: true,            //show tool tips on cells
         addRowPos: "top",          //when adding a new row, add it to the top of the table
         history: true,             //allow undo and redo actions on the table
         pagination: "local",       //paginate the data
@@ -46,6 +46,7 @@ function showSwabs(swabs, user) {
         columns: [                 //define the table columns
 
             { title: "#", field: "idAssistito", width: 10, editor: false, hozAlign: "center", visible: checkUserPermission(user, "canViewId") },
+
             {
                 title: "", width: 10, hozAlign: "center", editor: false, visible: checkUserPermission(user, "canEditAssistito"), cellClick: checkUserPermission(user, "canEditAssistito") ? showAssistitoUpdate : null, formatter: function (cell, formatterParams, onRendered) {
 
@@ -58,6 +59,12 @@ function showSwabs(swabs, user) {
                     return '<span class="material-symbols-outlined" style="color: red">delete</span>';
                 },
             },
+            {
+                title: "Note", field: "noteAssistito", editor: false/*, formatter: "textarea" */, cellClick: cellPopupFormatterNoteAssistito, formatter: function (cell, formatterParams, onRendered) {
+                    return (cell.getValue() == null) ? '' : '<span class="material-symbols-outlined">notes</span>';
+                }
+            },
+
             { title: "Cognome", field: "cognome", editor: false, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-symbols-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
             { title: "Nome", field: "nome", editor: false },
             {
@@ -75,20 +82,14 @@ function showSwabs(swabs, user) {
             {
                 title: "Usca", field: "usca", editor: false, hozAlign: "center", headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-symbols-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like"
             },
-            {
-                title: "Note", field: "noteAssistito", editor: false/*, formatter: "textarea" */, cellClick: cellPopupFormatterNoteAssistito, formatter: function (cell, formatterParams, onRendered) {
-                    return (cell.getValue() == null) ? '' : '<span class="material-symbols-outlined">notes</span>';
-                }
-            },
-
 
             {
-                title: "", width: 10, hozAlign: "center", editor: false, visible: checkUserPermission(user, "canCreateRequest"), cellClick: checkUserPermission(user, "canCreateRequest") ? newRequest : null, formatter: function (cell, formatterParams, onRendered) {
+                title: "", width: 10, hozAlign: "center", editor: false, visible: checkUserPermission(user, "canCreateRequest"), cellClick: checkUserPermission(user, "canCreateRequest") ? changeSwabStatus : null, formatter: function (cell, formatterParams, onRendered) {
 
-                    return '<span class="material-symbols-outlined" style="color: green">add</span>';
+                    return '<span class="material-symbols-outlined" style="color: green">edit</span>';
                 },
             },
-            
+
             { title: "#", field: "idTampone", editor: false, hozAlign: "center", visible: checkUserPermission(user, "canViewId") },
             {
                 title: "Data Tampone", field: "dataEsecuzione", editor: false, hozAlign: "center", formatter: "datetime", formatterParams: {
@@ -107,7 +108,10 @@ function showSwabs(swabs, user) {
                 }
             },
             {
-                title: "Programmato", field: "tamponeIsProgrammed", editor: false, hozAlign: "center", formatter: "tickCross"
+                title: "Stato", field: "status", editor: false, hozAlign: "center", headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-symbols-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like"
+            },
+            {
+                title: "", field: "idStatus", visible: false
             },
         ]
     });
@@ -119,7 +123,7 @@ function showSwabs(swabs, user) {
             table.download("xlsx", "tamponi.xlsx", { sheetName: "Export" });
         });
     }
-    localStorage.setItem("activity","requests");
+    localStorage.setItem("activity", "requests");
     setTimeout(checkNewData, 200);
 
 }
@@ -164,4 +168,8 @@ function readSwabs(toBeCompleted) {
     }
     //xhr.send();
     xhr.send("lastRead=" + localStorage.getItem("lastRead"));
+}
+
+var changeSwabStatus = function (e, row) {
+    alert("ok lo cambio");
 }

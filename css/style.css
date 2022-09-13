@@ -2,7 +2,7 @@
     margin-top: 5px;
     margin-left: 5px;
     margin-bottom: 5px;
-    }
+}
 
 .edit-row-element {
     border: 0px;
@@ -16,13 +16,44 @@
     vertical-align: middle;
 }
 
-#firma{
+#firma {
     font-size: 12px;
-    position:relative;                
-    bottom:0;                        
-    left:0;                        
+    position: relative;
+    bottom: 0;
+    left: 0;
 }
 
-.material-symbols-outlined{
+ .material-symbols-outlined {
+    font-family: 'Material Symbols Outlined';
+    font-weight: normal;
+    font-style: normal;
     font-size: 18px;
+    display: inline-block;
+    line-height: 1;
+    text-transform: none;
+    letter-spacing: normal;
+    word-wrap: normal;
+    white-space: nowrap;
+    direction: ltr;
 }
+
+
+/* .material-symbols-outlined {
+    font-family: 'Material Symbols Outlined';
+    font-weight: normal;
+    font-style: normal;
+    font-size: 18px;
+    display: inline-block;
+    line-height: 1;
+    text-transform: none;
+    letter-spacing: normal;
+    word-wrap: normal;
+    white-space: nowrap;
+    direction: ltr;
+} */
+
+/* @font-face {
+    font-family: 'Material Symbols Outlined';
+    font-style: normal;
+    src: url(font/material-icons-outlined.woff2) format('woff2');
+} */
