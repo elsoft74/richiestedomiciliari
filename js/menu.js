@@ -31,7 +31,7 @@ function showMenu(user) {
         div1.append(button);
         button = $("<button>").addClass('btn btn-primary btn-block requests-form').attr({"onClick":'mostraStorico()','id':'mostraStoricoButton'}).text(mostraStorico?"Solo Attuali":"Tutte");
         div1.append(button);
-        button = $("<button>").addClass('btn btn-primary btn-block users-form requests-form').attr({"onClick":'changeActivity("swabs")','id':'mostraTamponiButton'}).text("Tamponi").prop("disabled");
+        button = $("<button>").addClass('btn btn-primary btn-block users-form requests-form').attr({"onClick":'changeActivity("swabs")','id':'mostraTamponiButton'}).text("Tamponi");
         div1.append(button);
         row.append(div1);
         row.append(div2);

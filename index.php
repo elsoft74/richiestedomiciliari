@@ -59,7 +59,7 @@
             buildAssistitoEditForm("editAssistito");
             showMenu(lu);
             showRequests(richieste, lu);
-            // showSwabs(swabs,lu);
+            showSwabs(swabs,lu);
             changeActivity("requests");
         });
         //window.addEventListener('dataUpdated', updateTableData); 
