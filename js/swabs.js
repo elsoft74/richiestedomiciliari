@@ -6,7 +6,7 @@ function showSwabs(swabs, user) {
 
     var table = new Tabulator("#mainSwabs", {
         data: swabs,           //load row data from array
-        layout: "fitData",      //fit columns to width of table
+        layout: "fitColumns",      //fit columns to width of table
         responsiveLayout: "collapse",  //hide columns that dont fit on the table
         //tooltips: true,            //show tool tips on cells
         addRowPos: "top",          //when adding a new row, add it to the top of the table
