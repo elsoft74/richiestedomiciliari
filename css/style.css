@@ -29,3 +29,6 @@
 
 .tabulator .tabulator-header .tabulator-col .tabulator-col-content .tabulator-header-popup-button {
     padding: 0 0 0 0; }
+
+.tabulator-row .tabulator-cell {
+    padding: 5px;}
