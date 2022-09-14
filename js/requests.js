@@ -36,7 +36,7 @@ function showRequests(richieste, user) {
 
 
             {
-                title: "Programmata per:", field: "data", editor: false, hozAlign: "center", formatter: "datetime", formatterParams: {
+                title: "Programmata", width: 150, field: "data", editor: false, hozAlign: "center", formatter: "datetime", formatterParams: {
                     //inputFormat:"YYY-MM-DD HH:mm:ss",
                     outputFormat: "dd-MM-yyyy",
                     invalidPlaceholder: "(data non valida)",
@@ -44,43 +44,43 @@ function showRequests(richieste, user) {
                 }, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like"
             },
 
-            { title: "#", field: "idAssistito", width: 10, editor: false, hozAlign: "center", visible: checkUserPermission(user, "canViewId") },
+            { title: "#", field: "idAssistito", width: 5, editor: false, hozAlign: "center", visible: checkUserPermission(user, "canViewId") },
             {
                 columns: [
                     {
-                        title: "", width: 10, hozAlign: "center", editor: false, visible: checkUserPermission(user, "canEditAssistito"), cellClick: checkUserPermission(user, "canEditAssistito") ? showAssistitoUpdate : null, formatter: function (cell, formatterParams, onRendered) {
+                        title: "", width: 8, hozAlign: "center", editor: false, visible: checkUserPermission(user, "canEditAssistito"), cellClick: checkUserPermission(user, "canEditAssistito") ? showAssistitoUpdate : null, formatter: function (cell, formatterParams, onRendered) {
 
                             return '<span class="material-icons-outlined" style="color: green">edit</span>';
                         }, headerSort: false
                     },
                     {
-                        title: "", width: 10, hozAlign: "center", editor: false, visible: checkUserPermission(user, "canDeleteAssistito"), cellClick: checkUserPermission(user, "canDeleteAssistito") ? deleteElement : null, formatter: function (cell, formatterParams, onRendered) {
+                        title: "", width: 8, hozAlign: "center", editor: false, visible: checkUserPermission(user, "canDeleteAssistito"), cellClick: checkUserPermission(user, "canDeleteAssistito") ? deleteElement : null, formatter: function (cell, formatterParams, onRendered) {
 
                             return '<span class="material-icons-outlined" style="color: red">delete</span>';
                         }, headerSort: false
                     },
                     {
-                        title: "Note", field: "noteAssistito", editor: false, cellClick: cellPopupFormatterNoteAssistito, formatter: function (cell, formatterParams, onRendered) {
+                        title: "Note", width: 8, field: "noteAssistito", editor: false, cellClick: cellPopupFormatterNoteAssistito, formatter: function (cell, formatterParams, onRendered) {
                             return (cell.getValue() == null) ? '' : '<span class="material-icons-outlined">notes</span>';
                         }, headerSort: false
                     },
                 ]
             },
 
-            { title: "Cognome", field: "cognome", editor: false, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
-            { title: "Nome", field: "nome", editor: false, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
+            { title: "Cognome", width: 150, field: "cognome", editor: false, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
+            { title: "Nome", width: 150, field: "nome", editor: false, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
             {
                 title: "Nascita", field: "nascita", editor: false, formatter: "datetime", formatterParams: {
                     //inputFormat:"YYY-MM-DD HH:mm:ss",
                     outputFormat: "dd-MM-yyyy",
-                    invalidPlaceholder: "(data non valida)",
+                    invalidPlaceholder: "",
                     timezone: "Europe/Rome",
                 }
             },
             { title: "Codice Fiscale", field: "codiceFiscale", editor: false, hozAlign: "center", headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
             { title: "Telefono", field: "telefono", editor: false, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
             { title: "e-mail", field: "email", editor: false, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
-            { title: "Indirizzo", width: 200, field: "indirizzo", formatter: "textarea", editor: false, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
+            { title: "Indirizzo", width: 150, field: "indirizzo", formatter: "textarea", editor: false, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
             // (checkUserPermission(user, "canViewAllRequests")) ?
             {
                 title: "Usca", field: "usca", editor: false, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like"
@@ -132,10 +132,10 @@ function showRequests(richieste, user) {
             },
 
             {
-                title: "Tipo", field: "tipologia", editor: false, hozAlign: "center", headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like"
+                title: "Tipo", width: 100, field: "tipologia", editor: false, hozAlign: "center", headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like"
             },
             {
-                title: "Priorità", field: "priorita", editor: false, hozAlign: "center", headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like"
+                title: "Priorità", width: 100, field: "priorita", editor: false, hozAlign: "center", headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like"
             },
 
             (mostraStorico) ? {

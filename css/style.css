@@ -24,36 +24,8 @@
 }
 
  .material-icons-outlined {
-    font-family: 'Material Symbols Outlined';
-    font-weight: normal;
-    font-style: normal;
     font-size: 18px;
-    display: inline-block;
-    line-height: 1;
-    text-transform: none;
-    letter-spacing: normal;
-    word-wrap: normal;
-    white-space: nowrap;
-    direction: ltr;
 }
 
-
-/* .material-icons-outlined {
-    font-family: 'Material Symbols Outlined';
-    font-weight: normal;
-    font-style: normal;
-    font-size: 18px;
-    display: inline-block;
-    line-height: 1;
-    text-transform: none;
-    letter-spacing: normal;
-    word-wrap: normal;
-    white-space: nowrap;
-    direction: ltr;
-} */
-
-/* @font-face {
-    font-family: 'Material Symbols Outlined';
-    font-style: normal;
-    src: url(font/material-icons-outlined.woff2) format('woff2');
-} */
+.tabulator .tabulator-header .tabulator-col .tabulator-col-content .tabulator-header-popup-button {
+    padding: 0 0 0 0; }
