@@ -5,7 +5,8 @@
         public $idUsca;
         public $nome;
         public $cognome;
-        public $telefono;
+        public $telefono1;
+        public $telefono2;
         public $nascita;
         public $email;
         public $indirizzo;
@@ -25,8 +26,11 @@
         function setCognome($val){
             $this->cognome=$val;
         }
-        function setTelefono($val){
-            $this->telefono=$val;
+        function setTelefono1($val){
+            $this->telefono1=$val;
+        }
+        function setTelefono2($val){
+            $this->telefono2=$val;
         }
         function setEmail($val){
             $this->email=$val;
@@ -59,8 +63,11 @@
         function getCognome(){
             return $this->cognome;
         }
-        function getTelefono(){
-            return $this->telefono;
+        function getTelefono1(){
+            return $this->telefono1;
+        }
+        function getTelefono2(){
+            return $this->telefono2;
         }
         function getEmail(){
             return $this->email;
@@ -106,7 +113,8 @@
                                 $assistito->setIdUsca($res['id_usca']);
                                 $assistito->setNome($res['nome']);
                                 $assistito->setCognome($res['cognome']);
-                                $assistito->setTelefono($res['telefono']);
+                                $assistito->setTelefono1($res['telefono1']);
+                                $assistito->setTelefono2($res['telefono2']);
                                 $assistito->setEmail($res['email']);
                                 $assistito->setIndirizzo($res['indirizzo']);
                                 $assistito->setCodiceFiscale($res['codicefiscale']);
@@ -159,7 +167,8 @@
                                 $stmt->bindParam(':nome',$this->getNome(),PDO::PARAM_STR);
                                 $stmt->bindParam(':cognome',$this->getCognome(),PDO::PARAM_STR);
                                 $stmt->bindParam(':codicefiscale',$this->getCodiceFiscale(),PDO::PARAM_STR);
-                                $stmt->bindParam(':telefono',$this->getTelefono(),PDO::PARAM_STR);
+                                $stmt->bindParam(':telefono1',$this->getTelefono1(),PDO::PARAM_STR);
+                                $stmt->bindParam(':telefono2',$this->getTelefono2(),PDO::PARAM_STR);
                                 $stmt->bindParam(':email',$this->getEmail(),PDO::PARAM_STR);
                                 $stmt->bindParam(':indirizzo',$this->getIndirizzo(),PDO::PARAM_STR);
                                 $stmt->bindParam(':note',$this->getNote(),PDO::PARAM_STR);
@@ -218,7 +227,8 @@
                                 nome=:nome,
                                 cognome=:cognome,
                                 codicefiscale=:codicefiscale,
-                                telefono=:telefono,
+                                telefono1=:telefono1,
+                                telefono2=:telefono2,
                                 email=:email,
                                 indirizzo=:indirizzo,
                                 note=:note,
@@ -229,7 +239,8 @@
                                 $stmt->bindParam(':nome',$this->nome,PDO::PARAM_STR);
                                 $stmt->bindParam(':cognome',$this->cognome,PDO::PARAM_STR);
                                 $stmt->bindParam(':codicefiscale',$codicefiscale,PDO::PARAM_STR);
-                                $stmt->bindParam(':telefono',$this->telefono,PDO::PARAM_STR);
+                                $stmt->bindParam(':telefono1',$this->telefono1,PDO::PARAM_STR);
+                                $stmt->bindParam(':telefono2',$this->telefono2,PDO::PARAM_STR);
                                 $stmt->bindParam(':email',$this->email,PDO::PARAM_STR);
                                 $stmt->bindParam(':indirizzo',$this->indirizzo,PDO::PARAM_STR);
                                 $stmt->bindParam(':note',$this->note,PDO::PARAM_STR);

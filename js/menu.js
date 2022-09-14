@@ -33,6 +33,10 @@ function showMenu(user) {
         div1.append(button);
         button = $("<button>").addClass('btn btn-primary btn-block users-form requests-form').attr({"onClick":'changeActivity("swabs")','id':'mostraTamponiButton'}).text("Tamponi").hide();
         div1.append(button);
+        if(user.permissions.canUploadSwabs){
+            button = $("<button>").addClass('btn btn-primary btn-block swabs-form').attr({"onClick":'uploadSwabs()','id':'caricaTamponiButton'}).text("Carica Tamponi").hide();
+            div1.append(button);
+        }
         row.append(div1);
         row.append(div2);
         row.append(div3);

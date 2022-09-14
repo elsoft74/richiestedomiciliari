@@ -178,6 +178,11 @@ var changeSwabStatus = function (e, row) {
     $("#tamponeEdit").show();
 }
 
+function uploadSwabs(){
+    buildUpLoadTamponiForm();
+    $("#tamponeUpload").show();
+}
+
 function aggiornaTampone() {
     let lu = localStorage.getItem("ricdomloggeduser");
     if (lu != null) {
@@ -234,8 +239,8 @@ function buildUpdateTamponiForm() {
             status: "statusTamponeEdit",
             
         }
-        $("#tamponeEdit").html("");
-        let modal = $("#tamponeEdit").addClass("modal")/*.addClass("fade")*/.attr({ "id": "tamponeEdit", "tabindex": "-1", "role": "dialog", "aria-labelledby": attrs.titleId, "aria-hidden": "true" });
+        $("#tamponeUpload").html("");
+        let modal = $("#tamponeUpload").addClass("modal")/*.addClass("fade")*/.attr({ "id": "tamponeUpload", "tabindex": "-1", "role": "dialog", "aria-labelledby": attrs.titleId, "aria-hidden": "true" });
         let modalDialog = $("<div>").addClass("modal-dialog").attr({ "role": "document" });
         let modalContent = $("<div>").addClass("modal-content");
         let modalHeader = $("<div>").addClass("modal-header");
@@ -307,4 +312,52 @@ function buildUpdateTamponiForm() {
             }
         }
         xhr.send();
+    }
+
+    function buildUpLoadTamponiForm() {
+
+        fun1 = 'alert("carico");'
+        fun2 = '$("#tamponeUpload").hide()';
+        attrs = {
+            status: "statusTamponeUpload",
+            
+        }
+        $("#tamponeUpload").html("");
+        let modal = $("#tamponeUpload").addClass("modal")/*.addClass("fade")*/.attr({ "id": "tamponeUpload", "tabindex": "-1", "role": "dialog", "aria-labelledby": attrs.titleId, "aria-hidden": "true" });
+        let modalDialog = $("<div>").addClass("modal-dialog").attr({ "role": "document" });
+        let modalContent = $("<div>").addClass("modal-content");
+        let modalHeader = $("<div>").addClass("modal-header");
+        let modalBody = $("<div>").addClass("modal-body");
+        let modalFooter = $("<div>").addClass("modal-footer");
+
+        let el = $("<h5>").addClass("modal-title").attr({ "id": attrs.titleId }).html(attrs.titleText);
+        modalHeader.append(el);
+        modalContent.append(modalHeader);
+
+        let form = $("<form>");
+        let divFormGroup = $("<div>").addClass("form-group");
+        el = $("<label>").attr({ "for": attrs.status }).text("Stato di default");
+        divFormGroup.append(el);
+        el = $("<select>").addClass('user-input-form').addClass("form-control").attr({ "id": attrs.status});
+        if(statiTamponi!=null){
+            statiTamponi.forEach(element => {
+                let option = $("<option>").attr({ "value": element.id}).text(element.descrizione);
+                el.append(option);
+            });
+        }
+        divFormGroup.append(el);
+
+        form.append(divFormGroup);
+
+        modalBody.append(form);
+        modalContent.append(modalBody);
+
+        el = $("<button>").addClass("btn").addClass("btn-primary").text("Conferma").attr({ "onClick": fun1 });
+        modalFooter.append(el);
+        el = $("<button>").addClass("btn").addClass("btn-secondary").text("Annulla").attr({ "onClick": fun2});
+        modalFooter.append(el);
+        modalContent.append(modalFooter);
+
+        modalDialog.append(modalContent);
+        modal.append(modalDialog);
     }
