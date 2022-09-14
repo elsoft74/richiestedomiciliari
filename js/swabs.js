@@ -320,6 +320,9 @@ function buildUpdateTamponiForm() {
         fun2 = '$("#tamponeUpload").hide()';
         attrs = {
             status: "statusTamponeUpload",
+            file: "uploadTamponiFile",
+            fileText: "File da caricare",
+            statusText: "Stato di default"
             
         }
         $("#tamponeUpload").html("");
@@ -336,7 +339,11 @@ function buildUpdateTamponiForm() {
 
         let form = $("<form>");
         let divFormGroup = $("<div>").addClass("form-group");
-        el = $("<label>").attr({ "for": attrs.status }).text("Stato di default");
+        el = $("<label>").addClass("form-label").attr({ "for": attrs.file }).text(attrs.fileText);
+        divFormGroup.append(el);
+        el = $("<input>").addClass("form-control").attr({ "id": attrs.file, "type":"file" });
+        divFormGroup.append(el);
+        el = $("<label>").attr({ "for": attrs.status }).text(attrs.statusText);
         divFormGroup.append(el);
         el = $("<select>").addClass('user-input-form').addClass("form-control").attr({ "id": attrs.status});
         if(statiTamponi!=null){
