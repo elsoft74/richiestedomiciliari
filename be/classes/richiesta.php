@@ -259,6 +259,7 @@ class Richiesta
                         $tmp->priorita=$r['priorita'];
                         $tmp->tipologia=$r['tipologia'];
                         $tmp->isArchived=($r['is_archived']=="1");
+                        $tmp->archived=($r['is_archived']=="1")?"S":"N";
 
                         array_push($out->data, $tmp);
                     }

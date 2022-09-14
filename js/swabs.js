@@ -123,9 +123,9 @@ function showSwabs(swabs, user) {
             table.download("xlsx", "tamponi.xlsx", { sheetName: "Export" });
         });
     }
-    localStorage.setItem("activity", "requests");
+    // localStorage.setItem("activity", "requests");
+    $("#mainSwabs").hide();
     setTimeout(checkNewData, 200);
-
 }
 
 function readSwabs(toBeCompleted) {

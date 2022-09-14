@@ -139,9 +139,7 @@ function showRequests(richieste, user) {
             },
 
             (mostraStorico) ? {
-                title: "Arch.", width: 120, field: "isArchived", editor: false, formatter: "textarea", hozAlign: "center", formatter: function (cell, formatterParams, onRendered) {
-                    return (cell.getValue() != null) ? ((cell.getValue()) ? 'S' : 'N') : "";
-                }, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like"
+                title: "Arch.", width: 120, field: "archived", editor: false, formatter: "textarea", hozAlign: "center", headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like"
             } : { visible: false },
             // (checkUserPermission(user, "canViewDetails")) ?
             //     {
@@ -153,12 +151,13 @@ function showRequests(richieste, user) {
     });
 
     if (checkUserPermission(user, "canExport")) {
-        let button = $("<button>").addClass("btn btn-primary btn-block requests-form").attr({ "id": "dataDownLoadButton" }).html("Scarica richieste");
+        let button = $("<button>").addClass("btn btn-primary btn-block requests-form").attr({ "id": "dataDownLoadButton" }).html("Scarica richieste").hide();
         $("#menubuttons").append(button);
         document.getElementById("dataDownLoadButton").addEventListener("click", function () {
             table.download("xlsx", "richieste.xlsx", { sheetName: "Export" });
         });
     }
+    $("#main").hide();
     setTimeout(checkNewData, 200);
 
 }
