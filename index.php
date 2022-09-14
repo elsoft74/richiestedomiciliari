@@ -47,6 +47,7 @@
     <div id="editUser"></div>
     <div id="editAssistito"></div>
     <div id="modalNoteRichiesta"></div>
+    <div id="tamponeEdit"></div>
     <div id="firma"><a href="https://ivopugliese.it">©2022 Ivo Pugliese</a></div>
     <script>       
         if ($("#login").html() == "") {

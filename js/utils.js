@@ -90,7 +90,8 @@ function loadData() {
         richieste: false,
         swabs: false,
         ruoli: false,
-        usca: false
+        usca: false,
+        statiTamponi: false
     };
     priorita = null;
     tipologie = null;
@@ -101,6 +102,7 @@ function loadData() {
     getRuoli(toBeCompleted);
     getTipologie(toBeCompleted);
     getUsca(toBeCompleted);
+    getStatiTamponi(toBeCompleted);
     //readRequests(toBeCompleted);
     //readSwabs(toBeCompleted);
     getData(toBeCompleted);

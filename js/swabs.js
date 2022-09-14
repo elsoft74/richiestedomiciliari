@@ -171,5 +171,140 @@ function readSwabs(toBeCompleted) {
 }
 
 var changeSwabStatus = function (e, row) {
-    alert("ok lo cambio");
+    buildUpdateTamponiForm();
+    var element = row.getData();
+    $("#idTamponeEdit").val(element.idTampone);
+    $("#statusTamponeEdit").val(element.idStatus);
+    $("#tamponeEdit").show();
 }
+
+function aggiornaTampone() {
+    let lu = localStorage.getItem("ricdomloggeduser");
+    if (lu != null) {
+        loggedUser = JSON.parse(lu);
+        let username = loggedUser.username;
+        let token = "123456";
+        let tampone = {};
+        tampone.id = $("#idTamponeEdit").val();
+        tampone.status = $("#statusTamponeEdit").val();
+        tampone.lastUpdateBy = "" + loggedUser.id;
+
+
+        let xhr = new XMLHttpRequest();
+        let url = "be/updateSwab.php";
+        xhr.open("POST", url, true);
+        xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+                result = JSON.parse(xhr.responseText);
+                if (result.status == "OK") {
+                    Swal.fire({
+                        text: "Operazione completata.",
+                        icon: 'info',
+                        showCancelButton: false,
+                        confirmButtonColor: '#3085d6',
+                        confirmButtonText: 'Ok'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            cleanTamponeEdit();
+                            location.reload();
+                        }
+                    })
+                } else {
+                    Swal.fire({
+                        text: "Impossibile completare l'operazione",
+                        icon: 'error',
+                        showCancelButton: false,
+                        confirmButtonColor: '#3085d6',
+                        confirmButtonText: 'Ok'
+                    })
+                }
+            }
+        }
+        xhr.send("username=" + username + "&token=" + token + "&tampone=" + JSON.stringify(tampone));
+    }
+}
+
+function buildUpdateTamponiForm() {
+
+        fun1 = "aggiornaTampone()";
+        fun2 = "cleanTamponeEdit()";
+        attrs = {
+            idTampone: "idTamponeEdit",
+            status: "statusTamponeEdit",
+            
+        }
+        $("#tamponeEdit").html("");
+        let modal = $("#tamponeEdit").addClass("modal")/*.addClass("fade")*/.attr({ "id": "tamponeEdit", "tabindex": "-1", "role": "dialog", "aria-labelledby": attrs.titleId, "aria-hidden": "true" });
+        let modalDialog = $("<div>").addClass("modal-dialog").attr({ "role": "document" });
+        let modalContent = $("<div>").addClass("modal-content");
+        let modalHeader = $("<div>").addClass("modal-header");
+        let modalBody = $("<div>").addClass("modal-body");
+        let modalFooter = $("<div>").addClass("modal-footer");
+
+        let el = $("<h5>").addClass("modal-title").attr({ "id": attrs.titleId }).html(attrs.titleText);
+        modalHeader.append(el);
+        modalContent.append(modalHeader);
+
+        let form = $("<form>");
+        let divFormGroup = $("<div>").addClass("form-group");
+        el = $("<input>").attr({ "type": "hidden", "id": attrs.idTampone });
+        divFormGroup.append(el);
+        el = $("<label>").attr({ "for": attrs.roleId }).text("Nuovo stato");
+        divFormGroup.append(el);
+        el = $("<select>").addClass('user-input-form').addClass("form-control").attr({ "id": attrs.status});
+        if(statiTamponi!=null){
+            statiTamponi.forEach(element => {
+                let option = $("<option>").attr({ "value": element.id}).text(element.descrizione);
+                el.append(option);
+            });
+        }
+        divFormGroup.append(el);
+
+        form.append(divFormGroup);
+
+        modalBody.append(form);
+        modalContent.append(modalBody);
+
+        el = $("<button>").addClass("btn").addClass("btn-primary").text("Conferma").attr({ "onClick": fun1 });
+        modalFooter.append(el);
+        el = $("<button>").addClass("btn").addClass("btn-secondary").text("Annulla").attr({ "onClick": fun2});
+        modalFooter.append(el);
+        modalContent.append(modalFooter);
+
+        modalDialog.append(modalContent);
+        modal.append(modalDialog);
+    }
+
+    function cleanTamponeEdit(){
+        $("#idTamponeEdit").val('');
+        $("#statusTamponeEdit").val('');
+        $("#tamponeEdit").hide();
+    }
+
+    function getStatiTamponi(toBeCompleted) {
+        let xhr = new XMLHttpRequest();
+        let url = "be/getStatiTamponi.php";
+        xhr.open("POST", url, true);
+        xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+                let result = JSON.parse(xhr.responseText);
+                if (result.status == "OK") {
+                    toBeCompleted.statiTamponi = true;
+                    statiTamponi = result.data;
+                } else {
+                    Swal.fire({
+                        text: "C'è un problema con il recupero degli stati tamponi.",
+                        icon: 'error',
+                        showCancelButton: false,
+                        confirmButtonColor: '#3085d6',
+                        confirmButtonText: 'Ok'
+                    });
+                    tipologie = null;
+                }
+            }
+        }
+        xhr.send();
+    }

@@ -249,74 +249,49 @@ class Tampone
         return $out;
     }
 
-    // public function insert($username,$token)
-    // {
-    //     $out = new stdClass();
-    //     $out->status = "KO";
-    //     try {
-    //         $conn = DB::conn();
-    //         if ($conn != null) {
-    //             try {
-    //                 $query="SELECT is_active, role_id, id_usca FROM `users` AS u WHERE u.username=:username";
-    //                     $stmt = $conn->prepare($query);
-    //                     $stmt->bindParam(':username',$username,PDO::PARAM_STR);
-    //                     $stmt->execute();
-    //                     $res=$stmt->fetch(PDO::FETCH_ASSOC);
-    //                     if (User::checkToken($token) && $res && $res['is_active']==1 AND User::checkCanCreateRequest($res['role_id'])){
-    //                         $this->idUsca=$res['id_usca'];
-    //                         $query = "INSERT INTO `richieste` (
-    //                             `id_assistito`,
-    //                             `id_tipologia`,
-    //                             `id_priorita`,
-    //                             `id_usca`,
-    //                             `data`,
-    //                             `note`,
-    //                             `created_by`
-    //                         ) VALUES (:id_assistito,
-    //                             :id_tipologia,
-    //                             :id_priorita,
-    //                             :id_usca,
-    //                             :data,
-    //                             :note,
-    //                             :created_by)";
+    public function getData()
+    {
+        $out = new stdClass();
+        $out->status = "KO";
+        $out->data = [];
+        try {
+            $conn = DB::conn();
+            if ($conn != null) {
+                try {
+                    if($this->id==null){
+                        throw new Exception("ID-NULLO");
+                    }
+                    $query = "SELECT * FROM `tamponi` WHERE id=:id";
+                    $stmt = $conn->prepare($query);
+                    $stmt->bindParam(':id', $this->id, PDO::PARAM_INT);
+                    $stmt = $conn->prepare($query);
+                    $stmt->execute();
 
-    //                         $stmt = $conn->prepare($query);
-    //                         $stmt->bindParam(':id_assistito', $this->idAssistito, PDO::PARAM_INT);
-    //                         $stmt->bindParam(':id_tipologia', $this->idTipologia, PDO::PARAM_INT);
-    //                         $stmt->bindParam(':id_priorita', $this->idPriorita, PDO::PARAM_INT);
-    //                         $stmt->bindParam(':id_usca', $this->idUsca, PDO::PARAM_INT);
-    //                         $stmt->bindParam(':data', $this->data, PDO::PARAM_STR);
-    //                         $stmt->bindParam(':note', $this->note, PDO::PARAM_STR);
-    //                         $stmt->bindParam(':created_by', $this->createdBy, PDO::PARAM_INT);
+                    $res = $stmt->fetch(PDO::FETCH_ASSOC);
+                    if ($res) {
+                        $this->nome=$r['nome'];
+                        $this->tamponeIsActive=$r['is_active'];
+                        $this->status=$r['status'];
+                        $this->dataEsecuzione=$r['data_esecuzione'];
+                        $this->dataConsigliata=$r['data_consigliata'];
+                        $this->created=$r['created'];
+                        $this->createdBy=$r['created_by'];
+                        $this->last_update=$r['last_update'];
+                        $this->lastUpdateBy=$r['last_update_by'];
+                    }
 
-    //                         $stmt->execute();
-
-    //                         $this->setId($conn->lastInsertId());
-
-    //                         if ($this->id != 0) {
-    //                             $out->status = "OK";
-    //                         } else {
-    //                             $out->errorInfo=$conn->errorInfo();
-    //                             $out->errorCode=$conn->errorCode();
-    //                             throw new Exception("Errore d'inserimento");
-    //                         } 
-    //                     } else {
-    //                         throw new Exception("OPERAZIONE-NON-PERMESSA");
-    //                     } 
-                    
-    //             } catch (Exception $ex) {
-    //                 $out->error = $ex->getMessage();
-    //             }
-    //         } else {
-    //             throw new Exception("DB-CONNECTION-ERROR");
-    //         }
-    //     } catch (Exception $ex) {
-    //         $conn = null;
-    //         $out->error = $ex->getMessage();
-    //     }
-    //     //file_put_contents("../log/dbtest.log",(new DateTime("now"))->format("Y-m-d H:i").$msg."\n",FILE_APPEND);
-    //     return $out;
-    // }
+                    $out->status = "OK";
+                } catch (Exception $ex) {
+                    $out->error = $ex->getMessage();
+                }
+            } else {
+                $out->error = "DB-CONNECTION-ERROR";
+            }
+        } catch (Exception $e) {
+            $conn = null;
+        }
+        return $out;
+    }
 
     public function update($username,$token)
     {
@@ -335,21 +310,15 @@ class Tampone
                         $stmt->execute();
                         $res=$stmt->fetch(PDO::FETCH_ASSOC);
                         if (User::checkToken($token) && $res && $res['is_active']==1 AND User::checkCanUpdateRequest($res['role_id'])){
-                            $query = "UPDATE `richieste` SET
-                            id_tipologia=:id_tipologia,
-                            id_priorita=:id_priorita,
-                            data=:data,
-                            note=:note,
+                            $query = "UPDATE `tamponi` SET
+                            status=:status,
                             last_update=:last_update,
                             last_update_by=:last_update_by
                             WHERE `id`=:id";
 
                         $stmt = $conn->prepare($query);
 
-                        $stmt->bindParam(':id_tipologia', $this->idTipologia, PDO::PARAM_INT);
-                        $stmt->bindParam(':id_priorita', $this->idPriorita, PDO::PARAM_INT);
-                        $stmt->bindParam(':data', $this->data, PDO::PARAM_STR);
-                        $stmt->bindParam(':note', $this->note, PDO::PARAM_STR);
+                        $stmt->bindParam(':status', $this->status, PDO::PARAM_INT);
                         $stmt->bindParam(':last_update', $this->lastUpdate, PDO::PARAM_STR);
                         $stmt->bindParam(':last_update_by', $this->lastUpdateBy, PDO::PARAM_INT);
                         $stmt->bindParam(':id', $this->id, PDO::PARAM_INT);
@@ -384,62 +353,31 @@ class Tampone
         return $out;
     }
 
-    public function delete($username,$token)
-    {
+    public static function getStatiTamponi(){
         $out = new stdClass();
-        $out->status = "KO";
+        $out->status="KO";
         try {
-            if ($this->getId() != null) {
-                
-                $conn = DB::conn();
-                if ($conn != null) {
-                    try {
-                        $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-                        $query="SELECT is_active, role_id FROM `users` AS u WHERE u.username=:username";
-                        $stmt = $conn->prepare($query);
-                        $stmt->bindParam(':username',$username,PDO::PARAM_STR);
-                        $stmt->execute();
-                        $res=$stmt->fetch(PDO::FETCH_ASSOC);
-                        if (User::checkToken($token) && $res && $res['is_active']==1 AND User::checkCanDeleteRequest($res['role_id'])){
-                            $query = "UPDATE `tamponi` SET
-                            is_active=0,
-                            deleted_date=:deleted_date,
-                            deleted_by=:deleted_by
-                            WHERE `id`=:id";
-
-                        $stmt = $conn->prepare($query);
-
-                        $stmt->bindParam(':deleted_date', $this->deletedDate, PDO::PARAM_STR);
-                        $stmt->bindParam(':deleted_by', $this->deletedBy, PDO::PARAM_INT);
-                        $stmt->bindParam(':id', $this->id, PDO::PARAM_INT);
-
-                        $stmt->execute();
-                        $out->num = $stmt->rowCount();
-
-                        if ($out->num != 1) {
-                            throw new Exception("UPDATE-ERROR");
-                        }
-
-                        $out->status = "OK";
-                        } else {
-                            throw new Exception("OPERAZIONE-NON-PERMESSA");
-                        } 
-                        
-                    } catch (Exception $ex) {
-                        $out->status="KO";
-                        $out->error = $ex->getMessage();
+            $conn=DB::conn();
+            if ($conn!=null){
+                try {
+                    $query="SELECT id,descrizione FROM `stati_tamponi` WHERE `is_active`=1";
+                    
+                    $stmt = $conn->prepare($query);
+                    $stmt->execute();
+                    $res=$stmt->fetchAll(PDO::FETCH_ASSOC);
+                    $out->data=$res;                    
+                    $out->status="OK";
+                } catch(Exception $ex){
+                        $out->error=$ex->getMessage();
                     }
-                } else {
-                    throw new Exception("DB-CONNECTION-ERROR");
-                }
-            } else {
-                throw new Exception("EMPTY-REQUEST");
             }
-        } catch (Exception $ex) {
-            $conn = null;
-            $out->status="KO";
-            $out->error = $ex->getMessage();
+            else {
+                $out->error="DB-CONNECTION-ERROR";
+            }
+        } catch(Exception $e){
+            $conn=null;
         }
+        //file_put_contents("../log/dbtest.log",(new DateTime("now"))->format("Y-m-d H:i").$msg."\n",FILE_APPEND);
         return $out;
     }
 }
