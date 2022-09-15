@@ -295,6 +295,72 @@ class Tampone
         return $out;
     }
 
+    public function insert($username,$token)
+    {
+        $out = new stdClass();
+        $out->status = "KO";
+        try {
+            if ($this->getId() != null) {
+                
+                $conn = DB::conn();
+                if ($conn != null) {
+                    try {
+                        $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+                        $query="SELECT is_active, role_id FROM `users` AS u WHERE u.username=:username";
+                        $stmt = $conn->prepare($query);
+                        $stmt->bindParam(':username',$username,PDO::PARAM_STR);
+                        $stmt->execute();
+                        $res=$stmt->fetch(PDO::FETCH_ASSOC);
+                        if (User::checkToken($token) && $res && $res['is_active']==1 AND User::checkCanUpdateRequest($res['role_id'])){
+
+                            $query = "INSERT INTO `tamponi` (
+                                id_assistito=:id_assistito,
+                                data_esecuzione=:data_esecuzione,
+                                data_consigliata=:data_consigliata,
+                                status=:status,
+                                created=:created,
+                                created_by=:created_by";
+
+                            $stmt = $conn->prepare($query);
+
+                            $stmt->bindParam(':id_assistito', $this->idAssistito, PDO::PARAM_INT);
+                            $stmt->bindParam(':data_esecuzione', $this->dataEsecuzione, PDO::PARAM_STR);
+                            $stmt->bindParam(':data_consigliata', $this->dataConsigliata, PDO::PARAM_STR);
+                            $stmt->bindParam(':status', $this->status, PDO::PARAM_INT);
+                            $stmt->bindParam(':created', $this->created, PDO::PARAM_STR);
+                            $stmt->bindParam(':created_by', $this->createdBy, PDO::PARAM_INT);
+
+                            $stmt->execute();
+                            $this->setId($conn->lastInsertId());
+                                if ($this->getId()!=0){
+                                $out->status="OK";
+                            } else {
+                                throw new Exception("ERRORE-DI-INSERIMENTO");    
+                            }
+
+                        $out->status = "OK";
+                        } else {
+                            throw new Exception("OPERAZIONE-NON-PERMESSA");
+                        } 
+                        
+                    } catch (Exception $ex) {
+                        $out->status="KO";
+                        $out->error = $ex->getMessage();
+                    }
+                } else {
+                    throw new Exception("DB-CONNECTION-ERROR");
+                }
+            } else {
+                throw new Exception("EMPTY-REQUEST");
+            }
+        } catch (Exception $ex) {
+            $conn = null;
+            $out->status="KO";
+            $out->error = $ex->getMessage();
+        }
+        return $out;
+    }
+
     public function update($username,$token)
     {
         $out = new stdClass();
@@ -382,4 +448,6 @@ class Tampone
         //file_put_contents("../log/dbtest.log",(new DateTime("now"))->format("Y-m-d H:i").$msg."\n",FILE_APPEND);
         return $out;
     }
+
+    
 }

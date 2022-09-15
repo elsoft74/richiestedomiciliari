@@ -183,7 +183,7 @@ var changeSwabStatus = function (e, row) {
     $("#tamponeEdit").show();
 }
 
-function uploadSwabs(){
+function uploadSwabs() {
     buildUpLoadTamponiForm();
     $("#tamponeUpload").show();
 }
@@ -237,139 +237,190 @@ function aggiornaTampone() {
 
 function buildUpdateTamponiForm() {
 
-        fun1 = "aggiornaTampone()";
-        fun2 = "cleanTamponeEdit()";
-        attrs = {
-            idTampone: "idTamponeEdit",
-            status: "statusTamponeEdit",
-            
-        }
-        $("#tamponeUpload").html("");
-        let modal = $("#tamponeUpload").addClass("modal")/*.addClass("fade")*/.attr({ "id": "tamponeUpload", "tabindex": "-1", "role": "dialog", "aria-labelledby": attrs.titleId, "aria-hidden": "true" });
-        let modalDialog = $("<div>").addClass("modal-dialog").attr({ "role": "document" });
-        let modalContent = $("<div>").addClass("modal-content");
-        let modalHeader = $("<div>").addClass("modal-header");
-        let modalBody = $("<div>").addClass("modal-body");
-        let modalFooter = $("<div>").addClass("modal-footer");
+    fun1 = "aggiornaTampone()";
+    fun2 = "cleanTamponeEdit()";
+    attrs = {
+        idTampone: "idTamponeEdit",
+        status: "statusTamponeEdit",
 
-        let el = $("<h5>").addClass("modal-title").attr({ "id": attrs.titleId }).html(attrs.titleText);
-        modalHeader.append(el);
-        modalContent.append(modalHeader);
-
-        let form = $("<form>");
-        let divFormGroup = $("<div>").addClass("form-group");
-        el = $("<input>").attr({ "type": "hidden", "id": attrs.idTampone });
-        divFormGroup.append(el);
-        el = $("<label>").attr({ "for": attrs.roleId }).text("Nuovo stato");
-        divFormGroup.append(el);
-        el = $("<select>").addClass('user-input-form').addClass("form-control").attr({ "id": attrs.status});
-        if(statiTamponi!=null){
-            statiTamponi.forEach(element => {
-                let option = $("<option>").attr({ "value": element.id}).text(element.descrizione);
-                el.append(option);
-            });
-        }
-        divFormGroup.append(el);
-
-        form.append(divFormGroup);
-
-        modalBody.append(form);
-        modalContent.append(modalBody);
-
-        el = $("<button>").addClass("btn").addClass("btn-primary").text("Conferma").attr({ "onClick": fun1 });
-        modalFooter.append(el);
-        el = $("<button>").addClass("btn").addClass("btn-secondary").text("Annulla").attr({ "onClick": fun2});
-        modalFooter.append(el);
-        modalContent.append(modalFooter);
-
-        modalDialog.append(modalContent);
-        modal.append(modalDialog);
     }
+    $("#tamponeUpload").html("");
+    let modal = $("#tamponeUpload").addClass("modal")/*.addClass("fade")*/.attr({ "id": "tamponeUpload", "tabindex": "-1", "role": "dialog", "aria-labelledby": attrs.titleId, "aria-hidden": "true" });
+    let modalDialog = $("<div>").addClass("modal-dialog").attr({ "role": "document" });
+    let modalContent = $("<div>").addClass("modal-content");
+    let modalHeader = $("<div>").addClass("modal-header");
+    let modalBody = $("<div>").addClass("modal-body");
+    let modalFooter = $("<div>").addClass("modal-footer");
 
-    function cleanTamponeEdit(){
-        $("#idTamponeEdit").val('');
-        $("#statusTamponeEdit").val('');
-        $("#tamponeEdit").hide();
+    let el = $("<h5>").addClass("modal-title").attr({ "id": attrs.titleId }).html(attrs.titleText);
+    modalHeader.append(el);
+    modalContent.append(modalHeader);
+
+    let form = $("<form>");
+    let divFormGroup = $("<div>").addClass("form-group");
+    el = $("<input>").attr({ "type": "hidden", "id": attrs.idTampone });
+    divFormGroup.append(el);
+    el = $("<label>").attr({ "for": attrs.roleId }).text("Nuovo stato");
+    divFormGroup.append(el);
+    el = $("<select>").addClass('user-input-form').addClass("form-control").attr({ "id": attrs.status });
+    if (statiTamponi != null) {
+        statiTamponi.forEach(element => {
+            let option = $("<option>").attr({ "value": element.id }).text(element.descrizione);
+            el.append(option);
+        });
     }
+    divFormGroup.append(el);
 
-    function getStatiTamponi(toBeCompleted) {
+    form.append(divFormGroup);
+
+    modalBody.append(form);
+    modalContent.append(modalBody);
+
+    el = $("<button>").addClass("btn").addClass("btn-primary").text("Conferma").attr({ "onClick": fun1 });
+    modalFooter.append(el);
+    el = $("<button>").addClass("btn").addClass("btn-secondary").text("Annulla").attr({ "onClick": fun2 });
+    modalFooter.append(el);
+    modalContent.append(modalFooter);
+
+    modalDialog.append(modalContent);
+    modal.append(modalDialog);
+}
+
+function cleanTamponeEdit() {
+    $("#idTamponeEdit").val('');
+    $("#statusTamponeEdit").val('');
+    $("#tamponeEdit").hide();
+}
+
+function getStatiTamponi(toBeCompleted) {
+    let xhr = new XMLHttpRequest();
+    let url = "be/getStatiTamponi.php";
+    xhr.open("POST", url, true);
+    xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState === 4 && xhr.status === 200) {
+            let result = JSON.parse(xhr.responseText);
+            if (result.status == "OK") {
+                toBeCompleted.statiTamponi = true;
+                statiTamponi = result.data;
+            } else {
+                Swal.fire({
+                    text: "C'è un problema con il recupero degli stati tamponi.",
+                    icon: 'error',
+                    showCancelButton: false,
+                    confirmButtonColor: '#3085d6',
+                    confirmButtonText: 'Ok'
+                });
+                tipologie = null;
+            }
+        }
+    }
+    xhr.send();
+}
+
+function buildUpLoadTamponiForm() {
+
+    fun1 = 'uploadExcelTamponi()'
+    fun2 = '$("#tamponeUpload").hide()';
+    attrs = {
+        status: "statusTamponeUpload",
+        file: "uploadTamponiFile",
+        fileText: "File da caricare",
+        statusText: "Stato di default"
+
+    }
+    $("#tamponeUpload").html("");
+    let modal = $("#tamponeUpload").addClass("modal")/*.addClass("fade")*/.attr({ "id": "tamponeUpload", "tabindex": "-1", "role": "dialog", "aria-labelledby": attrs.titleId, "aria-hidden": "true" });
+    let modalDialog = $("<div>").addClass("modal-dialog").attr({ "role": "document" });
+    let modalContent = $("<div>").addClass("modal-content");
+    let modalHeader = $("<div>").addClass("modal-header");
+    let modalBody = $("<div>").addClass("modal-body");
+    let modalFooter = $("<div>").addClass("modal-footer");
+
+    let el = $("<h5>").addClass("modal-title").attr({ "id": attrs.titleId }).html(attrs.titleText);
+    modalHeader.append(el);
+    modalContent.append(modalHeader);
+
+    let form = $("<form>").attr({ "id": "formFiles" });
+    let divFormGroup = $("<div>").addClass("form-group");
+    el = $("<label>").addClass("form-label").attr({ "for": attrs.file }).text(attrs.fileText);
+    divFormGroup.append(el);
+    el = $("<input>").addClass("form-control").attr({ "id": attrs.file, "type": "file", "name":"files", "accept":".xls, .xlsx, .csv"});
+    divFormGroup.append(el);
+    el = $("<label>").attr({ "for": attrs.status }).text(attrs.statusText);
+    divFormGroup.append(el);
+    el = $("<select>").addClass('user-input-form').addClass("form-control").attr({ "id": attrs.status });
+    if (statiTamponi != null) {
+        statiTamponi.forEach(element => {
+            let option = $("<option>").attr({ "value": element.id }).text(element.descrizione);
+            el.append(option);
+        });
+    }
+    divFormGroup.append(el);
+
+    form.append(divFormGroup);
+
+    modalBody.append(form);
+    modalContent.append(modalBody);
+
+    el = $("<button>").addClass("btn").addClass("btn-primary").text("Conferma").attr({ "onClick": fun1 });
+    modalFooter.append(el);
+    el = $("<button>").addClass("btn").addClass("btn-secondary").text("Annulla").attr({ "onClick": fun2 });
+    modalFooter.append(el);
+    modalContent.append(modalFooter);
+
+    modalDialog.append(modalContent);
+    modal.append(modalDialog);
+}
+
+function uploadExcelTamponi() {
+    var f = $("#uploadTamponiFile").prop("files");
+    if (f == undefined || f.length==0) {
+        Swal.fire({
+            text: "Nessun file da caricare.",
+            icon: 'error',
+            showCancelButton: false,
+            confirmButtonColor: '#3085d6',
+            confirmButtonText: 'Ok'
+        });
+    } else {
+        var formData = new FormData();
+        formData.append("status", $("#statusTamponeUpload").val());
+        formData.append("files", f.length);
+        formData.append("file" , f[0]);
         let xhr = new XMLHttpRequest();
-        let url = "be/getStatiTamponi.php";
+        let url = "be/caricaExcelTamponi.php";
         xhr.open("POST", url, true);
-        xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-    
+        // xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+
         xhr.onreadystatechange = function () {
             if (xhr.readyState === 4 && xhr.status === 200) {
                 let result = JSON.parse(xhr.responseText);
                 if (result.status == "OK") {
-                    toBeCompleted.statiTamponi = true;
-                    statiTamponi = result.data;
+                    $("#loader").hide();
+                    Swal.fire({
+                        text: JSON.stringify(result.report),
+                        icon: 'info',
+                        showCancelButton: false,
+                        confirmButtonColor: '#3085d6',
+                        confirmButtonText: 'Ok'
+                    });
+                    
                 } else {
                     Swal.fire({
-                        text: "C'è un problema con il recupero degli stati tamponi.",
+                        text: "C'è un problema con il caricamento dei tamponi.",
                         icon: 'error',
                         showCancelButton: false,
                         confirmButtonColor: '#3085d6',
                         confirmButtonText: 'Ok'
                     });
-                    tipologie = null;
                 }
             }
         }
-        xhr.send();
+        $("#loader").show();
+        xhr.send(formData);
+        event.preventDefault();
     }
 
-    function buildUpLoadTamponiForm() {
-
-        fun1 = 'alert("carico");'
-        fun2 = '$("#tamponeUpload").hide()';
-        attrs = {
-            status: "statusTamponeUpload",
-            file: "uploadTamponiFile",
-            fileText: "File da caricare",
-            statusText: "Stato di default"
-            
-        }
-        $("#tamponeUpload").html("");
-        let modal = $("#tamponeUpload").addClass("modal")/*.addClass("fade")*/.attr({ "id": "tamponeUpload", "tabindex": "-1", "role": "dialog", "aria-labelledby": attrs.titleId, "aria-hidden": "true" });
-        let modalDialog = $("<div>").addClass("modal-dialog").attr({ "role": "document" });
-        let modalContent = $("<div>").addClass("modal-content");
-        let modalHeader = $("<div>").addClass("modal-header");
-        let modalBody = $("<div>").addClass("modal-body");
-        let modalFooter = $("<div>").addClass("modal-footer");
-
-        let el = $("<h5>").addClass("modal-title").attr({ "id": attrs.titleId }).html(attrs.titleText);
-        modalHeader.append(el);
-        modalContent.append(modalHeader);
-
-        let form = $("<form>");
-        let divFormGroup = $("<div>").addClass("form-group");
-        el = $("<label>").addClass("form-label").attr({ "for": attrs.file }).text(attrs.fileText);
-        divFormGroup.append(el);
-        el = $("<input>").addClass("form-control").attr({ "id": attrs.file, "type":"file" });
-        divFormGroup.append(el);
-        el = $("<label>").attr({ "for": attrs.status }).text(attrs.statusText);
-        divFormGroup.append(el);
-        el = $("<select>").addClass('user-input-form').addClass("form-control").attr({ "id": attrs.status});
-        if(statiTamponi!=null){
-            statiTamponi.forEach(element => {
-                let option = $("<option>").attr({ "value": element.id}).text(element.descrizione);
-                el.append(option);
-            });
-        }
-        divFormGroup.append(el);
-
-        form.append(divFormGroup);
-
-        modalBody.append(form);
-        modalContent.append(modalBody);
-
-        el = $("<button>").addClass("btn").addClass("btn-primary").text("Conferma").attr({ "onClick": fun1 });
-        modalFooter.append(el);
-        el = $("<button>").addClass("btn").addClass("btn-secondary").text("Annulla").attr({ "onClick": fun2});
-        modalFooter.append(el);
-        modalContent.append(modalFooter);
-
-        modalDialog.append(modalContent);
-        modal.append(modalDialog);
-    }
+}
