@@ -10,7 +10,7 @@
         public $nascita;
         public $email;
         public $indirizzo;
-        public $codicefiscale;
+        public $codiceFiscale;
         public $note;
         public $isactive;
         public $usca;
@@ -43,7 +43,7 @@
             $this->indirizzo=$val;
         }
         function setCodiceFiscale($val){
-            $this->codicefiscale=$val;
+            $this->codiceFiscale=$val;
         }
         function setNote($val){
             $this->note=$val;
@@ -83,7 +83,7 @@
             return $this->indirizzo;
         }
         function getCodiceFiscale(){
-            return $this->codicefiscale;
+            return $this->codiceFiscale;
         }
         function getnote(){
             return $this->note;
@@ -123,6 +123,7 @@
                                 a.telefono2 AS telefono2,
                                 a.nascita AS nascita,
                                 a.id_usca AS id_usca,
+                                a.note AS note,
                                 u.descrizione AS usca
                             FROM
                                 `assistiti` AS a
@@ -140,7 +141,7 @@
                             $results=$stmt->fetchAll(PDO::FETCH_ASSOC);
                             foreach($results as $res){
                                 $assistito = new Assistito();
-                                $assistito->setId($res['id']);
+                                $assistito->setId($res['id_assistito']);
                                 $assistito->setIdUsca($res['id_usca']);
                                 $assistito->setNome($res['nome']);
                                 $assistito->setCognome($res['cognome']);

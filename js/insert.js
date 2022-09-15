@@ -6,7 +6,6 @@ function buildInsertForm(target) {
             tar = "#insert";
             fun1 = "inserisci()";
             fun2 = "cleanInsert()";
-            fun3 = "aggiungiNota";
             attrs = {
                 idAssistito: "idAssistito",
                 nome: "nome",
@@ -15,12 +14,14 @@ function buildInsertForm(target) {
                 indirizzo: "indirizzo",
                 codiceFiscale: "codiceFiscale",
                 noteAssistito: "noteAssistito",
-                telefono: "telefono",
+                telefono1: "telefono1",
+                telefono2: "telefono2",
                 idRichiesta: "idRichiesta",
                 idTipologia: "idTipologia",
                 idPriorita: "idPriorita",
                 data: "data",
                 noteRichiesta: "noteRichiesta",
+                noteRichiestaText: "Note",
                 pulsante: "aggiungiNota",
                 pulsanteText: "Aggiungi nota",
                 titleId: "modalTitle",
@@ -32,7 +33,6 @@ function buildInsertForm(target) {
             tar = "#edit";
             fun1 = "aggiorna()";
             fun2 = "cleanEdit()";
-            fun3 = "archiviaRichiesta";
             attrs = {
                 idAssistito: "idAssistitoEdit",
                 nome: "nomeEdit",
@@ -41,12 +41,12 @@ function buildInsertForm(target) {
                 indirizzo: "indirizzoEdit",
                 codiceFiscale: "codiceFiscaleEdit",
                 noteAssistito: "noteAssistitoEdit",
-                telefono: "telefonoEdit",
+                telefono1: "telefono1Edit",
+                telefono2: "telefono2Edit",
                 idRichiesta: "idRichiestaEdit",
                 idTipologia: "idTipologiaEdit",
                 idPriorita: "idPrioritaEdit",
                 data: "dataEdit",
-                noteRichiesta: "noteRichiestaEdit",
                 titleId: "editModalTitle",
                 titleText: "Modifica richiesta"
             }
@@ -96,9 +96,14 @@ function buildInsertForm(target) {
         el = $("<input>").addClass("form-richiesta").addClass("form-control").attr({ "type": "email", "id": attrs.email }).prop("readonly", true);
         divFormGroup.append(el);
 
-        el = $("<label>").attr({ "for": attrs.telefono }).text("Telefono");
+        el = $("<label>").attr({ "for": attrs.telefono1 }).text("Telefono");
         divFormGroup.append(el);
-        el = $("<input>").addClass("form-richiesta").addClass("form-control").attr({ "type": "text", "id": attrs.telefono }).prop("readonly", true);
+        el = $("<input>").addClass("form-richiesta").addClass("form-control").attr({ "type": "text", "id": attrs.telefono1 }).prop("readonly", true);
+        divFormGroup.append(el);
+
+        el = $("<label>").attr({ "for": attrs.telefono2 }).text("Telefono");
+        divFormGroup.append(el);
+        el = $("<input>").addClass("form-richiesta").addClass("form-control").attr({ "type": "text", "id": attrs.telefono2 }).prop("readonly", true);
         divFormGroup.append(el);
 
         el = $("<label>").attr({ "for": attrs.idTipologia }).text("Tipo di richiesta");
@@ -139,17 +144,20 @@ function buildInsertForm(target) {
 
         form.append(divFormGroup);
 
-        if (attrs.hasOwnProperty("pulsante")) {
-            divFormGroup = $("<div>").addClass("form-group");
-            el = $("<button>").addClass("btn").addClass("btn-primary").text(attrs.pulsanteText).attr({ "id": attrs.pulsante, "onClick": fun3 });
+        // if (attrs.hasOwnProperty("pulsante")) {
+        //     divFormGroup = $("<div>").addClass("form-group");
+        //     el = $("<button>").addClass("btn").addClass("btn-primary").text(attrs.pulsanteText).attr({ "id": attrs.pulsante, "onClick": fun3 });
+        //     divFormGroup.append(el);
+        //     form.append(divFormGroup);
+        // }
+
+        if (attrs.hasOwnProperty("noteRichiesta")) {
+            el = $("<label>").attr({ "for": attrs.noteRichiesta }).text(attrs.noteRichiestaText);
             divFormGroup.append(el);
-            form.append(divFormGroup);
+            el = $("<textarea>").addClass("form-richiesta").addClass("form-control").attr({ "type": "hidden", "id": attrs.noteRichiesta });
+            divFormGroup.append(el);
         }
-
-        el = $("<textarea>").addClass("form-richiesta").addClass("form-control").attr({ "type": "hidden", "id": attrs.noteRichiesta }).prop("readonly", true);
-        divFormGroup.append(el);
         form.append(divFormGroup);
-
         modalBody.append(form);
         modalContent.append(modalBody);
 

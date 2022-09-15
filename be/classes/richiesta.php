@@ -342,14 +342,12 @@ class Richiesta
                                 `id_assistito`,
                                 `id_tipologia`,
                                 `id_priorita`,
-                                `id_usca`,
                                 `data`,
                                 `note`,
                                 `created_by`
                             ) VALUES (:id_assistito,
                                 :id_tipologia,
                                 :id_priorita,
-                                :id_usca,
                                 :data,
                                 :note,
                                 :created_by)";
@@ -358,13 +356,12 @@ class Richiesta
                             $stmt->bindParam(':id_assistito', $this->idAssistito, PDO::PARAM_INT);
                             $stmt->bindParam(':id_tipologia', $this->idTipologia, PDO::PARAM_INT);
                             $stmt->bindParam(':id_priorita', $this->idPriorita, PDO::PARAM_INT);
-                            $stmt->bindParam(':id_usca', $this->idUsca, PDO::PARAM_INT);
                             $stmt->bindParam(':data', $this->data, PDO::PARAM_STR);
                             $stmt->bindParam(':note', $this->note, PDO::PARAM_STR);
                             $stmt->bindParam(':created_by', $this->createdBy, PDO::PARAM_INT);
 
                             $stmt->execute();
-
+                            
                             $this->setId($conn->lastInsertId());
 
                             if ($this->id != 0) {

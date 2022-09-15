@@ -56,8 +56,8 @@
             buildLogin();
         }
         window.addEventListener('dataLoaded', function() {
-            // buildInsertForm("insert");
-            // buildEditForm("edit");
+            buildInsertForm("insert");
+            buildEditForm("edit");
             // buildUserInsertForm("insertUser");
             // buildUserEditForm("editUser");
             // buildAssistitoInsertForm("insertAssistito");

@@ -45,26 +45,31 @@ function showRequests(richieste, user) {
             },
 
             { title: "#", field: "idAssistito", width: 5, editor: false, hozAlign: "center", visible: checkUserPermission(user, "canViewId") },
+            // {
+            //     columns: [
+            //         {
+            //             title: "", width: 8, hozAlign: "center", editor: false, visible: checkUserPermission(user, "canEditAssistito"), cellClick: checkUserPermission(user, "canEditAssistito") ? showAssistitoUpdate : null, formatter: function (cell, formatterParams, onRendered) {
+
+            //                 return '<span class="material-icons-outlined" style="color: green">edit</span>';
+            //             }, headerSort: false
+            //         },
+            //         {
+            //             title: "", width: 8, hozAlign: "center", editor: false, visible: checkUserPermission(user, "canDeleteAssistito"), cellClick: checkUserPermission(user, "canDeleteAssistito") ? deleteElement : null, formatter: function (cell, formatterParams, onRendered) {
+
+            //                 return '<span class="material-icons-outlined" style="color: red">delete</span>';
+            //             }, headerSort: false
+            //         },
+            //         {
+            //             title: "", width: 8, field: "noteAssistito", editor: false, cellClick: cellPopupFormatterNoteAssistito, formatter: function (cell, formatterParams, onRendered) {
+            //                 return (cell.getValue() == null) ? '' : '<span class="material-icons-outlined">notes</span>';
+            //             }, headerSort: false
+            //         },
+            //     ]
+            // },
             {
-                columns: [
-                    {
-                        title: "", width: 8, hozAlign: "center", editor: false, visible: checkUserPermission(user, "canEditAssistito"), cellClick: checkUserPermission(user, "canEditAssistito") ? showAssistitoUpdate : null, formatter: function (cell, formatterParams, onRendered) {
-
-                            return '<span class="material-icons-outlined" style="color: green">edit</span>';
-                        }, headerSort: false
-                    },
-                    {
-                        title: "", width: 8, hozAlign: "center", editor: false, visible: checkUserPermission(user, "canDeleteAssistito"), cellClick: checkUserPermission(user, "canDeleteAssistito") ? deleteElement : null, formatter: function (cell, formatterParams, onRendered) {
-
-                            return '<span class="material-icons-outlined" style="color: red">delete</span>';
-                        }, headerSort: false
-                    },
-                    {
-                        title: "", width: 8, field: "noteAssistito", editor: false, cellClick: cellPopupFormatterNoteAssistito, formatter: function (cell, formatterParams, onRendered) {
-                            return (cell.getValue() == null) ? '' : '<span class="material-icons-outlined">notes</span>';
-                        }, headerSort: false
-                    },
-                ]
+                title: "", width: 8, field: "noteAssistito", editor: false, cellClick: cellPopupFormatterNoteAssistito, formatter: function (cell, formatterParams, onRendered) {
+                    return (cell.getValue() == null) ? '' : '<span class="material-icons-outlined">notes</span>';
+                }, headerSort: false
             },
 
             { title: "Cognome", width: 150, field: "cognome", editor: false, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
@@ -178,7 +183,10 @@ function inserisci() {
         richiesta.idTipologia = $("#idTipologia").val();
         richiesta.idPriorita = $("#idPriorita").val();
         richiesta.data = $("#data").val();
-        richiesta.note = $("#noteRichiesta").val().trim();
+        note = [];
+        nota = ($("#noteRichiesta").val().trim() != "") ? { "date": (new luxon.DateTime.fromJSDate(new Date())).toFormat("yyyy-MM-dd HH:mm:ss"), "note": $("#noteRichiesta").val().trim(), "createdBy": loggedUser.id } : {};
+        note.push(nota);
+        richiesta.note = JSON.stringify(note);
         richiesta.createdBy = "" + loggedUser.id;
 
         let err = checkDatiObbligatori(richiesta);
@@ -293,7 +301,7 @@ function aggiorna() {
 var showElementUpdate = function (e, row) {
     $("#edit").show();
     var element = row.getData();
-    $("#idAssistitoEdito").val(element.idAssistito);
+    $("#idAssistitoEdit").val(element.idAssistito);
     $("#nomeEdit").val(element.nome);
     $("#cognomeEdit").val(element.cognome);
     $("#emailEdit").val(element.email);
@@ -511,7 +519,7 @@ var cellPopupFormatter = function (title, text) {
 
 function checkDatiObbligatori(richiesta) {
     let out = '';
-    if (richiesta.data == null) {
+    if (richiesta.data == null || richiesta.data == "") {
         out += "La data è obbligatoria\n";
     }
     return out;
@@ -544,14 +552,15 @@ function checkAndShowMessage(result) {
 
 var newRequest = function (e, row) {
     var element = row.getData();
-    $("#idAssistito").val(element.idAssistito);
+    $("#idAssistito").val((element.hasOwnProperty("idAssistito")) ? element.idAssistito : element.id);
     $("#nome").val(element.nome);
     $("#cognome").val(element.cognome);
     $("#email").val(element.email);
     $("#indirizzo").val(element.indirizzo);
     $("#codiceFiscale").val(element.codiceFiscale);
     $("#noteAssistito").val(element.noteAssistito);
-    $("#telefono").val(element.telefono);
+    $("#telefono1").val(element.telefono1);
+    $("#telefono2").val(element.telefono2);
     $("#insert").show();
 
 }
@@ -658,7 +667,7 @@ var buildNoteRichiestaModal = function (e, row) {
     modal.append(modalDialog);
     var table = new Tabulator("#elencoNote", {
         data: noteRichiesta,           //load row data from array
-        layout: "fitData",      //fit columns to width of table
+        layout: "fitColumns",      //fit columns to width of table
         responsiveLayout: "collapse",  //hide columns that dont fit on the table
         addRowPos: "top",          //when adding a new row, add it to the top of the table
         history: true,             //allow undo and redo actions on the table
@@ -675,7 +684,7 @@ var buildNoteRichiestaModal = function (e, row) {
                 }, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like"
             },
 
-            { title: "Nota", field: "nota", editor: false, hozAlign: "center" },
+            { title: "Nota", field: "note", editor: false, hozAlign: "center" },
         ]
     });
     $("#nuovaNota").hide();
@@ -692,14 +701,15 @@ function salvaNote() {
     var newNoteDate = $("#nuovaNotaDate").val() + " 00:00:00";
     var newNoteText = $("#nuovaNotaText").val();
     if (newNoteDate != "" && newNoteText.trim() != "") {
-        var actualNotes = JSON.parse($("#noteRichiestaAttuali").val());
-        var newNoteObject = {};
-        newNoteObject.date = newNoteDate,
-            newNoteObject.nota = newNoteText;
-        actualNotes.push(newNoteObject);
         let lu = localStorage.getItem("ricdomloggeduser");
         if (lu != null) {
             loggedUser = JSON.parse(lu);
+            var actualNotes = JSON.parse($("#noteRichiestaAttuali").val());
+            var newNoteObject = {};
+            newNoteObject.date = newNoteDate,
+                newNoteObject.note = newNoteText;
+            newNoteObject.createdBy = loggedUser.id;
+            actualNotes.push(newNoteObject);
             let username = loggedUser.username;
             let token = "123456";
             let richiesta = {};
