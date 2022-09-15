@@ -20,7 +20,7 @@
         }
 
         public function setPassword($val){
-            $this->password=$password=hash("sha256",$val);
+            $this->password=hash("sha256",$val);
         }
 
         public function getPassword(){
