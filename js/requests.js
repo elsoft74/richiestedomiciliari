@@ -78,14 +78,19 @@ function showRequests(richieste, user) {
                 }
             },
             { title: "Codice Fiscale", field: "codiceFiscale", editor: false, hozAlign: "center", headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
-            { title: "Telefono", field: "telefono", editor: false, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
-            { title: "e-mail", field: "email", editor: false, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
+            {
+                columns: [
+                    { title: "", field: "telefono1", editor: false, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
+                    { title: "", field: "telefono2", editor: false, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
+                    { title: "", field: "email", editor: false, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
+                ]
+            },
             { title: "Indirizzo", width: 150, field: "indirizzo", formatter: "textarea", editor: false, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
             // (checkUserPermission(user, "canViewAllRequests")) ?
             {
                 title: "Usca", field: "usca", editor: false, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like"
             },
-            
+
             {
                 columns: [
                     {
@@ -364,7 +369,7 @@ var archiveElement = function (e, row) {
     var element = row.getData();
     Swal.fire({
         title: 'Sicuro?',
-        text: "Confermando "+((element.isArchived)?"ripristinerai":"archivierai")+" la scheda con id " + element.idRichiesta + " di:" + element.nome + " " + element.cognome + "\n" + element.codiceFiscale + "\n" + "Prevista per il:" + element.data,
+        text: "Confermando " + ((element.isArchived) ? "ripristinerai" : "archivierai") + " la scheda con id " + element.idRichiesta + " di:" + element.nome + " " + element.cognome + "\n" + element.codiceFiscale + "\n" + "Prevista per il:" + element.data,
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#3085d6',
@@ -383,7 +388,7 @@ var archiveElement = function (e, row) {
                 richiesta.archivedBy = "" + loggedUser.id;
 
                 let xhr = new XMLHttpRequest();
-                let url = (element.isArchived)?"be/unArchiveRequest.php":"be/archiveRequest.php";
+                let url = (element.isArchived) ? "be/unArchiveRequest.php" : "be/archiveRequest.php";
                 xhr.open("POST", url, true);
                 xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
                 xhr.onreadystatechange = function () {
@@ -589,7 +594,7 @@ function updateTableData() {
     }
 }
 
-var buildNoteRichiestaModal = function(e,row) {
+var buildNoteRichiestaModal = function (e, row) {
     var data = row.getData();
     var noteRichiesta = null;
     try {
@@ -610,7 +615,7 @@ var buildNoteRichiestaModal = function(e,row) {
     modalContent.append(modalHeader);
 
     let form = $("<form>");
-    let div1=$("<div>");
+    let div1 = $("<div>");
     el = $("<input>").attr({ "type": "hidden", "id": "idRichiestaNuovaNota" }).val(data.idRichiesta);
     form.append(el);
     el = $("<input>").attr({ "type": "hidden", "id": "noteRichiestaAttuali" }).val(JSON.stringify(noteRichiesta));
@@ -682,58 +687,58 @@ function mostraFormNuovaNota() {
     $("#aggiungiNotaButton").hide();
 }
 
-function salvaNote(){
+function salvaNote() {
     event.preventDefault();
-    var newNoteDate = $("#nuovaNotaDate").val()+" 00:00:00";
+    var newNoteDate = $("#nuovaNotaDate").val() + " 00:00:00";
     var newNoteText = $("#nuovaNotaText").val();
-    if (newNoteDate!="" && newNoteText.trim()!=""){
+    if (newNoteDate != "" && newNoteText.trim() != "") {
         var actualNotes = JSON.parse($("#noteRichiestaAttuali").val());
         var newNoteObject = {};
         newNoteObject.date = newNoteDate,
-        newNoteObject.nota = newNoteText;
+            newNoteObject.nota = newNoteText;
         actualNotes.push(newNoteObject);
         let lu = localStorage.getItem("ricdomloggeduser");
-            if (lu != null) {
-                loggedUser = JSON.parse(lu);
-                let username = loggedUser.username;
-                let token = "123456";
-                let richiesta = {};
-                richiesta.id = $("#idRichiestaNuovaNota").val();
-                richiesta.note = actualNotes;
-                let xhr = new XMLHttpRequest();
-                let url = "be/updateRequestNote.php";
-                xhr.open("POST", url, true);
-                xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-                let ready = false;
-                xhr.onreadystatechange = function () {
-                    if (xhr.readyState === 4 && xhr.status === 200) {
-                        result = JSON.parse(xhr.responseText);
-                        if (result.status == "OK") {
-                            Swal.fire({
-                                text: "Operazione compeltata.",
-                                icon: 'info',
-                                showCancelButton: false,
-                                confirmButtonColor: '#3085d6',
-                                confirmButtonText: 'Ok'
-                            }).then((result) => {
-                                if (result.isConfirmed) {
-                                    $("#modalNoteRichiesta").hide();
-                                }
-                            })
-                        } else {
-                            Swal.fire({
-                                text: "Errore durante l'aggiornamento.",
-                                icon: 'error',
-                                showCancelButton: false,
-                                confirmButtonColor: '#3085d6',
-                                confirmButtonText: 'Ok'
-                            })
-                        }
+        if (lu != null) {
+            loggedUser = JSON.parse(lu);
+            let username = loggedUser.username;
+            let token = "123456";
+            let richiesta = {};
+            richiesta.id = $("#idRichiestaNuovaNota").val();
+            richiesta.note = actualNotes;
+            let xhr = new XMLHttpRequest();
+            let url = "be/updateRequestNote.php";
+            xhr.open("POST", url, true);
+            xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+            let ready = false;
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    result = JSON.parse(xhr.responseText);
+                    if (result.status == "OK") {
+                        Swal.fire({
+                            text: "Operazione compeltata.",
+                            icon: 'info',
+                            showCancelButton: false,
+                            confirmButtonColor: '#3085d6',
+                            confirmButtonText: 'Ok'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                $("#modalNoteRichiesta").hide();
+                            }
+                        })
+                    } else {
+                        Swal.fire({
+                            text: "Errore durante l'aggiornamento.",
+                            icon: 'error',
+                            showCancelButton: false,
+                            confirmButtonColor: '#3085d6',
+                            confirmButtonText: 'Ok'
+                        })
                     }
                 }
-                xhr.send("username=" + username + "&token=" + token + "&richiesta=" + JSON.stringify(richiesta));
             }
-        
+            xhr.send("username=" + username + "&token=" + token + "&richiesta=" + JSON.stringify(richiesta));
+        }
+
     } else {
         Swal.fire({
             text: "Data e testo sono obbligatori",

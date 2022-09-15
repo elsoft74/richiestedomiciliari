@@ -180,7 +180,8 @@ class Tampone
                     a.codicefiscale AS codicefiscale,
                     a.note AS note_assistito,
                     a.is_active AS assistito_is_active,
-                    a.telefono AS telefono,
+                    a.telefono1 AS telefono1,
+                    a.telefono2 AS telefono2,
                     a.nascita AS nascita,
                     a.id_usca AS id_usca,
                     t.id as id_tampone,
@@ -213,7 +214,8 @@ class Tampone
                         $tmp->nome=$r['nome'];
                         $tmp->cognome=$r['cognome'];
                         $tmp->email=$r['email'];
-                        $tmp->telefono=$r['telefono'];
+                        $tmp->telefono1=$r['telefono1'];
+                        $tmp->telefono2=$r['telefono2'];
                         $tmp->indirizzo=$r['indirizzo'];
                         $tmp->codiceFiscale=$r['codicefiscale'];
                         $tmp->noteAssistito=$r['note_assistito'];

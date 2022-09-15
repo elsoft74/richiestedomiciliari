@@ -91,7 +91,8 @@ function loadData() {
         swabs: false,
         ruoli: false,
         usca: false,
-        statiTamponi: false
+        statiTamponi: false,
+        assistiti: false
     };
     priorita = null;
     tipologie = null;
@@ -103,6 +104,7 @@ function loadData() {
     getTipologie(toBeCompleted);
     getUsca(toBeCompleted);
     getStatiTamponi(toBeCompleted);
+    getAssistiti(toBeCompleted);
     //readRequests(toBeCompleted);
     //readSwabs(toBeCompleted);
     getData(toBeCompleted);
@@ -177,6 +179,7 @@ function changeActivity(val){
     $(".swabs-form").hide();
     $(".users-form").hide();
     $(".requests-form").hide();
+    $(".assistiti-form").hide();
     switch(val){
         case "requests":
             $(".requests-form").show();
@@ -186,6 +189,9 @@ function changeActivity(val){
             break;
         case "users":
             $(".users-form").show();
+            break;
+        case "assistiti":
+            $(".assistiti-form").show();
             break;
     }
     localStorage.setItem("activity",val);

@@ -198,7 +198,8 @@ class Richiesta
                     a.codicefiscale AS codicefiscale,
                     a.note AS note_assistito,
                     a.is_active AS assistito_is_active,
-                    a.telefono AS telefono,
+                    a.telefono1 AS telefono1,
+                    a.telefono2 AS telefono2,
                     a.nascita AS nascita,
                     a.id_usca AS id_usca,
                     r.id as id_richiesta,
@@ -215,7 +216,7 @@ class Richiesta
                     u.descrizione AS usca,
                     t.descrizione AS tipologia,
                     p.descrizione AS priorita
-                    FROM `assistiti` AS a LEFT JOIN `richieste` AS r ON a.id=r.id_assistito
+                    FROM `assistiti` AS a JOIN `richieste` AS r ON a.id=r.id_assistito
                     LEFT JOIN `usca` AS u ON a.id_usca=u.id
                     LEFT JOIN `tipologie` AS t ON r.id_tipologia=t.id
                     LEFT JOIN `priorita` AS p ON r.id_priorita=p.id
@@ -238,7 +239,8 @@ class Richiesta
                         $tmp->nome=$r['nome'];
                         $tmp->cognome=$r['cognome'];
                         $tmp->email=$r['email'];
-                        $tmp->telefono=$r['telefono'];
+                        $tmp->telefono1=$r['telefono1'];
+                        $tmp->telefono2=$r['telefono2'];
                         $tmp->indirizzo=$r['indirizzo'];
                         $tmp->codiceFiscale=$r['codicefiscale'];
                         $tmp->noteAssistito=$r['note_assistito'];
@@ -281,7 +283,8 @@ class Richiesta
                         $tmp->nome=$r['nome'];
                         $tmp->cognome=$r['cognome'];
                         $tmp->email=$r['email'];
-                        $tmp->telefono=$r['telefono'];
+                        $tmp->telefono1=$r['telefono1'];
+                        $tmp->telefono2=$r['telefono2'];
                         $tmp->indirizzo=$r['indirizzo'];
                         $tmp->codiceFiscale=$r['codicefiscale'];
                         $tmp->noteAssistito=$r['note_assistito'];

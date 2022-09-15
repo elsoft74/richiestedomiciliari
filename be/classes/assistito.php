@@ -13,12 +13,16 @@
         public $codicefiscale;
         public $note;
         public $isactive;
+        public $usca;
 
         function setId($val){
             $this->id=$val;
         }
         function setIdUsca($val){
             $this->idUsca=$val;
+        }
+        function setUsca($val){
+            $this->usca=$val;
         }
         function setNome($val){
             $this->nome=$val;
@@ -57,6 +61,9 @@
         function getIdUsca(){
             return $this->idUsca;
         }
+        function getUsca(){
+            return $this->usca;
+        }
         function getNome(){
             return $this->nome;
         }
@@ -88,21 +95,45 @@
             return $this->nascita;
         }
 
-        public static function getAssistiti($username,$token){
+        public static function getAssistiti(/*$username,$token*/){
             $out = new stdClass();
             $out->status="KO";
             $out->data=[];
             try {
                 $conn=DB::conn();
                 if ($conn!=null){
-                    try {
+                    try {/*
                         $query="SELECT is_active, role_id FROM `users` AS u WHERE u.username=:username";
                         $stmt = $conn->prepare($query);
                         $stmt->bindParam(':username',$username,PDO::PARAM_STR);
                         $stmt->execute();
                         $res=$stmt->fetch(PDO::FETCH_ASSOC);
-                        if (User::checkToken($token) && $res && $res['is_active']==1 AND User::checkCanCreateUser($res['role_id'])){
-                            $query="SELECT * FROM `assistiti`";
+                        if (User::checkToken($token) && $res && $res['is_active']==1 AND User::checkCanCreateUser($res['role_id'])){*/
+
+                            /*"SELECT
+                                a.id AS id_assistito,
+                                a.nome AS nome,
+                                a.cognome AS cognome,
+                                a.email AS email,
+                                a.indirizzo AS indirizzo,
+                                a.codicefiscale AS codicefiscale,
+                                a.note AS note_assistito,
+                                a.is_active AS assistito_is_active,
+                                a.telefono1 AS telefono1,
+                                a.telefono2 AS telefono2,
+                                a.nascita AS nascita,
+                                a.id_usca AS id_usca,
+                                u.descrizione AS usca
+                            FROM
+                                `assistiti` AS a
+                            LEFT JOIN `usca` AS u
+                            ON
+                                a.id_usca = u.id
+                            WHERE
+                                a.is_active = 1"
+                             *
+                             */
+                            $query="SELECT * FROM `vista_assistiti`";
                             
                             $stmt = $conn->prepare($query);
                             $stmt->execute();
@@ -121,12 +152,13 @@
                                 $assistito->setNote($res['note']);
                                 $assistito->setIsActive($res['is_active']==1);
                                 $assistito->setNascita($res['nascita']);
+                                $assistito->setUsca($res['usca']);
                                 array_push($out->data,$assistito);
                             }
                             $out->status="OK";
-                        } else {
+                        /*} else {
                             throw new Exception("OPERAZIONE-NON-PERMESSA");
-                        } 
+                        } */
                     } catch(Exception $ex){
                             $out->error=$ex->getMessage();
                         }
