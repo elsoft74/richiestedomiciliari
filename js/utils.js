@@ -193,6 +193,9 @@ function changeActivity(val){
         case "assistiti":
             $(".assistiti-form").show();
             break;
+        case "home":
+            $(".home-form").show();
+            break;
     }
     localStorage.setItem("activity",val);
 }

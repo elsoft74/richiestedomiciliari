@@ -6,7 +6,7 @@ function showMenu(user) {
         let div1 = $("<div>").addClass("col-10");
         let div2 = $("<div>").addClass("col-1");
         let div3 = $("<div>").addClass("col-1");
-        let button = $("<button>").addClass("btn").addClass("middle").addClass("btn-primary").addClass("btn-block").attr({ "onClick": "logout()" }).text("Esci");
+        let button = $("<button>").addClass("btn middle btn-primary btn-block").attr({ "onClick": "logout()" }).text("Esci");
         let el = $("<span>").addClass("material-icons-outlined").addClass("middle");
         el.text("logout");
         button.append(el);
@@ -20,20 +20,20 @@ function showMenu(user) {
         if(user.permissions.canCreateUser){
             button = $("<button>").addClass('btn btn-primary btn-block users-form').attr({"onClick":'$("#insertUser").show()','id':'userInsertButton'}).text("Nuovo Utente");
             div1.append(button);
-            button = $("<button>").addClass('btn btn-primary btn-block assistiti-form swabs-form requests-form').attr({"onClick":'showUsers()','id':'showUserButton'}).text("Utenti");
+            button = $("<button>").addClass('btn btn-primary btn-block home-form assistiti-form swabs-form requests-form').attr({"onClick":'window.open("users.php","_self")','id':'showUserButton'}).text("Utenti");
             div1.append(button);
         }
         var mostraStorico = JSON.parse(localStorage.getItem("mostraStorico"));
         if (mostraStorico==null) {
             mostraStorico = false;
         }
-        button = $("<button>").addClass('btn btn-primary btn-block requests-form swabs-form users-form').attr({"onClick":'changeActivity("assistiti")','id':'showRequestsButton'}).text("Assistiti").hide();
+        button = $("<button>").addClass('btn btn-primary btn-block home-form requests-form swabs-form users-form').attr({"onClick":'window.open("assistiti.php","_self")','id':'showRequestsButton'}).text("Assistiti").hide();
         div1.append(button);
-        button = $("<button>").addClass('btn btn-primary btn-block assistiti-form swabs-form users-form').attr({"onClick":'changeActivity("requests")','id':'showRequestsButton'}).text("Richieste").hide();
+        button = $("<button>").addClass('btn btn-primary btn-block home-form assistiti-form swabs-form users-form').attr({"onClick":'window.open("index.php","_self")','id':'showRequestsButton'}).text("Richieste").hide();
         div1.append(button);
         button = $("<button>").addClass('btn btn-primary btn-block requests-form').attr({"onClick":'mostraStorico()','id':'mostraStoricoButton'}).text(mostraStorico?"Solo Attuali":"Tutte").hide();
         div1.append(button);
-        button = $("<button>").addClass('btn btn-primary btn-block assistiti-form users-form requests-form').attr({"onClick":'changeActivity("swabs")','id':'mostraTamponiButton'}).text("Tamponi").hide();
+        button = $("<button>").addClass('btn btn-primary btn-block home-form assistiti-form users-form requests-form').attr({"onClick":'window.open("tamponi.php","_self")','id':'mostraTamponiButton'}).text("Tamponi").hide();
         div1.append(button);
         if(user.permissions.canUploadSwabs){
             button = $("<button>").addClass('btn btn-primary btn-block swabs-form').attr({"onClick":'uploadSwabs()','id':'caricaTamponiButton'}).text("Carica Tamponi").hide();

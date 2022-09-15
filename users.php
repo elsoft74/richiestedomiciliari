@@ -36,17 +36,17 @@
 
 <body>
     <div id="menu"></div>
-    <div id="main" class="sections requests-form"></div>
+    <!-- <div id="main" class="sections requests-form"></div> -->
     <!-- <div id="mainSwabs" class="sections swabs-form"></div> -->
-    <div id="insert"></div>
-    <!-- <div id="insertUser"></div> -->
+    <!-- <div id="insert"></div> -->
+    <div id="insertUser"></div>
     <!-- <div id="insertAssistito"></div> -->
     <div id="login" class="sections"></div>
-    <!-- <div id="users" class="sections users-form"></div> -->
-    <div id="edit"></div>
-    <!-- <div id="editUser"></div> -->
+    <div id="users" class="sections users-form"></div>
+    <!-- <div id="edit"></div> -->
+    <div id="editUser"></div>
     <!-- <div id="editAssistito"></div> -->
-    <div id="modalNoteRichiesta"></div>
+    <!-- <div id="modalNoteRichiesta"></div> -->
     <!-- <div id="tamponeEdit"></div> -->
     <!-- <div id="tamponeUpload"></div> -->
     <!-- <div id="assistiti"></div> -->
@@ -58,15 +58,15 @@
         window.addEventListener('dataLoaded', function() {
             // buildInsertForm("insert");
             // buildEditForm("edit");
-            // buildUserInsertForm("insertUser");
-            // buildUserEditForm("editUser");
+            buildUserInsertForm("insertUser");
+            buildUserEditForm("editUser");
             // buildAssistitoInsertForm("insertAssistito");
             // buildAssistitoEditForm("editAssistito");
             showMenu(lu);
-            showRequests(richieste, lu);
+            // showRequests(richieste, lu);
             // showSwabs(swabs,lu);
             // showAssistiti(assistiti,lu);
-            changeActivity("requests");
+            showUsers();
         });
         //window.addEventListener('dataUpdated', updateTableData); 
         window.onload = function() {

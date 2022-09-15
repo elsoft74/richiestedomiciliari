@@ -266,48 +266,48 @@ class Richiesta
                         array_push($out->data, $tmp);
                     }
 
-                    $query = "SELECT * FROM `vista_assistiti` WHERE id_assistito NOT IN (SELECT DISTINCT id_assistito FROM `vista_richieste` WHERE (richiesta_is_active=1 OR richiesta_is_active IS null)";
-                    if (!$arc){
-                        //$query.=" AND (data >= CURRENT_DATE() OR data is null)";
-                        $query.=" AND (is_archived = 0 OR is_archived is null)";
-                    }
-                    $query.=")";
+                    // $query = "SELECT * FROM `vista_assistiti` WHERE id_assistito NOT IN (SELECT DISTINCT id_assistito FROM `vista_richieste` WHERE (richiesta_is_active=1 OR richiesta_is_active IS null)";
+                    // if (!$arc){
+                    //     //$query.=" AND (data >= CURRENT_DATE() OR data is null)";
+                    //     $query.=" AND (is_archived = 0 OR is_archived is null)";
+                    // }
+                    // $query.=")";
 
-                    $stmt = $conn->prepare($query);
-                    $stmt->execute();
+                    // $stmt = $conn->prepare($query);
+                    // $stmt->execute();
 
-                    $res = $stmt->fetchAll(PDO::FETCH_ASSOC);
-                    foreach ($res as $r) {
-                        $tmp = new StdClass();
-                        $tmp->idAssistito=$r['id_assistito'];
-                        $tmp->nome=$r['nome'];
-                        $tmp->cognome=$r['cognome'];
-                        $tmp->email=$r['email'];
-                        $tmp->telefono1=$r['telefono1'];
-                        $tmp->telefono2=$r['telefono2'];
-                        $tmp->indirizzo=$r['indirizzo'];
-                        $tmp->codiceFiscale=$r['codicefiscale'];
-                        $tmp->noteAssistito=$r['note_assistito'];
-                        $tmp->nascita=$r['nascita'];
-                        $tmp->assistitoIsActive=$r['assistito_is_active'];
-                        $tmp->idRichiesta=null;
-                        $tmp->idTipologia=null;
-                        $tmp->idPriorita=null;
-                        $tmp->idUsca=$r['id_usca'];
-                        $tmp->data=null;
-                        $tmp->noteRichiesta=null;
-                        $tmp->richiestaIsActive=null;
-                        $tmp->created=null;
-                        $tmp->createdByNomeCognome=null;
-                        $tmp->last_update=null;
-                        $tmp->lastUpdateByNomeCognome=null;
-                        $tmp->usca=$r['usca'];
-                        $tmp->priorita=null;
-                        $tmp->tipologia=null;
-                        $tmp->isArchived=null;
+                    // $res = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                    // foreach ($res as $r) {
+                    //     $tmp = new StdClass();
+                    //     $tmp->idAssistito=$r['id_assistito'];
+                    //     $tmp->nome=$r['nome'];
+                    //     $tmp->cognome=$r['cognome'];
+                    //     $tmp->email=$r['email'];
+                    //     $tmp->telefono1=$r['telefono1'];
+                    //     $tmp->telefono2=$r['telefono2'];
+                    //     $tmp->indirizzo=$r['indirizzo'];
+                    //     $tmp->codiceFiscale=$r['codicefiscale'];
+                    //     $tmp->noteAssistito=$r['note_assistito'];
+                    //     $tmp->nascita=$r['nascita'];
+                    //     $tmp->assistitoIsActive=$r['assistito_is_active'];
+                    //     $tmp->idRichiesta=null;
+                    //     $tmp->idTipologia=null;
+                    //     $tmp->idPriorita=null;
+                    //     $tmp->idUsca=$r['id_usca'];
+                    //     $tmp->data=null;
+                    //     $tmp->noteRichiesta=null;
+                    //     $tmp->richiestaIsActive=null;
+                    //     $tmp->created=null;
+                    //     $tmp->createdByNomeCognome=null;
+                    //     $tmp->last_update=null;
+                    //     $tmp->lastUpdateByNomeCognome=null;
+                    //     $tmp->usca=$r['usca'];
+                    //     $tmp->priorita=null;
+                    //     $tmp->tipologia=null;
+                    //     $tmp->isArchived=null;
 
-                        array_push($out->data, $tmp);
-                    }
+                    //     array_push($out->data, $tmp);
+                    // }
 
                     $out->status = "OK";
                     $out->lastRead = (new DateTime())->format('Y-m-d H:i:s');
