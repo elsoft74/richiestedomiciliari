@@ -47,18 +47,18 @@ function showSwabs(swabs, user) {
 
             { title: "#", field: "idAssistito", width: 10, editor: false, hozAlign: "center", visible: checkUserPermission(user, "canViewId") },
 
-            {
-                title: "", width: 10, hozAlign: "center", editor: false, visible: checkUserPermission(user, "canEditAssistito"), cellClick: checkUserPermission(user, "canEditAssistito") ? showAssistitoUpdate : null, formatter: function (cell, formatterParams, onRendered) {
+            // {
+            //     title: "", width: 10, hozAlign: "center", editor: false, visible: checkUserPermission(user, "canEditAssistito"), cellClick: checkUserPermission(user, "canEditAssistito") ? showAssistitoUpdate : null, formatter: function (cell, formatterParams, onRendered) {
 
-                    return '<span class="material-icons-outlined" style="color: green">edit</span>';
-                },
-            },
-            {
-                title: "", width: 10, hozAlign: "center", editor: false, visible: checkUserPermission(user, "canDeleteAssistito"), cellClick: checkUserPermission(user, "canDeleteAssistito") ? deleteElement : null, formatter: function (cell, formatterParams, onRendered) {
+            //         return '<span class="material-icons-outlined" style="color: green">edit</span>';
+            //     },
+            // },
+            // {
+            //     title: "", width: 10, hozAlign: "center", editor: false, visible: checkUserPermission(user, "canDeleteAssistito"), cellClick: checkUserPermission(user, "canDeleteAssistito") ? deleteElement : null, formatter: function (cell, formatterParams, onRendered) {
 
-                    return '<span class="material-icons-outlined" style="color: red">delete</span>';
-                },
-            },
+            //         return '<span class="material-icons-outlined" style="color: red">delete</span>';
+            //     },
+            // },
             {
                 title: "Note", field: "noteAssistito", editor: false/*, formatter: "textarea" */, cellClick: cellPopupFormatterNoteAssistito, formatter: function (cell, formatterParams, onRendered) {
                     return (cell.getValue() == null) ? '' : '<span class="material-icons-outlined">notes</span>';
@@ -346,7 +346,7 @@ function buildUpLoadTamponiForm() {
     let divFormGroup = $("<div>").addClass("form-group");
     el = $("<label>").addClass("form-label").attr({ "for": attrs.file }).text(attrs.fileText);
     divFormGroup.append(el);
-    el = $("<input>").addClass("form-control").attr({ "id": attrs.file, "type": "file", "name":"files", "accept":".xls, .xlsx, .csv"});
+    el = $("<input>").addClass("form-control").attr({ "id": attrs.file, "type": "file", "name": "files", "accept": ".xls, .xlsx, .csv" });
     divFormGroup.append(el);
     el = $("<label>").attr({ "for": attrs.status }).text(attrs.statusText);
     divFormGroup.append(el);
@@ -375,52 +375,61 @@ function buildUpLoadTamponiForm() {
 }
 
 function uploadExcelTamponi() {
-    var f = $("#uploadTamponiFile").prop("files");
-    if (f == undefined || f.length==0) {
-        Swal.fire({
-            text: "Nessun file da caricare.",
-            icon: 'error',
-            showCancelButton: false,
-            confirmButtonColor: '#3085d6',
-            confirmButtonText: 'Ok'
-        });
-    } else {
-        var formData = new FormData();
-        formData.append("status", $("#statusTamponeUpload").val());
-        formData.append("files", f.length);
-        formData.append("file" , f[0]);
-        let xhr = new XMLHttpRequest();
-        let url = "be/caricaExcelTamponi.php";
-        xhr.open("POST", url, true);
-        // xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    let lu = localStorage.getItem("ricdomloggeduser");
+    if (lu != null) {
+        loggedUser = JSON.parse(lu);
+        let username = loggedUser.username;
+        let token = "123456";
+        var f = $("#uploadTamponiFile").prop("files");
+        if (f == undefined || f.length == 0) {
+            Swal.fire({
+                text: "Nessun file da caricare.",
+                icon: 'error',
+                showCancelButton: false,
+                confirmButtonColor: '#3085d6',
+                confirmButtonText: 'Ok'
+            });
+        } else {
+            var formData = new FormData();
+            formData.append("status", $("#statusTamponeUpload").val());
+            formData.append("files", f.length);
+            formData.append("file", f[0]);
+            formData.append("username",username);
+            formData.append("token",token);
+            let xhr = new XMLHttpRequest();
+            let url = "be/caricaExcelTamponi.php";
+            xhr.open("POST", url, true);
+            // xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 
-        xhr.onreadystatechange = function () {
-            if (xhr.readyState === 4 && xhr.status === 200) {
-                let result = JSON.parse(xhr.responseText);
-                if (result.status == "OK") {
-                    $("#loader").hide();
-                    Swal.fire({
-                        text: JSON.stringify(result.report),
-                        icon: 'info',
-                        showCancelButton: false,
-                        confirmButtonColor: '#3085d6',
-                        confirmButtonText: 'Ok'
-                    });
-                    
-                } else {
-                    Swal.fire({
-                        text: "C'è un problema con il caricamento dei tamponi.",
-                        icon: 'error',
-                        showCancelButton: false,
-                        confirmButtonColor: '#3085d6',
-                        confirmButtonText: 'Ok'
-                    });
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    let result = JSON.parse(xhr.responseText);
+                    if (result.status == "OK") {
+                        $("#loader").hide();
+                        Swal.fire({
+                            text: JSON.stringify(result.report)+((result.report.errori!=0)?"\n errori alle righe:"+JSON.stringify(result.errors):""),
+                            icon: 'info',
+                            showCancelButton: false,
+                            confirmButtonColor: '#3085d6',
+                            confirmButtonText: 'Ok'
+                        });
+
+                    } else {
+                        Swal.fire({
+                            text: "C'è un problema con il caricamento dei tamponi.",
+                            icon: 'error',
+                            showCancelButton: false,
+                            confirmButtonColor: '#3085d6',
+                            confirmButtonText: 'Ok'
+                        });
+                    }
                 }
             }
+            $("#loader").show();
+            xhr.send(formData);
+            event.preventDefault();
         }
-        $("#loader").show();
-        xhr.send(formData);
-        event.preventDefault();
     }
+
 
 }

@@ -1,5 +1,6 @@
 <?php
     include_once("user.php");
+    include_once("db.php");
     class Assistito {    
         public $id;
         public $idUsca;
@@ -14,6 +15,22 @@
         public $note;
         public $isactive;
         public $usca;
+
+        function __construct() {
+            $id = null;
+            $idUsca = null;
+            $nome = null;
+            $cognome = null;
+            $telefono1 = null;
+            $telefono2 = null;
+            $nascita = null;
+            $email = null;
+            $indirizzo = null;
+            $codiceFiscale = null;
+            $note = null;
+            $isactive = null;
+            $usca = null;
+        }
 
         function setId($val){
             $this->id=$val;
@@ -195,18 +212,18 @@
                             $stmt->execute();
                             $results=$stmt->fetch(PDO::FETCH_ASSOC);
                             if($results && $results['presente']==0){
-                                $query="INSERT INTO `assistiti` (nome,cognome,codicefiscale,telefono,email,indirizzo,note,nascita,id_usca) VALUES (:nome,:cognome,:codicefiscale,:telefono,:email,:indirizzo,:note,:nascita,:id_usca)";
+                                $query="INSERT INTO `assistiti` (nome,cognome,codicefiscale,telefono1,telefono2,email,indirizzo,note,nascita,id_usca) VALUES (:nome,:cognome,:codicefiscale,:telefono1,:telefono2,:email,:indirizzo,:note,:nascita,:id_usca)";
                                 $stmt = $conn->prepare($query);
-                                $stmt->bindParam(':nome',$this->getNome(),PDO::PARAM_STR);
-                                $stmt->bindParam(':cognome',$this->getCognome(),PDO::PARAM_STR);
-                                $stmt->bindParam(':codicefiscale',$this->getCodiceFiscale(),PDO::PARAM_STR);
-                                $stmt->bindParam(':telefono1',$this->getTelefono1(),PDO::PARAM_STR);
-                                $stmt->bindParam(':telefono2',$this->getTelefono2(),PDO::PARAM_STR);
-                                $stmt->bindParam(':email',$this->getEmail(),PDO::PARAM_STR);
-                                $stmt->bindParam(':indirizzo',$this->getIndirizzo(),PDO::PARAM_STR);
-                                $stmt->bindParam(':note',$this->getNote(),PDO::PARAM_STR);
-                                $stmt->bindParam(':nascita',$this->getNascita(),PDO::PARAM_STR);
-                                $stmt->bindParam(':id_usca',$this->getIdUsca(),PDO::PARAM_INT);
+                                $stmt->bindParam(':nome',$this->nome,PDO::PARAM_STR);
+                                $stmt->bindParam(':cognome',$this->cognome,PDO::PARAM_STR);
+                                $stmt->bindParam(':codicefiscale',$this->codiceFiscale,PDO::PARAM_STR);
+                                $stmt->bindParam(':telefono1',$this->telefono1,PDO::PARAM_STR);
+                                $stmt->bindParam(':telefono2',$this->telefono2,PDO::PARAM_STR);
+                                $stmt->bindParam(':email',$this->email,PDO::PARAM_STR);
+                                $stmt->bindParam(':indirizzo',$this->indirizzo,PDO::PARAM_STR);
+                                $stmt->bindParam(':note',$this->note,PDO::PARAM_STR);
+                                $stmt->bindParam(':nascita',$this->nascita,PDO::PARAM_STR);
+                                $stmt->bindParam(':id_usca',$this->idUsca,PDO::PARAM_INT);
                                 $stmt->execute();
                                 $this->setId($conn->lastInsertId());
                                     if ($this->getId()!=0){
@@ -303,6 +320,49 @@
                 $conn=null;
             }
             //file_put_contents("../log/dbtest.log",(new DateTime("now"))->format("Y-m-d H:i").$msg."\n",FILE_APPEND);
+            return $out;
+        }
+        
+        public function getIdOrInsert($username,$token){
+            $out = new stdClass();
+            $out->status="KO";
+            $out->data=null;
+            try {
+                $conn=DB::conn();
+                if ($conn!=null){
+                    try {
+                        $query="SELECT is_active, role_id FROM `users` AS u WHERE u.username=:username";
+                        $stmt = $conn->prepare($query);
+                        $stmt->bindParam(':username',$username,PDO::PARAM_STR);
+                        $stmt->execute();
+                        $res=$stmt->fetch(PDO::FETCH_ASSOC);
+                        if (User::checkToken($token) && $res && $res['is_active']==1 AND User::checkCanUpdateAssistito($res['role_id'])){
+                            $query="SELECT id FROM `assistiti` AS a WHERE UPPER(a.codicefiscale)=UPPER(:codicefiscale)";
+                            $codicefiscale=$this->getCodiceFiscale();
+                            $stmt = $conn->prepare($query);
+                            $stmt->bindParam(':codicefiscale',$codicefiscale,PDO::PARAM_STR);
+                            $stmt->execute();
+                            $results=$stmt->fetch(PDO::FETCH_ASSOC);
+                            if($results){
+                                $this->id=$results['id'];
+                            } else {
+                                $this->insert($username,$token);
+                            }
+                            $out->status="OK";
+                                
+                        } else {
+                            throw new Exception("OPERAZIONE-NON-PERMESSA");
+                        } 
+                    } catch(Exception $ex){
+                            $out->error=$ex->getMessage();
+                        }
+                }
+                else {
+                    throw new Exception("DB-CONNECTION-ERROR");
+                }
+            } catch(Exception $e){
+                $conn=null;
+            }
             return $out;
         }
     

@@ -1,5 +1,6 @@
 <?php
 include_once("user.php");
+include_once("assistito.php");
 include_once("db.php");
 class Tampone
 {
@@ -15,6 +16,23 @@ class Tampone
     public $lastUpdateBy;
     public $deletedDate;
     public $deletedBy;
+    public $status;
+
+    function __construct() {
+        $this->id = null;
+        $this->idAssistito = null;
+        $this->dataEsecuzione = null;
+        $this->dataConsigliata = null;
+        $this->idStatus = null;
+        $this->isactive = null;
+        $this->created = null;
+        $this->createdBy = null;
+        $this->lastUpdate = null;
+        $this->lastUpdateBy = null;
+        $this->deletedDate = null;
+        $this->deletedBy = null;
+        $this->status = null;
+    }
 
     public function setId($val){
         $this->id=$val;
@@ -299,59 +317,67 @@ class Tampone
     {
         $out = new stdClass();
         $out->status = "KO";
+        $out->data = null;
         try {
-            if ($this->getId() != null) {
-                
-                $conn = DB::conn();
-                if ($conn != null) {
-                    try {
-                        $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-                        $query="SELECT is_active, role_id FROM `users` AS u WHERE u.username=:username";
+            $conn = DB::conn();
+            if ($conn != null) {
+                try {
+                    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+                    $query="SELECT is_active, role_id FROM `users` AS u WHERE u.username=:username";
+                    $stmt = $conn->prepare($query);
+                    $stmt->bindParam(':username',$username,PDO::PARAM_STR);
+                    $stmt->execute();
+                    $res=$stmt->fetch(PDO::FETCH_ASSOC);
+                    if (User::checkToken($token) && $res && $res['is_active']==1 AND User::checkCanUpdateRequest($res['role_id'])){
+                        $query="SELECT COUNT(id) AS presente FROM `tamponi` WHERE id_assistito = :id_assistito AND data_esecuzione = :data_esecuzione";
+
                         $stmt = $conn->prepare($query);
-                        $stmt->bindParam(':username',$username,PDO::PARAM_STR);
+                        $stmt->bindParam(':id_assistito', $this->idAssistito, PDO::PARAM_INT);
+                        $stmt->bindParam(':data_esecuzione', $this->dataEsecuzione, PDO::PARAM_STR);
                         $stmt->execute();
-                        $res=$stmt->fetch(PDO::FETCH_ASSOC);
-                        if (User::checkToken($token) && $res && $res['is_active']==1 AND User::checkCanUpdateRequest($res['role_id'])){
 
-                            $query = "INSERT INTO `tamponi` (
-                                id_assistito=:id_assistito,
-                                data_esecuzione=:data_esecuzione,
-                                data_consigliata=:data_consigliata,
-                                status=:status,
-                                created=:created,
-                                created_by=:created_by";
-
-                            $stmt = $conn->prepare($query);
-
-                            $stmt->bindParam(':id_assistito', $this->idAssistito, PDO::PARAM_INT);
-                            $stmt->bindParam(':data_esecuzione', $this->dataEsecuzione, PDO::PARAM_STR);
-                            $stmt->bindParam(':data_consigliata', $this->dataConsigliata, PDO::PARAM_STR);
-                            $stmt->bindParam(':status', $this->status, PDO::PARAM_INT);
-                            $stmt->bindParam(':created', $this->created, PDO::PARAM_STR);
-                            $stmt->bindParam(':created_by', $this->createdBy, PDO::PARAM_INT);
-
-                            $stmt->execute();
-                            $this->setId($conn->lastInsertId());
-                                if ($this->getId()!=0){
-                                $out->status="OK";
-                            } else {
-                                throw new Exception("ERRORE-DI-INSERIMENTO");    
+                        $res = $stmt->fetch(PDO::FETCH_ASSOC);
+                        if ($res){
+                            if ($res['presente']=="0") {
+                                $query = "INSERT INTO `tamponi` (
+                                    id_assistito, data_esecuzione,data_consigliata,status,created,created_by)
+                                    VALUES (:id_assistito,:data_esecuzione,:data_consigliata,:status,:created,:created_by)";
+    
+                                $stmt = $conn->prepare($query);
+    
+                                $stmt->bindParam(':id_assistito', $this->idAssistito, PDO::PARAM_INT);
+                                $stmt->bindParam(':data_esecuzione', $this->dataEsecuzione, PDO::PARAM_STR);
+                                $stmt->bindParam(':data_consigliata', $this->dataConsigliata, PDO::PARAM_STR);
+                                $stmt->bindParam(':status', $this->idStatus, PDO::PARAM_INT);
+                                $stmt->bindParam(':created', $this->created, PDO::PARAM_STR);
+                                $stmt->bindParam(':created_by', $this->createdBy, PDO::PARAM_INT);
+    
+                                $stmt->execute();
+                                $this->setId($conn->lastInsertId());
+                                    if ($this->getId()!=0){
+                                    $out->data=$this->getId();
+                                } else {
+                                    throw new Exception("ERRORE-DI-INSERIMENTO");    
+                                }
+                                
                             }
-
-                        $out->status = "OK";
+                            $out->status = "OK";
+                            
                         } else {
-                            throw new Exception("OPERAZIONE-NON-PERMESSA");
-                        } 
-                        
-                    } catch (Exception $ex) {
-                        $out->status="KO";
-                        $out->error = $ex->getMessage();
-                    }
-                } else {
-                    throw new Exception("DB-CONNECTION-ERROR");
+
+                            throw new Exception("ERRORE-DI-INSERIMENTO");    
+                        }
+                    } else {
+                        throw new Exception("OPERAZIONE-NON-PERMESSA");
+                    } 
+                    
+                } catch (Exception $ex) {
+                    $out->status="KO";
+                    $out->error = $ex->getMessage();
+                    $out->errorData = $this;
                 }
             } else {
-                throw new Exception("EMPTY-REQUEST");
+                throw new Exception("DB-CONNECTION-ERROR");
             }
         } catch (Exception $ex) {
             $conn = null;

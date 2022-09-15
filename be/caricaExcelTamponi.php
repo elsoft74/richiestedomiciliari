@@ -2,18 +2,23 @@
     require '../vendor/autoload.php';
     require_once("classes/assistito.php");
     require_once("classes/tampone.php");
+    include_once("config/config.php");
 
     use PhpOffice\PhpSpreadsheet\IOFactory;
     use PhpOffice\PhpSpreadsheet\Spreadsheet;
     $out=new StdClass();
     $out->status="KO";
     $out->report=new StdClass();
-    $out->report->in=null;
+    $out->report->righe=0;
     $out->report->inseriti=0;
     $out->report->presenti=0;
+    $out->report->errori=0;
+    $out->errors=[];
     try{
         $file=$_FILES['file']['tmp_name'];
         $status=array_key_exists("status",$_POST)?$_POST["status"]:null;
+        $username=$_POST["username"];
+        $token=$_POST["token"];
         $reader = \PhpOffice\PhpSpreadsheet\IOFactory::createReaderForFile($file);
         $reader->setReadDataOnly(false); // Dovrebbe permettere di interpreare sempre correttamente le date 
         $spreadsheet = $reader->load($file);
@@ -46,6 +51,21 @@
             $assistito->setEmail($row["Vax mail"]);
             $tampone->setDataEsecuzione(formattaData($row["DATA TAMPONE"]));
             $tampone->setDataConsigliata(formattaData($row["Giorno Tampone"]));
+            $tampone->setIdStatus(($status!=null)?intval($status):null);
+            $assistito->getIdOrInsert($username,$token);
+            $tampone->setIdAssistito($assistito->getId());
+            $ins=$tampone->insert($username,$token);
+            if($ins->status=="OK"){
+                if($ins->data==null){
+                    $out->report->presenti++;
+                } else  {
+                    $out->report->inseriti++;
+                }
+            } else {
+                $out->report->errori++;
+                array_push($out->errors,$out->report->righe+1);
+            }
+            $out->report->righe++;
         }
         
         $out->status="OK";

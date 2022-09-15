@@ -36,7 +36,7 @@ function showMenu(user) {
         button = $("<button>").addClass('btn btn-primary btn-block home-form assistiti-form users-form requests-form').attr({"onClick":'window.open("tamponi.php","_self")','id':'mostraTamponiButton'}).text("Tamponi").hide();
         div1.append(button);
         if(user.permissions.canUploadSwabs){
-            button = $("<button>").addClass('btn btn-primary btn-block swabs-form').attr({"onClick":'uploadSwabs()','id':'caricaTamponiButton'}).text("Carica Tamponi").hide();
+            button = $("<button>").addClass('btn btn-primary btn-block swabs-form').attr({"onClick":'uploadSwabs()','id':'caricaTamponiButton'}).text("Carica Tamponi");
             div1.append(button);
         }
         row.append(div1);
