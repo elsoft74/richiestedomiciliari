@@ -48,7 +48,7 @@
             $assistito->setTelefono1(strval($row["TELEFONO"]));
             $assistito->setTelefono2(strval($row["ALTRO CONTATTO"]));
             $assistito->setIndirizzo($row["INDIRIZZO DOMICILIO"]." ".$row["DOMICILIO"]);
-            $assistito->setEmail($row["Vax mail"]);
+            $assistito->setEmail($row["mail"]);
             $tampone->setDataEsecuzione(formattaData($row["DATA TAMPONE"]));
             $tampone->setDataConsigliata(formattaData($row["Giorno Tampone"]));
             $tampone->setIdStatus(($status!=null)?intval($status):null);
