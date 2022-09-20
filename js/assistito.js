@@ -362,7 +362,17 @@ function showAssistiti(assistiti, user) {
                         title: "", width: 8, hozAlign: "center", editor: false, visible: checkUserPermission(user, "canEditAssistito"), cellClick: checkUserPermission(user, "canEditAssistito") ? showAssistitoUpdate : null, formatter: function (cell, formatterParams, onRendered) {
 
                             return '<span class="material-icons-outlined" style="color: green">edit</span>';
-                        }, headerSort: false
+                        }, headerSort: false,tooltip:function(e, cell, onRendered){
+            //e - mouseover event
+            //cell - cell component
+            //onRendered - onRendered callback registration function
+            
+            var el = document.createElement("div");
+            el.style.backgroundColor = "green";
+            el.innerText = "Modifica dati assistito";
+            
+            return el; 
+        }
                     },
                     {
                         title: "", width: 8, hozAlign: "center", editor: false, visible: checkUserPermission(user, "canDeleteAssistito"), cellClick: checkUserPermission(user, "canDeleteAssistito") ? deleteElement : null, formatter: function (cell, formatterParams, onRendered) {
