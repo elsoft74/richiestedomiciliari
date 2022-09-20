@@ -339,6 +339,19 @@ function showAssistiti(assistiti, user) {
             columnCalcs: false, //do not include column calcs in downloaded table
             dataTree: false, //do not include data tree in downloaded table
         },
+        columnDefaults:{
+        tooltip:function(e, cell, onRendered){
+            //e - mouseover event
+            //cell - cell component
+            //onRendered - onRendered callback registration function
+            
+            var el = document.createElement("div");
+            el.style.backgroundColor = "red";
+            el.innerText = cell.getColumn().getField() + " - " + cell.getValue(); //return cells "field - value";
+            
+            return el; 
+        },
+    },
         columns: [                 //define the table columns
 
 
