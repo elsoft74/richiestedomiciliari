@@ -43,6 +43,19 @@ function showSwabs(swabs, user) {
          "lastUpdateByNomeCognome":null
         
         */
+        columnDefaults:{
+        tooltip:function(e, cell, onRendered){
+            //e - mouseover event
+            //cell - cell component
+            //onRendered - onRendered callback registration function
+            
+            var el = document.createElement("div");
+            el.style.backgroundColor = "red";
+            el.innerText = cell.getColumn().getField() + " - " + cell.getValue(); //return cells "field - value";
+            
+            return el; 
+        },
+    },
         columns: [                 //define the table columns
 
             { title: "#", field: "idAssistito", width: 10, editor: false, hozAlign: "center", visible: checkUserPermission(user, "canViewId") },
