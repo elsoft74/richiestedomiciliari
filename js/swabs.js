@@ -43,19 +43,19 @@ function showSwabs(swabs, user) {
          "lastUpdateByNomeCognome":null
         
         */
-        columnDefaults:{
-        tooltip:function(e, cell, onRendered){
-            //e - mouseover event
-            //cell - cell component
-            //onRendered - onRendered callback registration function
-            
-            var el = document.createElement("div");
-            el.style.backgroundColor = "red";
-            el.innerText = cell.getColumn().getField() + " - " + cell.getValue(); //return cells "field - value";
-            
-            return el; 
-        },
-    },
+        //     columnDefaults:{
+        //     tooltip:function(e, cell, onRendered){
+        //         //e - mouseover event
+        //         //cell - cell component
+        //         //onRendered - onRendered callback registration function
+
+        //         var el = document.createElement("div");
+        //         el.style.backgroundColor = "red";
+        //         el.innerText = cell.getColumn().getField() + " - " + cell.getValue(); //return cells "field - value";
+
+        //         return el; 
+        //     },
+        // },
         columns: [                 //define the table columns
 
             { title: "#", field: "idAssistito", width: 10, editor: false, hozAlign: "center", visible: checkUserPermission(user, "canViewId") },
@@ -75,6 +75,11 @@ function showSwabs(swabs, user) {
             {
                 title: "Note", field: "noteAssistito", editor: false/*, formatter: "textarea" */, cellClick: cellPopupFormatterNoteAssistito, formatter: function (cell, formatterParams, onRendered) {
                     return (cell.getValue() == null) ? '' : '<span class="material-icons-outlined">notes</span>';
+                }, tooltip: function (e, cell, onRendered) {
+                    var el = document.createElement("div");
+                    el.style.backgroundColor = "#0d6efd";
+                    el.innerText = "Note assistito";
+                    return el;
                 }
             },
 
@@ -105,7 +110,12 @@ function showSwabs(swabs, user) {
                 title: "", width: 10, hozAlign: "center", editor: false, visible: checkUserPermission(user, "canCreateRequest"), cellClick: checkUserPermission(user, "canCreateRequest") ? changeSwabStatus : null, formatter: function (cell, formatterParams, onRendered) {
 
                     return '<span class="material-icons-outlined" style="color: green">edit</span>';
-                },
+                }, tooltip: function (e, cell, onRendered) {
+                    var el = document.createElement("div");
+                    el.style.backgroundColor = "#0d6efd";
+                    el.innerText = "Modifica stato";
+                    return el;
+                }
             },
 
             { title: "#", field: "idTampone", editor: false, hozAlign: "center", visible: checkUserPermission(user, "canViewId") },
@@ -407,8 +417,8 @@ function uploadExcelTamponi() {
             formData.append("status", $("#statusTamponeUpload").val());
             formData.append("files", f.length);
             formData.append("file", f[0]);
-            formData.append("username",username);
-            formData.append("token",token);
+            formData.append("username", username);
+            formData.append("token", token);
             let xhr = new XMLHttpRequest();
             let url = "be/caricaExcelTamponi.php";
             xhr.open("POST", url, true);
@@ -420,7 +430,7 @@ function uploadExcelTamponi() {
                     if (result.status == "OK") {
                         $("#loader").hide();
                         Swal.fire({
-                            text: JSON.stringify(result.report)+((result.report.errori!=0)?"\n errori alle righe:"+JSON.stringify(result.errors):""),
+                            text: JSON.stringify(result.report) + ((result.report.errori != 0) ? "\n errori alle righe:" + JSON.stringify(result.errors) : ""),
                             icon: 'info',
                             showCancelButton: false,
                             confirmButtonColor: '#3085d6',

@@ -287,7 +287,7 @@ function aggiornaAssistito() {
 var showAssistitoUpdate = function (e, row) {
     $("#editAssistito").show();
     var element = row.getData();
-    $("#idAssistito_Edit").val((element.hasOwnProperty("idAssistito"))?element.idAssistito:element.id);
+    $("#idAssistito_Edit").val((element.hasOwnProperty("idAssistito")) ? element.idAssistito : element.id);
     $("#idUscaAssistitoEdit").val(element.idUsca);
     $("#nomeAssistitoEdit").val(element.nome);
     $("#cognomeAssistitoEdit").val(element.cognome);
@@ -339,19 +339,19 @@ function showAssistiti(assistiti, user) {
             columnCalcs: false, //do not include column calcs in downloaded table
             dataTree: false, //do not include data tree in downloaded table
         },
-        columnDefaults:{
-        tooltip:function(e, cell, onRendered){
-            //e - mouseover event
-            //cell - cell component
-            //onRendered - onRendered callback registration function
-            
-            var el = document.createElement("div");
-            el.style.backgroundColor = "red";
-            el.innerText = cell.getColumn().getField() + " - " + cell.getValue(); //return cells "field - value";
-            
-            return el; 
-        },
-    },
+        // columnDefaults:{
+        // tooltip:function(e, cell, onRendered){
+        //     //e - mouseover event
+        //     //cell - cell component
+        //     //onRendered - onRendered callback registration function
+
+        //     var el = document.createElement("div");
+        //     el.style.backgroundColor = "red";
+        //     el.innerText = cell.getColumn().getField() + " - " + cell.getValue(); //return cells "field - value";
+
+        //     return el; 
+        // },
+        // },
         columns: [                 //define the table columns
 
 
@@ -362,34 +362,44 @@ function showAssistiti(assistiti, user) {
                         title: "", width: 8, hozAlign: "center", editor: false, visible: checkUserPermission(user, "canEditAssistito"), cellClick: checkUserPermission(user, "canEditAssistito") ? showAssistitoUpdate : null, formatter: function (cell, formatterParams, onRendered) {
 
                             return '<span class="material-icons-outlined" style="color: green">edit</span>';
-                        }, headerSort: false,tooltip:function(e, cell, onRendered){
-            //e - mouseover event
-            //cell - cell component
-            //onRendered - onRendered callback registration function
-            
-            var el = document.createElement("div");
-            el.style.backgroundColor = "green";
-            el.innerText = "Modifica dati assistito";
-            
-            return el; 
-        }
+                        }, headerSort: false, tooltip: function (e, cell, onRendered) {
+                            var el = document.createElement("div");
+                            el.style.backgroundColor = "#0d6efd";
+                            el.innerText = "Modifica dati assistito";
+                            return el;
+                        }
                     },
                     {
                         title: "", width: 8, hozAlign: "center", editor: false, visible: checkUserPermission(user, "canDeleteAssistito"), cellClick: checkUserPermission(user, "canDeleteAssistito") ? deleteElement : null, formatter: function (cell, formatterParams, onRendered) {
 
                             return '<span class="material-icons-outlined" style="color: red">delete</span>';
-                        }, headerSort: false
+                        }, headerSort: false, tooltip: function (e, cell, onRendered) {
+                            var el = document.createElement("div");
+                            el.style.backgroundColor = "red";
+                            el.innerText = "Cancella assistito";
+                            return el;
+                        }
                     },
                     {
-                        title: "", width: 8, field: "noteAssistito", editor: false, cellClick: cellPopupFormatterNoteAssistito, formatter: function (cell, formatterParams, onRendered) {
+                        title: "", width: 8, field: "note", editor: false, cellClick: cellPopupFormatterNoteAssistito, formatter: function (cell, formatterParams, onRendered) {
                             return (cell.getValue() == null) ? '' : '<span class="material-icons-outlined">notes</span>';
-                        }, headerSort: false
+                        }, headerSort: false, tooltip: function (e, cell, onRendered) {
+                            var el = document.createElement("div");
+                            el.style.backgroundColor = "#0d6efd";
+                            el.innerText = "Note assistito";
+                            return el;
+                        }
                     },
                     {
                         title: "", width: 8, hozAlign: "center", editor: false, visible: checkUserPermission(user, "canCreateRequest"), cellClick: checkUserPermission(user, "canCreateRequest") ? newRequest : null, formatter: function (cell, formatterParams, onRendered) {
-        
+
                             return '<span class="material-icons-outlined" style="color: green">add</span>';
-                        }, headerSort: false
+                        }, headerSort: false, tooltip: function (e, cell, onRendered) {
+                            var el = document.createElement("div");
+                            el.style.backgroundColor = "#0d6efd";
+                            el.innerText = "Aggiungi richiesta";
+                            return el;
+                        }
                     },
                 ]
             },

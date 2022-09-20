@@ -69,7 +69,12 @@ function showRequests(richieste, user) {
             {
                 title: "", width: 8, field: "noteAssistito", editor: false, cellClick: cellPopupFormatterNoteAssistito, formatter: function (cell, formatterParams, onRendered) {
                     return (cell.getValue() == null) ? '' : '<span class="material-icons-outlined">notes</span>';
-                }, headerSort: false
+                }, headerSort: false, tooltip: function (e, cell, onRendered) {
+                    var el = document.createElement("div");
+                    el.style.backgroundColor = "#0d6efd";
+                    el.innerText = "Note assistito";
+                    return el;
+                }
             },
 
             { title: "Cognome", width: 150, field: "cognome", editor: false, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
@@ -102,27 +107,52 @@ function showRequests(richieste, user) {
                         title: "", width: 8, hozAlign: "center", editor: false, visible: checkUserPermission(user, "canCreateRequest"), cellClick: checkUserPermission(user, "canCreateRequest") ? newRequest : null, formatter: function (cell, formatterParams, onRendered) {
 
                             return '<span class="material-icons-outlined" style="color: green">add</span>';
-                        }, headerSort: false
+                        }, headerSort: false, tooltip: function (e, cell, onRendered) {
+                            var el = document.createElement("div");
+                            el.style.backgroundColor = "#0d6efd";
+                            el.innerText = "Aggiungi richiesta";
+                            return el;
+                        }
                     },
                     {
                         title: "", width: 8, field: "idRichiesta", width: 10, hozAlign: "center", editor: false, visible: checkUserPermission(user, "canEditRequest"), cellClick: checkUserPermission(user, "canEditRequest") ? showElementUpdate : null, formatter: function (cell, formatterParams, onRendered) {
                             return (cell.getValue() == null) ? '' : '<span class="material-icons-outlined" style="color: green">edit</span>';
-                        }, headerSort: false
+                        }, headerSort: false, tooltip: function (e, cell, onRendered) {
+                            var el = document.createElement("div");
+                            el.style.backgroundColor = "#0d6efd";
+                            el.innerText = "Modifica richiesta";
+                            return el;
+                        }
                     },
                     {
                         title: "", width: 8, field: "idRichiesta", width: 10, hozAlign: "center", editor: false, visible: checkUserPermission(user, "canDeleteRequest"), cellClick: checkUserPermission(user, "canEditRequest") ? deleteElement : null, formatter: function (cell, formatterParams, onRendered) {
                             return (cell.getValue() == null) ? '' : '<span class="material-icons-outlined" style="color: red">delete</span>';
-                        }, headerSort: false
+                        }, headerSort: false, tooltip: function (e, cell, onRendered) {
+                            var el = document.createElement("div");
+                            el.style.backgroundColor = "red";
+                            el.innerText = "Cancella richiesta";
+                            return el;
+                        }
                     },
                     {
                         title: "", width: 8, field: "isArchived", width: 10, hozAlign: "center", editor: false, visible: checkUserPermission(user, "canArchiveRequest"), cellClick: checkUserPermission(user, "canEditRequest") ? archiveElement : null, formatter: function (cell, formatterParams, onRendered) {
                             return (cell.getValue() != null) ? (cell.getValue() ? '<span class="material-icons-outlined" style="color: green">unarchive</span>' : '<span class="material-icons-outlined" style="color: green">archive</span>') : "";
-                        }, headerSort: false
+                        }, headerSort: false, tooltip: function (e, cell, onRendered) {
+                            var el = document.createElement("div");
+                            el.style.backgroundColor = "#0d6efd";
+                            el.innerText = "Archiviazione/Ripristino richiesta";
+                            return el;
+                        }
                     },
                     {
                         title: "", width: 8, field: "noteRichiesta", editor: false/*, formatter: "textarea" */, cellClick: buildNoteRichiestaModal, formatter: function (cell, formatterParams, onRendered) {
                             return (cell.getValue() == null) ? '' : '<span class="material-icons-outlined">notes</span>';
-                        }, headerSort: false
+                        }, headerSort: false, tooltip: function (e, cell, onRendered) {
+                            var el = document.createElement("div");
+                            el.style.backgroundColor = "#0d6efd";
+                            el.innerText = "Note richiesta";
+                            return el;
+                        }
                     },
                 ]
             },
@@ -502,7 +532,7 @@ var emptyHeaderFilter = function () {
 
 var cellPopupFormatterNoteAssistito = function (e, row, onRendered) {
     var data = row.getData();
-    cellPopupFormatter(data.noteAssistito);
+    cellPopupFormatter(data.hasOwnProperty("noteAssistito") ? data.noteAssistito : data.note);
 };
 
 
@@ -579,7 +609,7 @@ var cellPopupFormatterDettagliRichiesta = function (e, row) {
 
 
 function updateRequestData() {
-    if (typeof(waitingForData) !== 'undefined' && !waitingForData){
+    if (typeof (waitingForData) !== 'undefined' && !waitingForData) {
         waitingForData = true;
         toBeCompleted.richieste = false;
         readRequests(toBeCompleted);
@@ -595,24 +625,24 @@ function updateRequestData() {
             setTimeout(updateRequestData, 200);
         }
     }
-    
-     
-    
 
-    
+
+
+
+
     // if (table != null || table != undefined) {
     //     if(waitingForData){
     //         if (toBeCompleted.richieste) {
-                
-                
+
+
     //             setTimeout(updateTableData, 200);
     //         }
     //     }
-        
-        
+
+
     //     if (toBeCompleted.richieste) {
     //         console.log("Scrivo i dati aggiornati");
-            
+
     //         table.updateOrAddData(richieste);
     //         var deleted = localStorage.getItem("deleted");
     //         if (deleted != null || deleted != undefined) {
