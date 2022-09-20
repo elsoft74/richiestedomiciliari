@@ -68,7 +68,7 @@
             // showAssistiti(assistiti,lu);
             changeActivity("requests");
         });
-        //window.addEventListener('dataUpdated', updateTableData); 
+        window.addEventListener('requestUpdated', updateRequestData); 
         window.onload = function() {
             lu = JSON.parse(localStorage.getItem("ricdomloggeduser"));
             if (lu == null) {

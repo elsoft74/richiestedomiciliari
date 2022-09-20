@@ -68,7 +68,7 @@ function checkNewData() {
             if (result.status == "OK") {
                 if (result.data) {
                     console.log("Nuovi Dati");
-                    updateTableData();
+                    updateRequestData();
                 } else {
                     if ("requests" == activity || "tamponi" == activity) {
                         setTimeout(checkNewData, 5000);

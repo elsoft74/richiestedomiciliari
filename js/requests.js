@@ -217,7 +217,7 @@ function inserisci() {
                         }).then((result) => {
                             if (result.isConfirmed) {
                                 cleanInsert();
-                                location.reload();
+                                // location.reload();
                             }
                         })
                     } else {
@@ -279,7 +279,7 @@ function aggiorna() {
                         }).then((result) => {
                             if (result.isConfirmed) {
                                 cleanEdit();
-                                location.reload();
+                                // location.reload();
                             }
                         })
                     } else {
@@ -578,29 +578,52 @@ var cellPopupFormatterDettagliRichiesta = function (e, row) {
 }
 
 
-function updateTableData() {
-    var table = Tabulator.findTable("#main")[0];
-    waitingForData = true;
-    if (table != null || table != undefined) {
-        console.log("Scrivo i dati aggiornati");
-        if (!waitingForData) {
-            toBeCompleted.richieste = false;
-            readRequests(toBeCompleted);
-            setTimeout(updateTableData, 200);
-        }
+function updateRequestData() {
+    if (typeof(waitingForData) !== 'undefined' && !waitingForData){
+        waitingForData = true;
+        toBeCompleted.richieste = false;
+        readRequests(toBeCompleted);
+        setTimeout(updateRequestData, 200);
+    } else {
         if (toBeCompleted.richieste) {
             waitingForData = false;
+            var table = Tabulator.findTable("#main")[0];
+            console.log("Scrivo i dati aggiornati");
             table.updateOrAddData(richieste);
-            var deleted = localStorage.getItem("deleted");
-            if (deleted != null || deleted != undefined) {
-                table.deleteRow(deleted);
-                localStorage.removeItem("deleted");
-            }
+            setTimeout(checkNewData, 200);
         } else {
-
+            setTimeout(updateRequestData, 200);
         }
-        setTimeout(checkNewData, 200);
     }
+    
+     
+    
+
+    
+    // if (table != null || table != undefined) {
+    //     if(waitingForData){
+    //         if (toBeCompleted.richieste) {
+                
+                
+    //             setTimeout(updateTableData, 200);
+    //         }
+    //     }
+        
+        
+    //     if (toBeCompleted.richieste) {
+    //         console.log("Scrivo i dati aggiornati");
+            
+    //         table.updateOrAddData(richieste);
+    //         var deleted = localStorage.getItem("deleted");
+    //         if (deleted != null || deleted != undefined) {
+    //             table.deleteRow(deleted);
+    //             localStorage.removeItem("deleted");
+    //         }
+    //     } else {
+
+    //     }
+    //     setTimeout(checkNewData, 200);
+    // }
 }
 
 var buildNoteRichiestaModal = function (e, row) {

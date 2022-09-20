@@ -235,6 +235,7 @@ class Richiesta
                     $res = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     foreach ($res as $r) {
                         $tmp = new StdClass();
+                        $tmp->id=intval($r['id_richiesta']);
                         $tmp->idAssistito=$r['id_assistito'];
                         $tmp->nome=$r['nome'];
                         $tmp->cognome=$r['cognome'];
