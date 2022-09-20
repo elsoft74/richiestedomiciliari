@@ -483,10 +483,7 @@ function readRequests(toBeCompleted) {
                 if (result.hasOwnProperty("lastRead")) {
                     localStorage.setItem("lastRead", result.lastRead);
                 }
-                if (result.hasOwnProperty("deleted")) {
-                    localStorage.setItem("deleted", result.deleted);
-                }
-                //setTimeout(checkIfAreUpdatedData, 1000);
+                setTimeout(checkIfUpdated, 1000);
             } else {
                 Swal.fire({
                     text: "Impossibile recuperare l'elenco delle richieste.",
@@ -618,42 +615,15 @@ function updateRequestData() {
         if (toBeCompleted.richieste) {
             waitingForData = false;
             var table = Tabulator.findTable("#main")[0];
-            console.log("Scrivo i dati aggiornati");
-            table.updateOrAddData(richieste);
-            setTimeout(checkNewData, 200);
+            if(table!=null && table != undefined){
+                console.log("Scrivo i dati aggiornati");
+                table.updateOrAddData(richieste);
+                setTimeout(checkNewData, 200);
+            }
         } else {
             setTimeout(updateRequestData, 200);
         }
     }
-
-
-
-
-
-    // if (table != null || table != undefined) {
-    //     if(waitingForData){
-    //         if (toBeCompleted.richieste) {
-
-
-    //             setTimeout(updateTableData, 200);
-    //         }
-    //     }
-
-
-    //     if (toBeCompleted.richieste) {
-    //         console.log("Scrivo i dati aggiornati");
-
-    //         table.updateOrAddData(richieste);
-    //         var deleted = localStorage.getItem("deleted");
-    //         if (deleted != null || deleted != undefined) {
-    //             table.deleteRow(deleted);
-    //             localStorage.removeItem("deleted");
-    //         }
-    //     } else {
-
-    //     }
-    //     setTimeout(checkNewData, 200);
-    // }
 }
 
 var buildNoteRichiestaModal = function (e, row) {

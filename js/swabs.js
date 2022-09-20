@@ -182,7 +182,7 @@ function readSwabs(toBeCompleted) {
                 if (result.hasOwnProperty("deleted")) {
                     localStorage.setItem("deleted", result.deleted);
                 }
-                //setTimeout(checkIfAreUpdatedData, 1000);
+                setTimeout(checkNewData, 5000);
             } else {
                 Swal.fire({
                     text: "Impossibile recuperare l'elenco dei tamponi.",
@@ -240,7 +240,7 @@ function aggiornaTampone() {
                     }).then((result) => {
                         if (result.isConfirmed) {
                             cleanTamponeEdit();
-                            location.reload();
+                            // location.reload();
                         }
                     })
                 } else {
@@ -455,4 +455,24 @@ function uploadExcelTamponi() {
     }
 
 
+}
+
+
+function updateTableDataTamponi() {
+    if (typeof (waitingForDataTamponi) !== 'undefined' && !waitingForDataTamponi) {
+        waitingForDataTamponi = true;
+        toBeCompleted.tamponi = false;
+        readSwabs(toBeCompleted);
+        setTimeout(updateTableDataTamponi, 200);
+    } else {
+        if (toBeCompleted.tamponi) {
+            waitingForDataTamponi = false;
+            var table = Tabulator.findTable("#mainSwabs")[0];
+            console.log("Scrivo i dati aggiornati");
+            table.updateOrAddData(swabs);
+            setTimeout(checkNewData, 200);
+        } else {
+            setTimeout(updateTableDataTamponi, 200);
+        }
+    }
 }

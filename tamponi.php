@@ -68,7 +68,7 @@
             // showAssistiti(assistiti,lu);
             changeActivity("swabs");
         });
-        //window.addEventListener('dataUpdated', updateTableData); 
+        window.addEventListener('dataUpdated', updateTableDataTamponi); 
         window.onload = function() {
             lu = JSON.parse(localStorage.getItem("ricdomloggeduser"));
             if (lu == null) {

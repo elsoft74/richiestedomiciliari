@@ -487,3 +487,53 @@ function getAssistiti(toBeCompleted) {
     //xhr.send();
     xhr.send("lastRead=" + localStorage.getItem("lastRead"));
 }
+
+function updateTableDataAssistiti() {
+    if (typeof (waitingForDataAssistiti) !== 'undefined' && !waitingForDataAssistiti) {
+        waitingForDataAssistiti = true;
+        toBeCompleted.assistiti = false;
+        readAssistiti(toBeCompleted);
+        setTimeout(updateTableDataAssistiti, 200);
+    } else {
+        if (toBeCompleted.assistiti) {
+            waitingForDataAssistiti = false;
+            var table = Tabulator.findTable("#assistiti")[0];
+            console.log("Scrivo i dati aggiornati");
+            table.updateOrAddData(assistiti);
+            setTimeout(checkNewData, 200);
+        } else {
+            setTimeout(updateTableDataAssistiti, 200);
+        }
+    }
+}
+
+function readAssistiti(toBeCompleted) {
+    let xhr = new XMLHttpRequest();
+    let url = "be/getassistiti.php";
+    xhr.open("POST", url, true);
+    xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    let ready = false;
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState === 4 && xhr.status === 200) {
+            result = JSON.parse(xhr.responseText);
+            if (result.status == "OK") {
+                assistiti = result.data;
+                toBeCompleted.assistiti = true;
+                if (result.hasOwnProperty("lastRead")) {
+                    localStorage.setItem("lastRead", result.lastRead);
+                }
+                // setTimeout(checkIfAreUpdatedData, 1000);
+            } else {
+                Swal.fire({
+                    text: "Impossibile recuperare l'elenco degli assistiti.",
+                    icon: 'error',
+                    showCancelButton: false,
+                    confirmButtonColor: '#3085d6',
+                    confirmButtonText: 'Ok'
+                })
+            }
+        }
+    }
+    //xhr.send();
+    xhr.send("lastRead=" + localStorage.getItem("lastRead"));
+}

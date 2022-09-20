@@ -39,6 +39,7 @@ function checkIfComplete() {
     let out = true;
     Object.keys(toBeCompleted).forEach(p => { out = out && toBeCompleted[p] });
     if (out) {
+        setTimeout(checkIfUpdated, 200);
         window.dispatchEvent(new CustomEvent("dataLoaded"));
     } else {
         setTimeout(checkIfComplete, 200);
@@ -46,7 +47,9 @@ function checkIfComplete() {
 }
 
 function checkIfUpdated() {
-    if (toBeCompleted.richieste) {
+    let out = true;
+    Object.keys(toBeCompleted).forEach(p => { out = out && toBeCompleted[p] });
+    if (out) {
         console.log("Aggiorno");
         window.dispatchEvent(new CustomEvent("dataUpdated"));
     } else {
@@ -68,11 +71,23 @@ function checkNewData() {
             if (result.status == "OK") {
                 if (result.data) {
                     console.log("Nuovi Dati");
-                    updateRequestData();
-                } else {
-                    if ("requests" == activity || "tamponi" == activity) {
-                        setTimeout(checkNewData, 5000);
+                    var activity = localStorage.getItem("activity");
+                    switch (activity){
+                        case "requests":
+                            updateRequestData();
+                            break;
+                        case "assistiti":
+                            updateTableDataAssistiti();
+                            break;
+                        case "swabs":
+                            updateTableDataTamponi();
+                            break;
                     }
+                    
+                } else {
+                    // if ("requests" == activity || "tamponi" == activity) {
+                        setTimeout(checkNewData, 5000);
+                    // }
                 }
             }
             else {
