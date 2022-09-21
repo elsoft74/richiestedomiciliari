@@ -8,6 +8,7 @@
         public $cognome;
         public $telefono1;
         public $telefono2;
+        public $telefono3;
         public $nascita;
         public $email;
         public $indirizzo;
@@ -23,6 +24,7 @@
             $cognome = null;
             $telefono1 = null;
             $telefono2 = null;
+            $telefono3 = null;
             $nascita = null;
             $email = null;
             $indirizzo = null;
@@ -52,6 +54,9 @@
         }
         function setTelefono2($val){
             $this->telefono2=$val;
+        }
+        function setTelefono3($val){
+            $this->telefono3=$val;
         }
         function setEmail($val){
             $this->email=$val;
@@ -92,6 +97,9 @@
         }
         function getTelefono2(){
             return $this->telefono2;
+        }
+        function getTelefono3(){
+            return $this->telefono3;
         }
         function getEmail(){
             return $this->email;
@@ -138,6 +146,7 @@
                                 a.is_active AS assistito_is_active,
                                 a.telefono1 AS telefono1,
                                 a.telefono2 AS telefono2,
+                                a.telefono3 AS telefono3,
                                 a.nascita AS nascita,
                                 a.id_usca AS id_usca,
                                 a.note AS note,
@@ -164,6 +173,7 @@
                                 $assistito->setCognome($res['cognome']);
                                 $assistito->setTelefono1($res['telefono1']);
                                 $assistito->setTelefono2($res['telefono2']);
+                                $assistito->setTelefono3($res['telefono3']);
                                 $assistito->setEmail($res['email']);
                                 $assistito->setIndirizzo($res['indirizzo']);
                                 $assistito->setCodiceFiscale($res['codicefiscale']);
@@ -219,6 +229,7 @@
                                 $stmt->bindParam(':codicefiscale',$this->codiceFiscale,PDO::PARAM_STR);
                                 $stmt->bindParam(':telefono1',$this->telefono1,PDO::PARAM_STR);
                                 $stmt->bindParam(':telefono2',$this->telefono2,PDO::PARAM_STR);
+                                $stmt->bindParam(':telefono3',$this->telefono3,PDO::PARAM_STR);
                                 $stmt->bindParam(':email',$this->email,PDO::PARAM_STR);
                                 $stmt->bindParam(':indirizzo',$this->indirizzo,PDO::PARAM_STR);
                                 $stmt->bindParam(':note',$this->note,PDO::PARAM_STR);
@@ -279,6 +290,7 @@
                                 codicefiscale=:codicefiscale,
                                 telefono1=:telefono1,
                                 telefono2=:telefono2,
+                                telefono3=:telefono3,
                                 email=:email,
                                 indirizzo=:indirizzo,
                                 note=:note,
@@ -291,6 +303,7 @@
                                 $stmt->bindParam(':codicefiscale',$codicefiscale,PDO::PARAM_STR);
                                 $stmt->bindParam(':telefono1',$this->telefono1,PDO::PARAM_STR);
                                 $stmt->bindParam(':telefono2',$this->telefono2,PDO::PARAM_STR);
+                                $stmt->bindParam(':telefono3',$this->telefono3,PDO::PARAM_STR);
                                 $stmt->bindParam(':email',$this->email,PDO::PARAM_STR);
                                 $stmt->bindParam(':indirizzo',$this->indirizzo,PDO::PARAM_STR);
                                 $stmt->bindParam(':note',$this->note,PDO::PARAM_STR);

@@ -14,6 +14,7 @@ function buildAssistitoInsertForm(target) {
                 codiceFiscale: "codiceFiscaleAssistito",
                 telefono1: "telefono1Assistito",
                 telefono2: "telefono2Assistito",
+                telefono3: "telefono3Assistito",
                 email: "emailAssistito",
                 indirizzo: "indirizzoAssistito",
                 note: "noteAssistito",
@@ -35,6 +36,7 @@ function buildAssistitoInsertForm(target) {
                 codiceFiscale: "codiceFiscaleAssistitoEdit",
                 telefono1: "telefono1AssistitoEdit",
                 telefono2: "telefono2AssistitoEdit",
+                telefono3: "telefono3AssistitoEdit",
                 email: "emailAssistitoEdit",
                 indirizzo: "indirizzoAssistitoEdit",
                 note: "noteAssistitoEdit",
@@ -81,13 +83,17 @@ function buildAssistitoInsertForm(target) {
         divFormGroup.append(el);
         el = $("<input>").addClass('assitito-input-form').addClass("form-control").attr({ "type": "text", "id": attrs.codiceFiscale });
         divFormGroup.append(el);
-        el = $("<label>").attr({ "for": attrs.telefono1 }).text("Telefono");
+        el = $("<label>").attr({ "for": attrs.telefono1 }).text("Telefono 1");
         divFormGroup.append(el);
         el = $("<input>").addClass('assitito-input-form').addClass("form-control").attr({ "type": "tel", "id": attrs.telefono1, "pattern": "[0-9]{10}" });
         divFormGroup.append(el);
-        el = $("<label>").attr({ "for": attrs.telefono2 }).text("Telefono");
+        el = $("<label>").attr({ "for": attrs.telefono2 }).text("Telefono 2");
         divFormGroup.append(el);
         el = $("<input>").addClass('assitito-input-form').addClass("form-control").attr({ "type": "tel", "id": attrs.telefono2, "pattern": "[0-9]{10}" });
+        divFormGroup.append(el);
+        el = $("<label>").attr({ "for": attrs.telefono3 }).text("Telefono 3");
+        divFormGroup.append(el);
+        el = $("<input>").addClass('assitito-input-form').addClass("form-control").attr({ "type": "tel", "id": attrs.telefono3, "pattern": "[0-9]{10}" });
         divFormGroup.append(el);
         form.append(divFormGroup);
 
@@ -156,6 +162,7 @@ function inserisciAssistito() {
         assistito.codiceFiscale = $("#codiceFiscaleAssistito").val().toUpperCase();
         assistito.telefono1 = $("#telefono1Assistito").val();
         assistito.telefono2 = $("#telefono2Assistito").val();
+        assistito.telefono3 = $("#telefono3Assistito").val();
         assistito.email = $("#emailAssistito").val();
         assistito.indirizzo = $("#indirizzoAssistito").val().toUpperCase();
         assistito.note = $("#noteAssistito").val();
@@ -227,6 +234,7 @@ function aggiornaAssistito() {
         assistito.codiceFiscale = $("#codiceFiscaleAssistitoEdit").val().toUpperCase();
         assistito.telefono1 = $("#telefono1AssistitoEdit").val();
         assistito.telefono2 = $("#telefono2AssistitoEdit").val();
+        assistito.telefono3 = $("#telefono3AssistitoEdit").val();
         assistito.email = $("#emailAssistitoEdit").val();
         assistito.indirizzo = $("#indirizzoAssistitoEdit").val().toUpperCase();
         assistito.note = $("#noteAssistitoEdit").val();
@@ -294,6 +302,7 @@ var showAssistitoUpdate = function (e, row) {
     $("#codiceFiscaleAssistitoEdit").val(element.codiceFiscale);
     $("#telefono1AssistitoEdit").val(element.telefono1);
     $("#telefono2AssistitoEdit").val(element.telefono2);
+    $("#telefono3AssistitoEdit").val(element.telefono3);
     $("#emailAssistitoEdit").val(element.email);
     $("#indirizzoAssistitoEdit").val(element.indirizzo);
     $("#noteAssistitoEdit").val(element.noteAssistito);
@@ -356,54 +365,6 @@ function showAssistiti(assistiti, user) {
 
 
             { title: "#", field: "id", width: 5, editor: false, hozAlign: "center", visible: checkUserPermission(user, "canViewId") },
-            {
-                columns: [
-                    {
-                        title: "", width: 8, hozAlign: "center", editor: false, visible: checkUserPermission(user, "canEditAssistito"), cellClick: checkUserPermission(user, "canEditAssistito") ? showAssistitoUpdate : null, formatter: function (cell, formatterParams, onRendered) {
-
-                            return '<span class="material-icons-outlined" style="color: green">edit</span>';
-                        }, headerSort: false, tooltip: function (e, cell, onRendered) {
-                            var el = document.createElement("div");
-                            el.style.backgroundColor = "#0d6efd";
-                            el.innerText = "Modifica dati assistito";
-                            return el;
-                        }
-                    },
-                    {
-                        title: "", width: 8, hozAlign: "center", editor: false, visible: checkUserPermission(user, "canDeleteAssistito"), cellClick: checkUserPermission(user, "canDeleteAssistito") ? deleteElement : null, formatter: function (cell, formatterParams, onRendered) {
-
-                            return '<span class="material-icons-outlined" style="color: red">delete</span>';
-                        }, headerSort: false, tooltip: function (e, cell, onRendered) {
-                            var el = document.createElement("div");
-                            el.style.backgroundColor = "red";
-                            el.innerText = "Cancella assistito";
-                            return el;
-                        }
-                    },
-                    {
-                        title: "", width: 8, field: "note", editor: false, cellClick: cellPopupFormatterNoteAssistito, formatter: function (cell, formatterParams, onRendered) {
-                            return (cell.getValue() == null) ? '' : '<span class="material-icons-outlined">notes</span>';
-                        }, headerSort: false, tooltip: function (e, cell, onRendered) {
-                            var el = document.createElement("div");
-                            el.style.backgroundColor = "#0d6efd";
-                            el.innerText = "Note assistito";
-                            return el;
-                        }
-                    },
-                    {
-                        title: "", width: 8, hozAlign: "center", editor: false, visible: checkUserPermission(user, "canCreateRequest"), cellClick: checkUserPermission(user, "canCreateRequest") ? newRequest : null, formatter: function (cell, formatterParams, onRendered) {
-
-                            return '<span class="material-icons-outlined" style="color: green">add</span>';
-                        }, headerSort: false, tooltip: function (e, cell, onRendered) {
-                            var el = document.createElement("div");
-                            el.style.backgroundColor = "#0d6efd";
-                            el.innerText = "Aggiungi richiesta";
-                            return el;
-                        }
-                    },
-                ]
-            },
-
             { title: "Cognome", width: 150, field: "cognome", editor: false, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
             { title: "Nome", width: 150, field: "nome", editor: false, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
             {
@@ -417,9 +378,10 @@ function showAssistiti(assistiti, user) {
             { title: "Codice Fiscale", field: "codiceFiscale", editor: false, hozAlign: "center", headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
             {
                 columns: [
-                    { title: "", field: "telefono1", editor: false, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
-                    { title: "", field: "telefono2", editor: false, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
-                    { title: "", field: "email", editor: false, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
+                    { title: "Cont.1", field: "telefono1", editor: false, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
+                    { title: "Cont.2", field: "telefono2", editor: false, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
+                    { title: "Cont.3", field: "telefono3", editor: false, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
+                    { title: "e-mail", field: "email", editor: false, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
                 ]
             },
             { title: "Indirizzo", width: 150, field: "indirizzo", formatter: "textarea", editor: false, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
@@ -430,7 +392,54 @@ function showAssistiti(assistiti, user) {
             {
                 title: "", field: "idUsca", visible: false
             },
+            {
+                columns: [
+                    {
+                        title: "", width: 8, hozAlign: "center", editor: false, visible: checkUserPermission(user, "canCreateRequest"), cellClick: checkUserPermission(user, "canCreateRequest") ? newRequest : null, formatter: function (cell, formatterParams, onRendered) {
 
+                            return '<span class="material-icons-outlined" style="color: green">add</span>';
+                        }, headerSort: false, tooltip: function (e, cell, onRendered) {
+                            var el = document.createElement("div");
+                            el.style.backgroundColor = "#0d6efd";
+                            el.innerText = "Aggiungi richiesta";
+                            return el;
+                        }
+                    },
+                    {
+                        title: "", width: 8, hozAlign: "center", editor: false, visible: checkUserPermission(user, "canEditAssistito"), cellClick: checkUserPermission(user, "canEditAssistito") ? showAssistitoUpdate : null, formatter: function (cell, formatterParams, onRendered) {
+        
+                            return '<span class="material-icons-outlined" style="color: green">edit</span>';
+                        }, headerSort: false, tooltip: function (e, cell, onRendered) {
+                            var el = document.createElement("div");
+                            el.style.backgroundColor = "#0d6efd";
+                            el.innerText = "Modifica dati assistito";
+                            return el;
+                        }
+                    },
+                    {
+                        title: "", width: 8, field: "note", editor: false, cellClick: cellPopupFormatterNoteAssistito, formatter: function (cell, formatterParams, onRendered) {
+                            return (cell.getValue() == null) ? '' : '<span class="material-icons-outlined">notes</span>';
+                        }, headerSort: false, tooltip: function (e, cell, onRendered) {
+                            var el = document.createElement("div");
+                            el.style.backgroundColor = "#0d6efd";
+                            el.innerText = "Note assistito";
+                            return el;
+                        }
+                    },
+                
+                    {
+                        title: "", width: 8, hozAlign: "center", editor: false, visible: checkUserPermission(user, "canDeleteAssistito"), cellClick: checkUserPermission(user, "canDeleteAssistito") ? deleteElement : null, formatter: function (cell, formatterParams, onRendered) {
+
+                            return '<span class="material-icons-outlined" style="color: red">delete</span>';
+                        }, headerSort: false, tooltip: function (e, cell, onRendered) {
+                            var el = document.createElement("div");
+                            el.style.backgroundColor = "red";
+                            el.innerText = "Cancella assistito";
+                            return el;
+                        }
+                    },
+                ]
+            },
         ]
     });
 

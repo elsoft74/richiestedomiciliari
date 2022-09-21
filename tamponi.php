@@ -38,7 +38,7 @@
     <div id="menu"></div>
     <div id="main" class="sections requests-form"></div>
     <div id="mainSwabs" class="sections swabs-form"></div>
-    <!-- <div id="insert"></div> -->
+    <div id="insert"></div>
     <div id="insertUser"></div>
     <!-- <div id="insertAssistito"></div> -->
     <div id="login" class="sections"></div>
@@ -56,7 +56,7 @@
             buildLogin();
         }
         window.addEventListener('dataLoaded', function() {
-            // buildInsertForm("insert");
+            buildInsertForm("insert");
             // buildEditForm("edit");
             // buildUserInsertForm("insertUser");
             // buildUserEditForm("editUser");

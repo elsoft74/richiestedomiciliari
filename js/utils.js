@@ -106,6 +106,7 @@ function loadData() {
         swabs: false,
         ruoli: false,
         usca: false,
+        uscaFull: false,
         statiTamponi: false,
         assistiti: false
     };
@@ -118,6 +119,7 @@ function loadData() {
     getRuoli(toBeCompleted);
     getTipologie(toBeCompleted);
     getUsca(toBeCompleted);
+    getUscaFull(toBeCompleted);
     getStatiTamponi(toBeCompleted);
     getAssistiti(toBeCompleted);
     //readRequests(toBeCompleted);

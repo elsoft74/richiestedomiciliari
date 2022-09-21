@@ -21,6 +21,7 @@
             $assistito->setCodiceFiscale($tmp->codiceFiscale);
             $assistito->setTelefono1($tmp->telefono1);
             $assistito->setTelefono2($tmp->telefono2);
+            $assistito->setTelefono3($tmp->telefono3);
             $assistito->setEmail($tmp->email);
             $assistito->setIndirizzo($tmp->indirizzo);
             $assistito->setNote($tmp->note);

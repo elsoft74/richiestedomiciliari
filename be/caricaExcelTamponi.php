@@ -45,12 +45,12 @@
             $assistito->setNome($row["NOME"]);
             $assistito->setCodiceFiscale($row["CODICE FISCALE"]);
             $assistito->setNascita(formattaData($row["DATA NASCITA"]));
-            $assistito->setTelefono1(strval($row["TELEFONO"]));
-            $assistito->setTelefono2(strval($row["ALTRO CONTATTO"]));
+            $assistito->setTelefono1(strval($row["TELEFONO1"]));
+            $assistito->setTelefono2(strval($row["TELEFONO2"]));
             $assistito->setIndirizzo($row["INDIRIZZO DOMICILIO"]." ".$row["DOMICILIO"]);
-            $assistito->setEmail($row["mail"]);
+            $assistito->setEmail($row["MAIL"]);
             $tampone->setDataEsecuzione(formattaData($row["DATA TAMPONE"]));
-            $tampone->setDataConsigliata(formattaData($row["Giorno Tampone"]));
+            $tampone->setDataConsigliata(formattaData($row["GIORNO TAMPONE"]));
             $tampone->setIdStatus(($status!=null)?intval($status):null);
             $assistito->getIdOrInsert($username,$token);
             $tampone->setIdAssistito($assistito->getId());

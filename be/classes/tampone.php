@@ -228,6 +228,7 @@ class Tampone
                     $res = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     foreach ($res as $r) {
                         $tmp = new StdClass();
+                        $tmp->id = $r['id_tampone'];
                         $tmp->idAssistito=$r['id_assistito'];
                         $tmp->nome=$r['nome'];
                         $tmp->cognome=$r['cognome'];

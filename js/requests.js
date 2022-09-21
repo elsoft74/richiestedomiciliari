@@ -43,6 +43,15 @@ function showRequests(richieste, user) {
                     timezone: "Europe/Rome",
                 }, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like"
             },
+            {
+                title: "Tipo", width: 120, field: "tipologia", editor: false, hozAlign: "center", headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like"
+            },
+            {
+                title: "Priorità", width: 100, field: "priorita", editor: false, hozAlign: "center", headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like"
+            },
+            (mostraStorico) ? {
+                title: "Arch.", width: 120, field: "archived", editor: false, formatter: "textarea", hozAlign: "center", headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like"
+            } : { visible: false },
 
             { title: "#", field: "idAssistito", width: 5, editor: false, hozAlign: "center", visible: checkUserPermission(user, "canViewId") },
             // {
@@ -100,6 +109,7 @@ function showRequests(richieste, user) {
             {
                 title: "Usca", field: "usca", editor: false, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like"
             },
+            
 
             {
                 columns: [
@@ -171,16 +181,7 @@ function showRequests(richieste, user) {
                 ]
             },
 
-            {
-                title: "Tipo", width: 120, field: "tipologia", editor: false, hozAlign: "center", headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like"
-            },
-            {
-                title: "Priorità", width: 100, field: "priorita", editor: false, hozAlign: "center", headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like"
-            },
-
-            (mostraStorico) ? {
-                title: "Arch.", width: 120, field: "archived", editor: false, formatter: "textarea", hozAlign: "center", headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like"
-            } : { visible: false },
+            
             // (checkUserPermission(user, "canViewDetails")) ?
             //     {
             //         title: "Dettagli", editor: false/*, formatter: "textarea" */, cellClick: cellPopupFormatterDettagliRichiesta, formatter: function (cell, formatterParams, onRendered) {

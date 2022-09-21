@@ -58,6 +58,8 @@ function showSwabs(swabs, user) {
         // },
         columns: [                 //define the table columns
 
+        { title: "", field: "id", width: 10, editor: false, hozAlign: "center", visible: false },
+
             { title: "#", field: "idAssistito", width: 10, editor: false, hozAlign: "center", visible: checkUserPermission(user, "canViewId") },
 
             // {
@@ -72,17 +74,6 @@ function showSwabs(swabs, user) {
             //         return '<span class="material-icons-outlined" style="color: red">delete</span>';
             //     },
             // },
-            {
-                title: "Note", field: "noteAssistito", editor: false/*, formatter: "textarea" */, cellClick: cellPopupFormatterNoteAssistito, formatter: function (cell, formatterParams, onRendered) {
-                    return (cell.getValue() == null) ? '' : '<span class="material-icons-outlined">notes</span>';
-                }, tooltip: function (e, cell, onRendered) {
-                    var el = document.createElement("div");
-                    el.style.backgroundColor = "#0d6efd";
-                    el.innerText = "Note assistito";
-                    return el;
-                }
-            },
-
             { title: "Cognome", field: "cognome", editor: false, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
             { title: "Nome", field: "nome", editor: false },
             {
@@ -105,22 +96,9 @@ function showSwabs(swabs, user) {
             {
                 title: "Usca", field: "usca", editor: false, hozAlign: "center", headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like"
             },
-
-            {
-                title: "", width: 10, hozAlign: "center", editor: false, visible: checkUserPermission(user, "canCreateRequest"), cellClick: checkUserPermission(user, "canCreateRequest") ? changeSwabStatus : null, formatter: function (cell, formatterParams, onRendered) {
-
-                    return '<span class="material-icons-outlined" style="color: green">edit</span>';
-                }, tooltip: function (e, cell, onRendered) {
-                    var el = document.createElement("div");
-                    el.style.backgroundColor = "#0d6efd";
-                    el.innerText = "Modifica stato";
-                    return el;
-                }
-            },
-
             { title: "#", field: "idTampone", editor: false, hozAlign: "center", visible: checkUserPermission(user, "canViewId") },
             {
-                title: "Data Tampone", field: "dataEsecuzione", editor: false, hozAlign: "center", formatter: "datetime", formatterParams: {
+                title: "Data Positività", field: "dataEsecuzione", editor: false, hozAlign: "center", formatter: "datetime", formatterParams: {
                     //inputFormat:"YYY-MM-DD HH:mm:ss",
                     outputFormat: "dd-MM-yyyy",
                     invalidPlaceholder: "(data non valida)",
@@ -140,6 +118,38 @@ function showSwabs(swabs, user) {
             },
             {
                 title: "", field: "idStatus", visible: false
+            },
+            {
+                title: "", width: 10, hozAlign: "center", editor: false, visible: checkUserPermission(user, "canCreateRequest"), cellClick: checkUserPermission(user, "canCreateRequest") ? changeSwabStatus : null, formatter: function (cell, formatterParams, onRendered) {
+
+                    return '<span class="material-icons-outlined" style="color: green">edit</span>';
+                }, tooltip: function (e, cell, onRendered) {
+                    var el = document.createElement("div");
+                    el.style.backgroundColor = "#0d6efd";
+                    el.innerText = "Modifica stato";
+                    return el;
+                }
+            },
+            {
+                title: "", width: 8, hozAlign: "center", editor: false, visible: checkUserPermission(user, "canCreateRequest"), cellClick: checkUserPermission(user, "canCreateRequest") ? newRequest : null, formatter: function (cell, formatterParams, onRendered) {
+
+                    return '<span class="material-icons-outlined" style="color: green">add</span>';
+                }, headerSort: false, tooltip: function (e, cell, onRendered) {
+                    var el = document.createElement("div");
+                    el.style.backgroundColor = "#0d6efd";
+                    el.innerText = "Aggiungi richiesta";
+                    return el;
+                }
+            },
+            {
+                title: "", field: "noteAssistito", editor: false/*, formatter: "textarea" */, cellClick: cellPopupFormatterNoteAssistito, formatter: function (cell, formatterParams, onRendered) {
+                    return (cell.getValue() == null) ? '' : '<span class="material-icons-outlined">notes</span>';
+                }, tooltip: function (e, cell, onRendered) {
+                    var el = document.createElement("div");
+                    el.style.backgroundColor = "#0d6efd";
+                    el.innerText = "Note assistito";
+                    return el;
+                }
             },
         ]
     });
@@ -178,9 +188,6 @@ function readSwabs(toBeCompleted) {
                 toBeCompleted.swabs = true;
                 if (result.hasOwnProperty("lastRead")) {
                     localStorage.setItem("lastRead", result.lastRead);
-                }
-                if (result.hasOwnProperty("deleted")) {
-                    localStorage.setItem("deleted", result.deleted);
                 }
                 setTimeout(checkNewData, 5000);
             } else {
@@ -267,8 +274,8 @@ function buildUpdateTamponiForm() {
         status: "statusTamponeEdit",
 
     }
-    $("#tamponeUpload").html("");
-    let modal = $("#tamponeUpload").addClass("modal")/*.addClass("fade")*/.attr({ "id": "tamponeUpload", "tabindex": "-1", "role": "dialog", "aria-labelledby": attrs.titleId, "aria-hidden": "true" });
+    $("#tamponeEdit").html("");
+    let modal = $("#tamponeEdit").addClass("modal")/*.addClass("fade")*/.attr({ "id": "tamponeEdit", "tabindex": "-1", "role": "dialog", "aria-labelledby": attrs.titleId, "aria-hidden": "true" });
     let modalDialog = $("<div>").addClass("modal-dialog").attr({ "role": "document" });
     let modalContent = $("<div>").addClass("modal-content");
     let modalHeader = $("<div>").addClass("modal-header");
@@ -461,11 +468,11 @@ function uploadExcelTamponi() {
 function updateTableDataTamponi() {
     if (typeof (waitingForDataTamponi) !== 'undefined' && !waitingForDataTamponi) {
         waitingForDataTamponi = true;
-        toBeCompleted.tamponi = false;
+        toBeCompleted.swabs = false;
         readSwabs(toBeCompleted);
         setTimeout(updateTableDataTamponi, 200);
     } else {
-        if (toBeCompleted.tamponi) {
+        if (toBeCompleted.swabs) {
             waitingForDataTamponi = false;
             var table = Tabulator.findTable("#mainSwabs")[0];
             console.log("Scrivo i dati aggiornati");

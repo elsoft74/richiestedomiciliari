@@ -343,8 +343,8 @@ function buildUserInsertForm(target) {
         el = $("<label>").attr({ "for": attrs.idUsca }).text("USCA di appartenenza");
         divFormGroup.append(el);
         el = $("<select>").addClass('user-input-form').addClass("form-control").attr({ "id": attrs.idUsca });
-        if(usca!=null){
-            usca.forEach(element => {
+        if(uscaFull!=null){
+            uscaFull.forEach(element => {
                 let option = $("<option>").attr({ "value": element.id}).text(element.descrizione);
                 el.append(option);
             });
