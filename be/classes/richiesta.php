@@ -200,6 +200,7 @@ class Richiesta
                     a.is_active AS assistito_is_active,
                     a.telefono1 AS telefono1,
                     a.telefono2 AS telefono2,
+                    a.telefono3 AS telefono3,
                     a.nascita AS nascita,
                     a.id_usca AS id_usca,
                     r.id as id_richiesta,
@@ -242,6 +243,7 @@ class Richiesta
                         $tmp->email=$r['email'];
                         $tmp->telefono1=$r['telefono1'];
                         $tmp->telefono2=$r['telefono2'];
+                        $tmp->telefono3=$r['telefono3'];
                         $tmp->indirizzo=$r['indirizzo'];
                         $tmp->codiceFiscale=$r['codicefiscale'];
                         $tmp->noteAssistito=$r['note_assistito'];
