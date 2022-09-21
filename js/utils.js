@@ -39,10 +39,10 @@ function checkIfComplete() {
     let out = true;
     Object.keys(toBeCompleted).forEach(p => { out = out && toBeCompleted[p] });
     if (out) {
-        setTimeout(checkIfUpdated, 200);
+        setTimeout(checkIfUpdated, 3000);
         window.dispatchEvent(new CustomEvent("dataLoaded"));
     } else {
-        setTimeout(checkIfComplete, 200);
+        setTimeout(checkIfComplete, 3000);
     }
 }
 
@@ -54,7 +54,7 @@ function checkIfUpdated() {
         window.dispatchEvent(new CustomEvent("dataUpdated"));
     } else {
         console.log("Aggiornamenti non ancora pronti");
-        setTimeout(checkIfUpdated, 200);
+        setTimeout(checkIfUpdated, 3000);
     }
 }
 
@@ -86,7 +86,7 @@ function checkNewData() {
                     
                 } else {
                     // if ("requests" == activity || "tamponi" == activity) {
-                        setTimeout(checkNewData, 5000);
+                        setTimeout(checkNewData, 3000);
                     // }
                 }
             }
@@ -125,7 +125,7 @@ function loadData() {
     //readRequests(toBeCompleted);
     //readSwabs(toBeCompleted);
     getData(toBeCompleted);
-    setTimeout(checkIfComplete, 200);
+    setTimeout(checkIfComplete, 3000);
 }
 
 function formattaData(data, lung) { // lung se impostato a true fa ottenere una data compresa dell'ora

@@ -199,7 +199,7 @@ function showRequests(richieste, user) {
         });
     }
     $("#main").hide();
-    setTimeout(checkNewData, 200);
+    setTimeout(checkNewData, 3000);
 
 }
 
@@ -619,7 +619,7 @@ function updateRequestData() {
             if(table!=null && table != undefined){
                 console.log("Scrivo i dati aggiornati");
                 table.updateOrAddData(richieste);
-                setTimeout(checkNewData, 200);
+                setTimeout(checkNewData, 3000);
             }
         } else {
             setTimeout(updateRequestData, 200);
