@@ -183,6 +183,7 @@
                                 $assistito->setUsca($res['usca']);
                                 array_push($out->data,$assistito);
                             }
+                            $out->lastRead = (new DateTime())->format('Y-m-d H:i:s');
                             $out->status="OK";
                         /*} else {
                             throw new Exception("OPERAZIONE-NON-PERMESSA");
