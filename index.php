@@ -37,18 +37,18 @@
 <body>
     <div id="menu"></div>
     <div id="main" class="sections requests-form"></div>
-    <!-- <div id="mainSwabs" class="sections swabs-form"></div> -->
+    <div id="mainSwabs" class="sections swabs-form"></div>
     <div id="insert"></div>
-    <!-- <div id="insertUser"></div> -->
+    <div id="insertUser"></div>
     <!-- <div id="insertAssistito"></div> -->
     <div id="login" class="sections"></div>
     <!-- <div id="users" class="sections users-form"></div> -->
-    <div id="edit"></div>
+    <!-- <div id="edit"></div> -->
     <!-- <div id="editUser"></div> -->
     <!-- <div id="editAssistito"></div> -->
-    <div id="modalNoteRichiesta"></div>
-    <!-- <div id="tamponeEdit"></div> -->
-    <!-- <div id="tamponeUpload"></div> -->
+    <!-- <div id="modalNoteRichiesta"></div> -->
+    <div id="tamponeEdit"></div>
+    <div id="tamponeUpload"></div>
     <!-- <div id="assistiti"></div> -->
     <div id="firma"><a href="https://ivopugliese.it">©2022 Ivo Pugliese</a></div>
     <script>       
@@ -57,18 +57,18 @@
         }
         window.addEventListener('dataLoaded', function() {
             buildInsertForm("insert");
-            buildEditForm("edit");
+            // buildEditForm("edit");
             // buildUserInsertForm("insertUser");
             // buildUserEditForm("editUser");
             // buildAssistitoInsertForm("insertAssistito");
             // buildAssistitoEditForm("editAssistito");
             showMenu(lu);
-            showRequests(richieste, lu);
-            // showSwabs(swabs,lu);
+            // showRequests(richieste, lu);
+            showSwabs(swabs,lu);
             // showAssistiti(assistiti,lu);
-            changeActivity("requests");
+            changeActivity("swabs");
         });
-        window.addEventListener('dataUpdated', updateRequestData); 
+        window.addEventListener('dataUpdated', updateTableDataTamponi); 
         window.onload = function() {
             lu = JSON.parse(localStorage.getItem("ricdomloggeduser"));
             if (lu == null) {

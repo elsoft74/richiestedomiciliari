@@ -29,11 +29,11 @@ function showMenu(user) {
         }
         button = $("<button>").addClass('btn btn-primary btn-block home-form requests-form swabs-form users-form').attr({"onClick":'window.open("assistiti.php","_self")','id':'showRequestsButton'}).text("Elenco Pazienti").hide();
         div1.append(button);
-        button = $("<button>").addClass('btn btn-primary btn-block home-form assistiti-form swabs-form users-form').attr({"onClick":'window.open("index.php","_self")','id':'showRequestsButton'}).text("Elenco Attività").hide();
+        button = $("<button>").addClass('btn btn-primary btn-block home-form assistiti-form swabs-form users-form').attr({"onClick":'window.open("richieste.php","_self")','id':'showRequestsButton'}).text("Elenco Attività").hide();
         div1.append(button);
         button = $("<button>").addClass('btn btn-primary btn-block requests-form').attr({"onClick":'mostraStorico()','id':'mostraStoricoButton'}).text(mostraStorico?"Solo Attuali":"Tutte").hide();
         div1.append(button);
-        button = $("<button>").addClass('btn btn-primary btn-block home-form assistiti-form users-form requests-form').attr({"onClick":'window.open("tamponi.php","_self")','id':'mostraTamponiButton'}).text("Pazienti Positivi").hide();
+        button = $("<button>").addClass('btn btn-primary btn-block home-form assistiti-form users-form requests-form').attr({"onClick":'window.open("index.php","_self")','id':'mostraTamponiButton'}).text("Pazienti Positivi").hide();
         div1.append(button);
         if(user.permissions.canUploadSwabs){
             button = $("<button>").addClass('btn btn-primary btn-block swabs-form').attr({"onClick":'uploadSwabs()','id':'caricaTamponiButton'}).text("Carica Tamponi");
