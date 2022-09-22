@@ -344,8 +344,8 @@ class Tampone
                         if ($res){
                             if ($res['presente']=="0") {
                                 $query = "INSERT INTO `tamponi` (
-                                    id_assistito, data_esecuzione,data_consigliata,status,created,created_by)
-                                    VALUES (:id_assistito,:data_esecuzione,:data_consigliata,:status,:created,:created_by)";
+                                    id_assistito, data_esecuzione,data_consigliata,status,created_by)
+                                    VALUES (:id_assistito,:data_esecuzione,:data_consigliata,:status,:created_by)";
     
                                 $stmt = $conn->prepare($query);
     
@@ -353,7 +353,7 @@ class Tampone
                                 $stmt->bindParam(':data_esecuzione', $this->dataEsecuzione, PDO::PARAM_STR);
                                 $stmt->bindParam(':data_consigliata', $this->dataConsigliata, PDO::PARAM_STR);
                                 $stmt->bindParam(':status', $this->idStatus, PDO::PARAM_INT);
-                                $stmt->bindParam(':created', $this->created, PDO::PARAM_STR);
+                                // $stmt->bindParam(':created', $this->created, PDO::PARAM_STR);
                                 $stmt->bindParam(':created_by', $this->createdBy, PDO::PARAM_INT);
     
                                 $stmt->execute();
