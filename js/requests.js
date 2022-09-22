@@ -190,7 +190,7 @@ function showRequests(richieste, user) {
         });
     }
     $("#main").hide();
-    setTimeout(checkNewData, 4000);
+    setTimeout(checkNewData, 6000);
 
 }
 
@@ -601,18 +601,18 @@ function updateRequestData() {
         waitingForData = true;
         toBeCompleted.richieste = false;
         readRequests(toBeCompleted);
-        setTimeout(updateRequestData, 4000);
+        setTimeout(updateRequestData, 6000);
     } else {
         if (toBeCompleted.richieste) {
             waitingForData = false;
             var table = Tabulator.findTable("#main")[0];
             if (table != null && table != undefined) {
-                console.log("Scrivo i dati aggiornati");
+                // console.log("Scrivo i dati aggiornati");
                 table.updateOrAddData(richieste);
-                setTimeout(checkNewData, 4000);
+                setTimeout(checkNewData, 6000);
             }
         } else {
-            setTimeout(updateRequestData, 4000);
+            setTimeout(updateRequestData, 6000);
         }
     }
 }
