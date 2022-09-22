@@ -24,18 +24,19 @@
                 if ($lastRead==null){
                     throw new Exception("LASTREAD-NULL");
                 }
-                $dbname=DBNAME;
-                $query = "SELECT MAX(UPDATE_TIME) > :lr AS updated
-                    FROM   information_schema.tables
-                    WHERE  TABLE_SCHEMA = :dbname
-                    AND (TABLE_NAME = 'richieste' OR TABLE_NAME = 'assistiti' OR TABLE_NAME = 'tamponi')";
+                // $dbname=DBNAME;
+                // $query = "SELECT MAX(UPDATE_TIME) > :lr AS updated
+                //     FROM   information_schema.tables
+                //     WHERE  TABLE_SCHEMA = :dbname
+                //     AND (TABLE_NAME = 'richieste' OR TABLE_NAME = 'assistiti' OR TABLE_NAME = 'tamponi')";
                     
-                $stmt = $conn->prepare($query);
-                $stmt->bindParam(':lr', $lastRead, PDO::PARAM_STR);
-                $stmt->bindParam(':dbname', $dbname, PDO::PARAM_STR);
-                $stmt->execute();
-                $res=$stmt->fetch(PDO::FETCH_ASSOC);
-                $out->data=($res["updated"]=="1");
+                // $stmt = $conn->prepare($query);
+                // $stmt->bindParam(':lr', $lastRead, PDO::PARAM_STR);
+                // $stmt->bindParam(':dbname', $dbname, PDO::PARAM_STR);
+                // $stmt->execute();
+                // $res=$stmt->fetch(PDO::FETCH_ASSOC); 
+                // $out->data=($res["updated"]=="1");
+                $out->data=true;
                 $out->status="OK";
             } catch(Exception $ex) {
                 $out->error=$ex->getMessage();
