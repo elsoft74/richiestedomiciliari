@@ -164,7 +164,7 @@ function showSwabs(swabs, user) {
     }
     // localStorage.setItem("activity", "requests");
     $("#mainSwabs").hide();
-    setTimeout(checkNewData, 3000);
+    setTimeout(checkNewData, 4000);
 }
 
 function readSwabs(toBeCompleted) {
@@ -190,7 +190,7 @@ function readSwabs(toBeCompleted) {
                 if (result.hasOwnProperty("lastRead")) {
                     localStorage.setItem("lastRead", result.lastRead);
                 }
-                setTimeout(checkNewData, 3000);
+                setTimeout(checkNewData, 4000);
             } else {
                 Swal.fire({
                     text: "Impossibile recuperare l'elenco dei tamponi.",
@@ -248,7 +248,6 @@ function aggiornaTampone() {
                     }).then((result) => {
                         if (result.isConfirmed) {
                             cleanTamponeEdit();
-                            // location.reload();
                         }
                     })
                 } else {
@@ -321,6 +320,11 @@ function cleanTamponeEdit() {
     $("#idTamponeEdit").val('');
     $("#statusTamponeEdit").val('');
     $("#tamponeEdit").hide();
+}
+
+function cleanTamponeUpload() {
+    $("#tamponeUpload").hide();
+    $("#tamponeUpload").html('');
 }
 
 function getStatiTamponi(toBeCompleted) {
@@ -443,7 +447,11 @@ function uploadExcelTamponi() {
                             showCancelButton: false,
                             confirmButtonColor: '#3085d6',
                             confirmButtonText: 'Ok'
-                        });
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                cleanTamponeUpload();
+                            }
+                        })
 
                     } else {
                         Swal.fire({
@@ -478,7 +486,7 @@ function updateTableDataTamponi() {
             var table = Tabulator.findTable("#mainSwabs")[0];
             console.log("Scrivo i dati aggiornati");
             table.updateOrAddData(swabs);
-            setTimeout(checkNewData, 3000);
+            setTimeout(checkNewData, 4000);
         } else {
             setTimeout(updateTableDataTamponi, 200);
         }

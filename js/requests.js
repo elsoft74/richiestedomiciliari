@@ -193,14 +193,14 @@ function showRequests(richieste, user) {
     });
 
     if (checkUserPermission(user, "canExport")) {
-        let button = $("<button>").addClass("btn btn-primary btn-block requests-form").attr({ "id": "dataDownLoadButton" }).html("Scarica richieste").hide();
+        let button = $("<button>").addClass("btn btn-primary btn-block requests-form").attr({ "id": "dataDownLoadButton" }).html("Scarica elenco attività").hide();
         $("#menubuttons").append(button);
         document.getElementById("dataDownLoadButton").addEventListener("click", function () {
             table.download("xlsx", "richieste.xlsx", { sheetName: "Export" });
         });
     }
     $("#main").hide();
-    setTimeout(checkNewData, 3000);
+    setTimeout(checkNewData, 4000);
 
 }
 
@@ -249,7 +249,6 @@ function inserisci() {
                         }).then((result) => {
                             if (result.isConfirmed) {
                                 cleanInsert();
-                                // location.reload();
                             }
                         })
                     } else {
@@ -311,7 +310,6 @@ function aggiorna() {
                         }).then((result) => {
                             if (result.isConfirmed) {
                                 cleanEdit();
-                                // location.reload();
                             }
                         })
                     } else {
@@ -340,7 +338,9 @@ var showElementUpdate = function (e, row) {
     $("#indirizzoEdit").val(element.indirizzo);
     $("#codiceFiscaleEdit").val(element.codiceFiscale);
     $("#noteAssistitoEdit").val(element.noteAssistito);
-    $("#telefonoEdit").val(element.telefono);
+    $("#telefono1Edit").val(element.telefono1);
+    $("#telefono2Edit").val(element.telefono2);
+    $("#telefono3Edit").val(element.telefono3);
     $("#idRichiestaEdit").val(element.idRichiesta);
     $("#idTipologiaEdit").val(element.idTipologia);
     $("#idPrioritaEdit").val(element.idPriorita);
@@ -497,7 +497,6 @@ function readRequests(toBeCompleted) {
             }
         }
     }
-    //xhr.send();
     xhr.send("lastRead=" + localStorage.getItem("lastRead"));
 }
 
@@ -565,7 +564,6 @@ function checkAndShowMessage(result) {
         }).then((result) => {
             if (result.isConfirmed) {
                 cleanEdit();
-                //location.reload();
             }
         })
     } else {
@@ -590,6 +588,7 @@ var newRequest = function (e, row) {
     $("#noteAssistito").val(element.noteAssistito);
     $("#telefono1").val(element.telefono1);
     $("#telefono2").val(element.telefono2);
+    $("#telefono3").val(element.telefono3);
     $("#insert").show();
 
 }
@@ -612,7 +611,7 @@ function updateRequestData() {
         waitingForData = true;
         toBeCompleted.richieste = false;
         readRequests(toBeCompleted);
-        setTimeout(updateRequestData, 200);
+        setTimeout(updateRequestData, 4000);
     } else {
         if (toBeCompleted.richieste) {
             waitingForData = false;
@@ -620,10 +619,10 @@ function updateRequestData() {
             if(table!=null && table != undefined){
                 console.log("Scrivo i dati aggiornati");
                 table.updateOrAddData(richieste);
-                setTimeout(checkNewData, 3000);
+                setTimeout(checkNewData, 4000);
             }
         } else {
-            setTimeout(updateRequestData, 200);
+            setTimeout(updateRequestData, 4000);
         }
     }
 }

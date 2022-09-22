@@ -16,6 +16,7 @@ function buildInsertForm(target) {
                 noteAssistito: "noteAssistito",
                 telefono1: "telefono1",
                 telefono2: "telefono2",
+                telefono3: "telefono3",
                 idRichiesta: "idRichiesta",
                 idTipologia: "idTipologia",
                 idPriorita: "idPriorita",
@@ -43,6 +44,7 @@ function buildInsertForm(target) {
                 noteAssistito: "noteAssistitoEdit",
                 telefono1: "telefono1Edit",
                 telefono2: "telefono2Edit",
+                telefono3: "telefono3Edit",
                 idRichiesta: "idRichiestaEdit",
                 idTipologia: "idTipologiaEdit",
                 idPriorita: "idPrioritaEdit",
@@ -96,14 +98,19 @@ function buildInsertForm(target) {
         el = $("<input>").addClass("form-richiesta").addClass("form-control").attr({ "type": "email", "id": attrs.email }).prop("readonly", true);
         divFormGroup.append(el);
 
-        el = $("<label>").attr({ "for": attrs.telefono1 }).text("Telefono");
+        el = $("<label>").attr({ "for": attrs.telefono1 }).text("Telefono 1");
         divFormGroup.append(el);
         el = $("<input>").addClass("form-richiesta").addClass("form-control").attr({ "type": "text", "id": attrs.telefono1 }).prop("readonly", true);
         divFormGroup.append(el);
 
-        el = $("<label>").attr({ "for": attrs.telefono2 }).text("Telefono");
+        el = $("<label>").attr({ "for": attrs.telefono2 }).text("Telefono 2");
         divFormGroup.append(el);
         el = $("<input>").addClass("form-richiesta").addClass("form-control").attr({ "type": "text", "id": attrs.telefono2 }).prop("readonly", true);
+        divFormGroup.append(el);
+
+        el = $("<label>").attr({ "for": attrs.telefono3 }).text("Telefono 3");
+        divFormGroup.append(el);
+        el = $("<input>").addClass("form-richiesta").addClass("form-control").attr({ "type": "text", "id": attrs.telefono3 }).prop("readonly", true);
         divFormGroup.append(el);
 
         el = $("<label>").attr({ "for": attrs.idTipologia }).text("Tipo di richiesta");

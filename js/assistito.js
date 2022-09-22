@@ -401,7 +401,7 @@ function showAssistiti(assistiti, user) {
                         }, headerSort: false, tooltip: function (e, cell, onRendered) {
                             var el = document.createElement("div");
                             el.style.backgroundColor = "#0d6efd";
-                            el.innerText = "Aggiungi richiesta";
+                            el.innerText = "Aggiungi attività";
                             return el;
                         }
                     },
@@ -412,7 +412,7 @@ function showAssistiti(assistiti, user) {
                         }, headerSort: false, tooltip: function (e, cell, onRendered) {
                             var el = document.createElement("div");
                             el.style.backgroundColor = "#0d6efd";
-                            el.innerText = "Modifica dati assistito";
+                            el.innerText = "Modifica dati paziente";
                             return el;
                         }
                     },
@@ -422,7 +422,7 @@ function showAssistiti(assistiti, user) {
                         }, headerSort: false, tooltip: function (e, cell, onRendered) {
                             var el = document.createElement("div");
                             el.style.backgroundColor = "#0d6efd";
-                            el.innerText = "Note assistito";
+                            el.innerText = "Note paziente";
                             return el;
                         }
                     },
@@ -434,7 +434,7 @@ function showAssistiti(assistiti, user) {
                         }, headerSort: false, tooltip: function (e, cell, onRendered) {
                             var el = document.createElement("div");
                             el.style.backgroundColor = "red";
-                            el.innerText = "Cancella assistito";
+                            el.innerText = "Cancella paziente";
                             return el;
                         }
                     },
@@ -451,7 +451,7 @@ function showAssistiti(assistiti, user) {
         });
     }
     $("#main").hide();
-    setTimeout(checkNewData, 3000);
+    setTimeout(checkNewData, 4000);
 
 }
 
@@ -478,10 +478,6 @@ function getAssistiti(toBeCompleted) {
                 if (result.hasOwnProperty("lastRead")) {
                     localStorage.setItem("lastRead", result.lastRead);
                 }
-                if (result.hasOwnProperty("deleted")) {
-                    localStorage.setItem("deleted", result.deleted);
-                }
-                //setTimeout(checkIfAreUpdatedData, 1000);
             } else {
                 Swal.fire({
                     text: "Impossibile recuperare l'elenco degli assistiti.",
@@ -493,7 +489,6 @@ function getAssistiti(toBeCompleted) {
             }
         }
     }
-    //xhr.send();
     xhr.send("lastRead=" + localStorage.getItem("lastRead"));
 }
 
@@ -502,16 +497,16 @@ function updateTableDataAssistiti() {
         waitingForDataAssistiti = true;
         toBeCompleted.assistiti = false;
         readAssistiti(toBeCompleted);
-        setTimeout(updateTableDataAssistiti, 3000);
+        setTimeout(updateTableDataAssistiti, 4000);
     } else {
         if (toBeCompleted.assistiti) {
             waitingForDataAssistiti = false;
             var table = Tabulator.findTable("#assistiti")[0];
             console.log("Scrivo i dati aggiornati");
             table.updateOrAddData(assistiti);
-            setTimeout(checkNewData, 3000);
+            setTimeout(checkNewData, 4000);
         } else {
-            setTimeout(updateTableDataAssistiti, 3000);
+            setTimeout(updateTableDataAssistiti, 4000);
         }
     }
 }
@@ -531,7 +526,6 @@ function readAssistiti(toBeCompleted) {
                 if (result.hasOwnProperty("lastRead")) {
                     localStorage.setItem("lastRead", result.lastRead);
                 }
-                // setTimeout(checkIfAreUpdatedData, 1000);
             } else {
                 Swal.fire({
                     text: "Impossibile recuperare l'elenco degli assistiti.",
@@ -543,6 +537,5 @@ function readAssistiti(toBeCompleted) {
             }
         }
     }
-    //xhr.send();
     xhr.send("lastRead=" + localStorage.getItem("lastRead"));
 }

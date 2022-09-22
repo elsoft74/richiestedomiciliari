@@ -223,7 +223,7 @@
                             $stmt->execute();
                             $results=$stmt->fetch(PDO::FETCH_ASSOC);
                             if($results && $results['presente']==0){
-                                $query="INSERT INTO `assistiti` (nome,cognome,codicefiscale,telefono1,telefono2,email,indirizzo,note,nascita,id_usca) VALUES (:nome,:cognome,:codicefiscale,:telefono1,:telefono2,:email,:indirizzo,:note,:nascita,:id_usca)";
+                                $query="INSERT INTO `assistiti` (nome,cognome,codicefiscale,telefono1,telefono2,telefono3,email,indirizzo,note,nascita,id_usca) VALUES (:nome,:cognome,:codicefiscale,:telefono1,:telefono2,:telefono3,:email,:indirizzo,:note,:nascita,:id_usca)";
                                 $stmt = $conn->prepare($query);
                                 $stmt->bindParam(':nome',$this->nome,PDO::PARAM_STR);
                                 $stmt->bindParam(':cognome',$this->cognome,PDO::PARAM_STR);

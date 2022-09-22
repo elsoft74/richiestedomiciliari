@@ -3,6 +3,7 @@
     require_once("classes/assistito.php");
     require_once("classes/tampone.php");
     include_once("config/config.php");
+    ini_set('memory_limit', '768M');
 
     use PhpOffice\PhpSpreadsheet\IOFactory;
     use PhpOffice\PhpSpreadsheet\Spreadsheet;
@@ -38,6 +39,7 @@
                 $keys = $cells;
             }
         }
+        $out->dbg=json_encode($worksheet);
         foreach($rows as $row){
             $assistito=new Assistito();
             $tampone=new Tampone();
@@ -47,6 +49,7 @@
             $assistito->setNascita(formattaData($row["DATA NASCITA"]));
             $assistito->setTelefono1(strval($row["TELEFONO1"]));
             $assistito->setTelefono2(strval($row["TELEFONO2"]));
+            $assistito->setTelefono3(strval($row["ALTRO CONTATTO"]));
             $assistito->setIndirizzo($row["INDIRIZZO DOMICILIO"]." ".$row["DOMICILIO"]);
             $assistito->setEmail($row["MAIL"]);
             $tampone->setDataEsecuzione(formattaData($row["DATA TAMPONE"]));
