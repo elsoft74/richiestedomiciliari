@@ -34,7 +34,7 @@
                 // $stmt->bindParam(':lr', $lastRead, PDO::PARAM_STR);
                 // $stmt->bindParam(':dbname', $dbname, PDO::PARAM_STR);
                 // $stmt->execute();
-                // $res=$stmt->fetch(PDO::FETCH_ASSOC);
+                // $res=$stmt->fetch(PDO::FETCH_ASSOC); 
                 // $out->data=($res["updated"]=="1");
                 $out->data=true;
                 $out->status="OK";
