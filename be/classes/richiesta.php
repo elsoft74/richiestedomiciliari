@@ -16,6 +16,8 @@ class Richiesta
     public $lastUpdateBy;
     public $deletedDate;
     public $deletedBy;
+    public $archivedDate;
+    public $archivedBy;
 
     public function setId($val){
         $this->id=$val;
@@ -121,6 +123,22 @@ class Richiesta
         return $this->deletedBy;
     }
 
+    public function setArchivedBy($val){
+        $this->archivedBy=$val;
+    }
+
+    public function getArchivedBy(){
+        return $this->archivedBy;
+    }
+
+    public function setArchivedDate($val){
+        $this->archivedDate=$val;
+    }
+
+    public function getArchivedDate(){
+        return $this->archivedDate;
+    }
+
 
     public function getDetails()
     {
@@ -158,7 +176,7 @@ class Richiesta
         }
     }
 
-    public static function getRequestes()
+    public static function getRequestes($arc)
     {
         //$val null o "A" restituisce tutte le richieste Attive
         //$val "T" restituisce tutte le richieste
@@ -166,6 +184,7 @@ class Richiesta
 
         $out = new stdClass();
         $out->status = "KO";
+        $out->data = [];
         try {
             $conn = DB::conn();
             if ($conn != null) {
@@ -179,7 +198,9 @@ class Richiesta
                     a.codicefiscale AS codicefiscale,
                     a.note AS note_assistito,
                     a.is_active AS assistito_is_active,
-                    a.telefono AS telefono,
+                    a.telefono1 AS telefono1,
+                    a.telefono2 AS telefono2,
+                    a.telefono3 AS telefono3,
                     a.nascita AS nascita,
                     a.id_usca AS id_usca,
                     r.id as id_richiesta,
@@ -191,30 +212,38 @@ class Richiesta
                     r.created AS created,
                     r.created_by AS created_by,
                     r.last_update AS last_update,
-                    r.last_update_by AS last_update_by
-                    FROM `assistiti` AS a LEFT JOIN `richieste` AS r ON a.id=r.id_assistito
+                    r.last_update_by AS last_update_by,
+                    r.is_archived AS is_archived,
+                    u.descrizione AS usca,
+                    t.descrizione AS tipologia,
+                    p.descrizione AS priorita
+                    FROM `assistiti` AS a JOIN `richieste` AS r ON a.id=r.id_assistito
+                    LEFT JOIN `usca` AS u ON a.id_usca=u.id
+                    LEFT JOIN `tipologie` AS t ON r.id_tipologia=t.id
+                    LEFT JOIN `priorita` AS p ON r.id_priorita=p.id
                     WHERE a.is_active=1";
                     */
 
-                    $query = "SELECT * FROM `vista_richieste` WHERE richiesta_is_active=1 OR richiesta_is_active IS null";
+                    $query = "SELECT * FROM `vista_richieste` WHERE (richiesta_is_active=1 OR richiesta_is_active IS null)";
+                    if (!$arc){
+                        //$query.=" AND (data >= CURRENT_DATE() OR data is null)";
+                        $query.=" AND (is_archived = 0 OR is_archived is null)";
+                    }
                     
-
                     $stmt = $conn->prepare($query);
                     $stmt->execute();
 
                     $res = $stmt->fetchAll(PDO::FETCH_ASSOC);
-                    $out->data = $res;
-                    // if (!$res) {
-                    //     throw new Exception("ERRORE-NELLA-RICERCA");
-                    // }
-                    $out->data = [];
                     foreach ($res as $r) {
                         $tmp = new StdClass();
+                        $tmp->id=intval($r['id_richiesta']);
                         $tmp->idAssistito=$r['id_assistito'];
                         $tmp->nome=$r['nome'];
                         $tmp->cognome=$r['cognome'];
                         $tmp->email=$r['email'];
-                        $tmp->telefono=$r['telefono'];
+                        $tmp->telefono1=$r['telefono1'];
+                        $tmp->telefono2=$r['telefono2'];
+                        $tmp->telefono3=$r['telefono3'];
                         $tmp->indirizzo=$r['indirizzo'];
                         $tmp->codiceFiscale=$r['codicefiscale'];
                         $tmp->noteAssistito=$r['note_assistito'];
@@ -231,11 +260,60 @@ class Richiesta
                         $tmp->createdByNomeCognome=$r['created_by'];
                         $tmp->last_update=$r['last_update'];
                         $tmp->lastUpdateByNomeCognome=$r['last_update_by'];
+                        $tmp->usca=$r['usca'];
+                        $tmp->priorita=$r['priorita'];
+                        $tmp->tipologia=$r['tipologia'];
+                        $tmp->isArchived=($r['is_archived']=="1");
+                        $tmp->archived=($r['is_archived']=="1")?"S":"N";
 
                         array_push($out->data, $tmp);
                     }
 
+                    // $query = "SELECT * FROM `vista_assistiti` WHERE id_assistito NOT IN (SELECT DISTINCT id_assistito FROM `vista_richieste` WHERE (richiesta_is_active=1 OR richiesta_is_active IS null)";
+                    // if (!$arc){
+                    //     //$query.=" AND (data >= CURRENT_DATE() OR data is null)";
+                    //     $query.=" AND (is_archived = 0 OR is_archived is null)";
+                    // }
+                    // $query.=")";
+
+                    // $stmt = $conn->prepare($query);
+                    // $stmt->execute();
+
+                    // $res = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                    // foreach ($res as $r) {
+                    //     $tmp = new StdClass();
+                    //     $tmp->idAssistito=$r['id_assistito'];
+                    //     $tmp->nome=$r['nome'];
+                    //     $tmp->cognome=$r['cognome'];
+                    //     $tmp->email=$r['email'];
+                    //     $tmp->telefono1=$r['telefono1'];
+                    //     $tmp->telefono2=$r['telefono2'];
+                    //     $tmp->indirizzo=$r['indirizzo'];
+                    //     $tmp->codiceFiscale=$r['codicefiscale'];
+                    //     $tmp->noteAssistito=$r['note_assistito'];
+                    //     $tmp->nascita=$r['nascita'];
+                    //     $tmp->assistitoIsActive=$r['assistito_is_active'];
+                    //     $tmp->idRichiesta=null;
+                    //     $tmp->idTipologia=null;
+                    //     $tmp->idPriorita=null;
+                    //     $tmp->idUsca=$r['id_usca'];
+                    //     $tmp->data=null;
+                    //     $tmp->noteRichiesta=null;
+                    //     $tmp->richiestaIsActive=null;
+                    //     $tmp->created=null;
+                    //     $tmp->createdByNomeCognome=null;
+                    //     $tmp->last_update=null;
+                    //     $tmp->lastUpdateByNomeCognome=null;
+                    //     $tmp->usca=$r['usca'];
+                    //     $tmp->priorita=null;
+                    //     $tmp->tipologia=null;
+                    //     $tmp->isArchived=null;
+
+                    //     array_push($out->data, $tmp);
+                    // }
+
                     $out->status = "OK";
+                    $out->lastRead = (new DateTime())->format('Y-m-d H:i:s');
                 } catch (Exception $ex) {
                     $out->error = $ex->getMessage();
                 }
@@ -267,14 +345,12 @@ class Richiesta
                                 `id_assistito`,
                                 `id_tipologia`,
                                 `id_priorita`,
-                                `id_usca`,
                                 `data`,
                                 `note`,
                                 `created_by`
                             ) VALUES (:id_assistito,
                                 :id_tipologia,
                                 :id_priorita,
-                                :id_usca,
                                 :data,
                                 :note,
                                 :created_by)";
@@ -283,13 +359,12 @@ class Richiesta
                             $stmt->bindParam(':id_assistito', $this->idAssistito, PDO::PARAM_INT);
                             $stmt->bindParam(':id_tipologia', $this->idTipologia, PDO::PARAM_INT);
                             $stmt->bindParam(':id_priorita', $this->idPriorita, PDO::PARAM_INT);
-                            $stmt->bindParam(':id_usca', $this->idUsca, PDO::PARAM_INT);
                             $stmt->bindParam(':data', $this->data, PDO::PARAM_STR);
                             $stmt->bindParam(':note', $this->note, PDO::PARAM_STR);
                             $stmt->bindParam(':created_by', $this->createdBy, PDO::PARAM_INT);
 
                             $stmt->execute();
-
+                            
                             $this->setId($conn->lastInsertId());
 
                             if ($this->id != 0) {
@@ -338,7 +413,6 @@ class Richiesta
                             id_tipologia=:id_tipologia,
                             id_priorita=:id_priorita,
                             data=:data,
-                            note=:note,
                             last_update=:last_update,
                             last_update_by=:last_update_by
                             WHERE `id`=:id";
@@ -348,7 +422,7 @@ class Richiesta
                         $stmt->bindParam(':id_tipologia', $this->idTipologia, PDO::PARAM_INT);
                         $stmt->bindParam(':id_priorita', $this->idPriorita, PDO::PARAM_INT);
                         $stmt->bindParam(':data', $this->data, PDO::PARAM_STR);
-                        $stmt->bindParam(':note', $this->note, PDO::PARAM_STR);
+                        // $stmt->bindParam(':note', $this->note, PDO::PARAM_STR);
                         $stmt->bindParam(':last_update', $this->lastUpdate, PDO::PARAM_STR);
                         $stmt->bindParam(':last_update_by', $this->lastUpdateBy, PDO::PARAM_INT);
                         $stmt->bindParam(':id', $this->id, PDO::PARAM_INT);
@@ -410,6 +484,184 @@ class Richiesta
 
                         $stmt->bindParam(':deleted_date', $this->deletedDate, PDO::PARAM_STR);
                         $stmt->bindParam(':deleted_by', $this->deletedBy, PDO::PARAM_INT);
+                        $stmt->bindParam(':id', $this->id, PDO::PARAM_INT);
+
+                        $stmt->execute();
+                        $out->num = $stmt->rowCount();
+
+                        if ($out->num != 1) {
+                            throw new Exception("UPDATE-ERROR");
+                        }
+
+                        $out->status = "OK";
+                        } else {
+                            throw new Exception("OPERAZIONE-NON-PERMESSA");
+                        } 
+                        
+                    } catch (Exception $ex) {
+                        $out->status="KO";
+                        $out->error = $ex->getMessage();
+                    }
+                } else {
+                    throw new Exception("DB-CONNECTION-ERROR");
+                }
+            } else {
+                throw new Exception("EMPTY-REQUEST");
+            }
+        } catch (Exception $ex) {
+            $conn = null;
+            $out->status="KO";
+            $out->error = $ex->getMessage();
+        }
+        return $out;
+    }
+
+public function archive($username,$token)
+    {
+        $out = new stdClass();
+        $out->status = "KO";
+        try {
+            if ($this->getId() != null) {
+                
+                $conn = DB::conn();
+                if ($conn != null) {
+                    try {
+                        $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+                        $query="SELECT is_active, role_id FROM `users` AS u WHERE u.username=:username";
+                        $stmt = $conn->prepare($query);
+                        $stmt->bindParam(':username',$username,PDO::PARAM_STR);
+                        $stmt->execute();
+                        $res=$stmt->fetch(PDO::FETCH_ASSOC);
+                        if (User::checkToken($token) && $res && $res['is_active']==1 AND User::checkCanDeleteRequest($res['role_id'])){
+                            $query = "UPDATE `richieste` SET
+                            is_archived=1,
+                            archived_date=:archived_date,
+                            archived_by=:archived_by
+                            WHERE `id`=:id";
+
+                        $stmt = $conn->prepare($query);
+
+                        $stmt->bindParam(':archived_date', $this->archivedDate, PDO::PARAM_STR);
+                        $stmt->bindParam(':archived_by', $this->archivedBy, PDO::PARAM_INT);
+                        $stmt->bindParam(':id', $this->id, PDO::PARAM_INT);
+
+                        $stmt->execute();
+                        $out->num = $stmt->rowCount();
+
+                        if ($out->num != 1) {
+                            throw new Exception("UPDATE-ERROR");
+                        }
+
+                        $out->status = "OK";
+                        } else {
+                            throw new Exception("OPERAZIONE-NON-PERMESSA");
+                        } 
+                        
+                    } catch (Exception $ex) {
+                        $out->status="KO";
+                        $out->error = $ex->getMessage();
+                    }
+                } else {
+                    throw new Exception("DB-CONNECTION-ERROR");
+                }
+            } else {
+                throw new Exception("EMPTY-REQUEST");
+            }
+        } catch (Exception $ex) {
+            $conn = null;
+            $out->status="KO";
+            $out->error = $ex->getMessage();
+        }
+        return $out;
+    }
+    
+    public function unArchive($username,$token)
+    {
+        $out = new stdClass();
+        $out->status = "KO";
+        try {
+            if ($this->getId() != null) {
+                
+                $conn = DB::conn();
+                if ($conn != null) {
+                    try {
+                        $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+                        $query="SELECT is_active, role_id FROM `users` AS u WHERE u.username=:username";
+                        $stmt = $conn->prepare($query);
+                        $stmt->bindParam(':username',$username,PDO::PARAM_STR);
+                        $stmt->execute();
+                        $res=$stmt->fetch(PDO::FETCH_ASSOC);
+                        if (User::checkToken($token) && $res && $res['is_active']==1 AND User::checkCanDeleteRequest($res['role_id'])){
+                            $query = "UPDATE `richieste` SET
+                            is_archived=0,
+                            archived_date=:archived_date,
+                            archived_by=:archived_by
+                            WHERE `id`=:id";
+
+                        $stmt = $conn->prepare($query);
+
+                        $stmt->bindParam(':archived_date', $this->archivedDate, PDO::PARAM_STR);
+                        $stmt->bindParam(':archived_by', $this->archivedBy, PDO::PARAM_INT);
+                        $stmt->bindParam(':id', $this->id, PDO::PARAM_INT);
+
+                        $stmt->execute();
+                        $out->num = $stmt->rowCount();
+
+                        if ($out->num != 1) {
+                            throw new Exception("UPDATE-ERROR");
+                        }
+
+                        $out->status = "OK";
+                        } else {
+                            throw new Exception("OPERAZIONE-NON-PERMESSA");
+                        } 
+                        
+                    } catch (Exception $ex) {
+                        $out->status="KO";
+                        $out->error = $ex->getMessage();
+                    }
+                } else {
+                    throw new Exception("DB-CONNECTION-ERROR");
+                }
+            } else {
+                throw new Exception("EMPTY-REQUEST");
+            }
+        } catch (Exception $ex) {
+            $conn = null;
+            $out->status="KO";
+            $out->error = $ex->getMessage();
+        }
+        return $out;
+    }
+
+    public function updateNote($username,$token)
+    {
+        $out = new stdClass();
+        $out->status = "KO";
+        try {
+            if ($this->getId() != null) {
+                
+                $conn = DB::conn();
+                if ($conn != null) {
+                    try {
+                        $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+                        $query="SELECT is_active, role_id FROM `users` AS u WHERE u.username=:username";
+                        $stmt = $conn->prepare($query);
+                        $stmt->bindParam(':username',$username,PDO::PARAM_STR);
+                        $stmt->execute();
+                        $res=$stmt->fetch(PDO::FETCH_ASSOC);
+                        if (User::checkToken($token) && $res && $res['is_active']==1 AND User::checkCanDeleteRequest($res['role_id'])){
+                            $query = "UPDATE `richieste` SET
+                            note=:note,
+                            last_update=:last_update,
+                            last_update_by=:last_update_by
+                            WHERE `id`=:id";
+
+                        $stmt = $conn->prepare($query);
+                        $note=json_encode($this->note);
+                        $stmt->bindParam(':note', $note, PDO::PARAM_STR);
+                        $stmt->bindParam(':last_update', $this->lastUpdate, PDO::PARAM_STR);
+                        $stmt->bindParam(':last_update_by', $this->lastUpdateBy, PDO::PARAM_INT);
                         $stmt->bindParam(':id', $this->id, PDO::PARAM_INT);
 
                         $stmt->execute();

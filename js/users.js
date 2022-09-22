@@ -1,7 +1,8 @@
 function showUsers() {
-    $("#main").html("");
-    $(".requests-form-btn").hide();
-    $(".users-form-btn").show();
+    changeActivity("users");
+    // $(".requests-form").hide();
+    // $(".swabs-form").hide();
+    // $(".users-form").show();
     getUsers();
 }
 
@@ -32,9 +33,9 @@ function showUsersTable(users) {
 
         var table = new Tabulator("#users", {
             data: users.data,           //load row data from array
-            layout: "fitColumns",      //fit columns to width of table
-            responsiveLayout: "hide",  //hide columns that dont fit on the table
-            //tooltips: true,            //show tool tips on cells
+            layout: "fitData",      //fit columns to width of table
+            responsiveLayout: "collapse",  //hide columns that dont fit on the table
+                        //tooltips: true,            //show tool tips on cells
             addRowPos: "top",          //when adding a new row, add it to the top of the table
             history: true,             //allow undo and redo actions on the table
             pagination: "local",       //paginate the data
@@ -49,7 +50,7 @@ function showUsersTable(users) {
                 {
                     title: "", width: 10, hozAlign: "center", editor: false, cellClick: showUserUpdate, formatter: function (cell, formatterParams, onRendered) {
 
-                        return '<span class="material-symbols-outlined" style="color: green">edit</span>';
+                        return '<span class="material-icons-outlined" style="color: green">edit</span>';
                     },
                 },
                 { title: "Username", field: "username", editor: false },
@@ -77,6 +78,7 @@ function showUsersTable(users) {
                 { title: "Attivo", field: "is_active", editor: false, formatter:"tickCross" },
             ],
         });
+        localStorage.setItem("activity","users");
     } else {
         Swal.fire({
             text: result.error,
@@ -89,7 +91,7 @@ function showUsersTable(users) {
 }
 
 var showUserUpdate = function (e, row) {
-    $("#editUser").fadeIn();
+    $("#editUser").show();
     var element = row.getData();
     $("#editIdUser").val(element.id);
     $("#editNomeUser").val(element.nome);
@@ -341,8 +343,8 @@ function buildUserInsertForm(target) {
         el = $("<label>").attr({ "for": attrs.idUsca }).text("USCA di appartenenza");
         divFormGroup.append(el);
         el = $("<select>").addClass('user-input-form').addClass("form-control").attr({ "id": attrs.idUsca });
-        if(usca!=null){
-            usca.forEach(element => {
+        if(uscaFull!=null){
+            uscaFull.forEach(element => {
                 let option = $("<option>").attr({ "value": element.id}).text(element.descrizione);
                 el.append(option);
             });
@@ -382,5 +384,5 @@ function buildUserInsertForm(target) {
 
 function cleanUserInsert() {
     $(".user-input-form").val('');
-    $("#insertUser").fadeOut();
+    $("#insertUser").hide();
 }

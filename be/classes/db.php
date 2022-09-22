@@ -16,31 +16,31 @@
             return $conn;
         }
 
-        public static function get_last_update_time($table) {
-            $out = new stdClass();
+        public static function checkNewData($lastRead){
+            $out=new StdClass();
             $out->status="KO";
-            $conn = DB::conn();
-            if ($conn != null){
-                try {
-                    $query = "SELECT count(*) AS exist FROM `information_schema`.tables WHERE TABLE_SCHEMA = 'richieste' AND TABLE_NAME = '$table' ";
+            try {
+                $conn=DB::conn();
+                if ($lastRead==null){
+                    throw new Exception("LASTREAD-NULL");
+                }
+                $dbname=DBNAME;
+                $query = "SELECT MAX(UPDATE_TIME) > :lr AS updated
+                    FROM   information_schema.tables
+                    WHERE  TABLE_SCHEMA = :dbname
+                    AND (TABLE_NAME = 'richieste' OR TABLE_NAME = 'assistiti' OR TABLE_NAME = 'tamponi')";
                     
-                    $stmt = $conn->prepare($query);
-                    $stmt->execute();
-                    $res=$stmt->fetch(PDO::FETCH_ASSOC);
-                    if(!$res['exist']){
-                        throw new Exception("TABLE-NOT-EXIST");
-                    }
-                    $query = "SELECT UPDATE_TIME FROM `information_schema`.tables WHERE TABLE_SCHEMA = '".DBNAME."' AND TABLE_NAME = '$table' ";
-                    $stmt = $conn->prepare($query);
-                    $stmt->execute();
-                    $res=$stmt->fetch(PDO::FETCH_ASSOC);
-                    $out->data=$res["UPDATE_TIME"];
-                    $out->status="OK";
-                } catch(Exception $ex){
-                        $out->error=$ex->getMessage();
-                    }
-                return $out;
+                $stmt = $conn->prepare($query);
+                $stmt->bindParam(':lr', $lastRead, PDO::PARAM_STR);
+                $stmt->bindParam(':dbname', $dbname, PDO::PARAM_STR);
+                $stmt->execute();
+                $res=$stmt->fetch(PDO::FETCH_ASSOC);
+                $out->data=($res["updated"]=="1");
+                $out->status="OK";
+            } catch(Exception $ex) {
+                $out->error=$ex->getMessage();
             }
+            return $out;
         }
     }
 ?>
