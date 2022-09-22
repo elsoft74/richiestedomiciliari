@@ -376,14 +376,10 @@ function showAssistiti(assistiti, user) {
                 }
             },
             { title: "Codice Fiscale", field: "codiceFiscale", editor: false, hozAlign: "center", headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
-            {
-                columns: [
-                    { title: "Cont.1", field: "telefono1", editor: false, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
-                    { title: "Cont.2", field: "telefono2", editor: false, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
-                    { title: "Cont.3", field: "telefono3", editor: false, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
-                    { title: "e-mail", field: "email", editor: false, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
-                ]
-            },
+            { title: "Cont.1", field: "telefono1", editor: false, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
+            { title: "Cont.2", field: "telefono2", editor: false, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
+            { title: "Cont.3", field: "telefono3", editor: false, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
+            { title: "e-mail", field: "email", editor: false, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
             { title: "Indirizzo", width: 150, field: "indirizzo", formatter: "textarea", editor: false, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
             {
                 title: "Usca", field: "usca", editor: false, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like"
@@ -393,52 +389,48 @@ function showAssistiti(assistiti, user) {
                 title: "", field: "idUsca", visible: false
             },
             {
-                columns: [
-                    {
-                        title: "", width: 8, hozAlign: "center", editor: false, visible: checkUserPermission(user, "canCreateRequest"), cellClick: checkUserPermission(user, "canCreateRequest") ? newRequest : null, formatter: function (cell, formatterParams, onRendered) {
+                title: "", width: 8, hozAlign: "center", editor: false, visible: checkUserPermission(user, "canCreateRequest"), cellClick: checkUserPermission(user, "canCreateRequest") ? newRequest : null, formatter: function (cell, formatterParams, onRendered) {
 
-                            return '<span class="material-icons-outlined" style="color: green">add</span>';
-                        }, headerSort: false, tooltip: function (e, cell, onRendered) {
-                            var el = document.createElement("div");
-                            el.style.backgroundColor = "#0d6efd";
-                            el.innerText = "Aggiungi attività";
-                            return el;
-                        }
-                    },
-                    {
-                        title: "", width: 8, hozAlign: "center", editor: false, visible: checkUserPermission(user, "canEditAssistito"), cellClick: checkUserPermission(user, "canEditAssistito") ? showAssistitoUpdate : null, formatter: function (cell, formatterParams, onRendered) {
-        
-                            return '<span class="material-icons-outlined" style="color: green">edit</span>';
-                        }, headerSort: false, tooltip: function (e, cell, onRendered) {
-                            var el = document.createElement("div");
-                            el.style.backgroundColor = "#0d6efd";
-                            el.innerText = "Modifica dati paziente";
-                            return el;
-                        }
-                    },
-                    {
-                        title: "", width: 8, field: "note", editor: false, cellClick: cellPopupFormatterNoteAssistito, formatter: function (cell, formatterParams, onRendered) {
-                            return (cell.getValue() == null) ? '' : '<span class="material-icons-outlined">notes</span>';
-                        }, headerSort: false, tooltip: function (e, cell, onRendered) {
-                            var el = document.createElement("div");
-                            el.style.backgroundColor = "#0d6efd";
-                            el.innerText = "Note paziente";
-                            return el;
-                        }
-                    },
-                
-                    {
-                        title: "", width: 8, hozAlign: "center", editor: false, visible: checkUserPermission(user, "canDeleteAssistito"), cellClick: checkUserPermission(user, "canDeleteAssistito") ? deleteElement : null, formatter: function (cell, formatterParams, onRendered) {
+                    return '<span class="material-icons-outlined" style="color: green">add</span>';
+                }, headerSort: false, tooltip: function (e, cell, onRendered) {
+                    var el = document.createElement("div");
+                    el.style.backgroundColor = "#0d6efd";
+                    el.innerText = "Aggiungi attività";
+                    return el;
+                }
+            },
+            {
+                title: "", width: 8, hozAlign: "center", editor: false, visible: checkUserPermission(user, "canEditAssistito"), cellClick: checkUserPermission(user, "canEditAssistito") ? showAssistitoUpdate : null, formatter: function (cell, formatterParams, onRendered) {
 
-                            return '<span class="material-icons-outlined" style="color: red">delete</span>';
-                        }, headerSort: false, tooltip: function (e, cell, onRendered) {
-                            var el = document.createElement("div");
-                            el.style.backgroundColor = "red";
-                            el.innerText = "Cancella paziente";
-                            return el;
-                        }
-                    },
-                ]
+                    return '<span class="material-icons-outlined" style="color: green">edit</span>';
+                }, headerSort: false, tooltip: function (e, cell, onRendered) {
+                    var el = document.createElement("div");
+                    el.style.backgroundColor = "#0d6efd";
+                    el.innerText = "Modifica dati paziente";
+                    return el;
+                }
+            },
+            {
+                title: "", width: 8, field: "note", editor: false, cellClick: cellPopupFormatterNoteAssistito, formatter: function (cell, formatterParams, onRendered) {
+                    return (cell.getValue() == null) ? '' : '<span class="material-icons-outlined">notes</span>';
+                }, headerSort: false, tooltip: function (e, cell, onRendered) {
+                    var el = document.createElement("div");
+                    el.style.backgroundColor = "#0d6efd";
+                    el.innerText = "Note paziente";
+                    return el;
+                }
+            },
+
+            {
+                title: "", width: 8, hozAlign: "center", editor: false, visible: checkUserPermission(user, "canDeleteAssistito"), cellClick: checkUserPermission(user, "canDeleteAssistito") ? deleteElement : null, formatter: function (cell, formatterParams, onRendered) {
+
+                    return '<span class="material-icons-outlined" style="color: red">delete</span>';
+                }, headerSort: false, tooltip: function (e, cell, onRendered) {
+                    var el = document.createElement("div");
+                    el.style.backgroundColor = "red";
+                    el.innerText = "Cancella paziente";
+                    return el;
+                }
             },
         ]
     });

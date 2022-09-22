@@ -97,75 +97,65 @@ function showRequests(richieste, user) {
                 }
             },
             { title: "Codice Fiscale", field: "codiceFiscale", editor: false, hozAlign: "center", headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
-            {
-                columns: [
-                    { title: "Cont.1", field: "telefono1", editor: false, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
-                    { title: "Cont.2", field: "telefono2", editor: false, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
-                    { title: "Cont.3", field: "telefono3", editor: false, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
-                    { title: "e-mail", field: "email", editor: false, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
-                ]
-            },
+            { title: "Cont.1", field: "telefono1", editor: false, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
+            { title: "Cont.2", field: "telefono2", editor: false, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
+            { title: "Cont.3", field: "telefono3", editor: false, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
+            { title: "e-mail", field: "email", editor: false, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
             { title: "Indirizzo", width: 150, field: "indirizzo", formatter: "textarea", editor: false, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
             // (checkUserPermission(user, "canViewAllRequests")) ?
             {
                 title: "Usca", field: "usca", editor: false, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like"
             },
-            
-
             {
-                columns: [
-                    {
-                        title: "", width: 8, hozAlign: "center", editor: false, visible: checkUserPermission(user, "canCreateRequest"), cellClick: checkUserPermission(user, "canCreateRequest") ? newRequest : null, formatter: function (cell, formatterParams, onRendered) {
+                title: "", width: 8, hozAlign: "center", editor: false, visible: checkUserPermission(user, "canCreateRequest"), cellClick: checkUserPermission(user, "canCreateRequest") ? newRequest : null, formatter: function (cell, formatterParams, onRendered) {
 
-                            return '<span class="material-icons-outlined" style="color: green">add</span>';
-                        }, headerSort: false, tooltip: function (e, cell, onRendered) {
-                            var el = document.createElement("div");
-                            el.style.backgroundColor = "#0d6efd";
-                            el.innerText = "Aggiungi richiesta";
-                            return el;
-                        }
-                    },
-                    {
-                        title: "", width: 8, field: "idRichiesta", width: 10, hozAlign: "center", editor: false, visible: checkUserPermission(user, "canEditRequest"), cellClick: checkUserPermission(user, "canEditRequest") ? showElementUpdate : null, formatter: function (cell, formatterParams, onRendered) {
-                            return (cell.getValue() == null) ? '' : '<span class="material-icons-outlined" style="color: green">edit</span>';
-                        }, headerSort: false, tooltip: function (e, cell, onRendered) {
-                            var el = document.createElement("div");
-                            el.style.backgroundColor = "#0d6efd";
-                            el.innerText = "Modifica richiesta";
-                            return el;
-                        }
-                    },
-                    {
-                        title: "", width: 8, field: "idRichiesta", width: 10, hozAlign: "center", editor: false, visible: checkUserPermission(user, "canDeleteRequest"), cellClick: checkUserPermission(user, "canEditRequest") ? deleteElement : null, formatter: function (cell, formatterParams, onRendered) {
-                            return (cell.getValue() == null) ? '' : '<span class="material-icons-outlined" style="color: red">delete</span>';
-                        }, headerSort: false, tooltip: function (e, cell, onRendered) {
-                            var el = document.createElement("div");
-                            el.style.backgroundColor = "red";
-                            el.innerText = "Cancella richiesta";
-                            return el;
-                        }
-                    },
-                    {
-                        title: "", width: 8, field: "isArchived", width: 10, hozAlign: "center", editor: false, visible: checkUserPermission(user, "canArchiveRequest"), cellClick: checkUserPermission(user, "canEditRequest") ? archiveElement : null, formatter: function (cell, formatterParams, onRendered) {
-                            return (cell.getValue() != null) ? (cell.getValue() ? '<span class="material-icons-outlined" style="color: green">unarchive</span>' : '<span class="material-icons-outlined" style="color: green">archive</span>') : "";
-                        }, headerSort: false, tooltip: function (e, cell, onRendered) {
-                            var el = document.createElement("div");
-                            el.style.backgroundColor = "#0d6efd";
-                            el.innerText = "Archiviazione/Ripristino richiesta";
-                            return el;
-                        }
-                    },
-                    {
-                        title: "", width: 8, field: "noteRichiesta", editor: false/*, formatter: "textarea" */, cellClick: buildNoteRichiestaModal, formatter: function (cell, formatterParams, onRendered) {
-                            return (cell.getValue() == null) ? '' : '<span class="material-icons-outlined">notes</span>';
-                        }, headerSort: false, tooltip: function (e, cell, onRendered) {
-                            var el = document.createElement("div");
-                            el.style.backgroundColor = "#0d6efd";
-                            el.innerText = "Note richiesta";
-                            return el;
-                        }
-                    },
-                ]
+                    return '<span class="material-icons-outlined" style="color: green">add</span>';
+                }, headerSort: false, tooltip: function (e, cell, onRendered) {
+                    var el = document.createElement("div");
+                    el.style.backgroundColor = "#0d6efd";
+                    el.innerText = "Aggiungi richiesta";
+                    return el;
+                }
+            },
+            {
+                title: "", width: 8, field: "idRichiesta", width: 10, hozAlign: "center", editor: false, visible: checkUserPermission(user, "canEditRequest"), cellClick: checkUserPermission(user, "canEditRequest") ? showElementUpdate : null, formatter: function (cell, formatterParams, onRendered) {
+                    return (cell.getValue() == null) ? '' : '<span class="material-icons-outlined" style="color: green">edit</span>';
+                }, headerSort: false, tooltip: function (e, cell, onRendered) {
+                    var el = document.createElement("div");
+                    el.style.backgroundColor = "#0d6efd";
+                    el.innerText = "Modifica richiesta";
+                    return el;
+                }
+            },
+            {
+                title: "", width: 8, field: "idRichiesta", width: 10, hozAlign: "center", editor: false, visible: checkUserPermission(user, "canDeleteRequest"), cellClick: checkUserPermission(user, "canEditRequest") ? deleteElement : null, formatter: function (cell, formatterParams, onRendered) {
+                    return (cell.getValue() == null) ? '' : '<span class="material-icons-outlined" style="color: red">delete</span>';
+                }, headerSort: false, tooltip: function (e, cell, onRendered) {
+                    var el = document.createElement("div");
+                    el.style.backgroundColor = "red";
+                    el.innerText = "Cancella richiesta";
+                    return el;
+                }
+            },
+            {
+                title: "", width: 8, field: "isArchived", width: 10, hozAlign: "center", editor: false, visible: checkUserPermission(user, "canArchiveRequest"), cellClick: checkUserPermission(user, "canEditRequest") ? archiveElement : null, formatter: function (cell, formatterParams, onRendered) {
+                    return (cell.getValue() != null) ? (cell.getValue() ? '<span class="material-icons-outlined" style="color: green">unarchive</span>' : '<span class="material-icons-outlined" style="color: green">archive</span>') : "";
+                }, headerSort: false, tooltip: function (e, cell, onRendered) {
+                    var el = document.createElement("div");
+                    el.style.backgroundColor = "#0d6efd";
+                    el.innerText = "Archiviazione/Ripristino richiesta";
+                    return el;
+                }
+            },
+            {
+                title: "", width: 8, field: "noteRichiesta", editor: false/*, formatter: "textarea" */, cellClick: buildNoteRichiestaModal, formatter: function (cell, formatterParams, onRendered) {
+                    return (cell.getValue() == null) ? '' : '<span class="material-icons-outlined">notes</span>';
+                }, headerSort: false, tooltip: function (e, cell, onRendered) {
+                    var el = document.createElement("div");
+                    el.style.backgroundColor = "#0d6efd";
+                    el.innerText = "Note richiesta";
+                    return el;
+                }
             },
             {
                 columns: [
@@ -182,7 +172,7 @@ function showRequests(richieste, user) {
                 ]
             },
 
-            
+
             // (checkUserPermission(user, "canViewDetails")) ?
             //     {
             //         title: "Dettagli", editor: false/*, formatter: "textarea" */, cellClick: cellPopupFormatterDettagliRichiesta, formatter: function (cell, formatterParams, onRendered) {
@@ -616,7 +606,7 @@ function updateRequestData() {
         if (toBeCompleted.richieste) {
             waitingForData = false;
             var table = Tabulator.findTable("#main")[0];
-            if(table!=null && table != undefined){
+            if (table != null && table != undefined) {
                 console.log("Scrivo i dati aggiornati");
                 table.updateOrAddData(richieste);
                 setTimeout(checkNewData, 4000);
