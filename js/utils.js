@@ -39,10 +39,10 @@ function checkIfComplete() {
     let out = true;
     Object.keys(toBeCompleted).forEach(p => { out = out && toBeCompleted[p] });
     if (out) {
-        setTimeout(checkIfUpdated, 4000);
+        setTimeout(checkIfUpdated, 6000);
         window.dispatchEvent(new CustomEvent("dataLoaded"));
     } else {
-        setTimeout(checkIfComplete, 4000);
+        setTimeout(checkIfComplete, 6000);
     }
 }
 
@@ -50,11 +50,11 @@ function checkIfUpdated() {
     let out = true;
     Object.keys(toBeCompleted).forEach(p => { out = out && toBeCompleted[p] });
     if (out) {
-        console.log("Aggiorno");
+        // console.log("Aggiorno");
         window.dispatchEvent(new CustomEvent("dataUpdated"));
     } else {
-        console.log("Aggiornamenti non ancora pronti");
-        setTimeout(checkIfUpdated, 4000);
+        // console.log("Aggiornamenti non ancora pronti");
+        setTimeout(checkIfUpdated, 6000);
     }
 }
 
@@ -70,7 +70,7 @@ function checkNewData() {
             result = JSON.parse(xhr.responseText);
             if (result.status == "OK") {
                 if (result.data) {
-                    console.log("Nuovi Dati");
+                    // console.log("Nuovi Dati");
                     var activity = localStorage.getItem("activity");
                     switch (activity){
                         case "requests":
@@ -86,12 +86,12 @@ function checkNewData() {
                     
                 } else {
                     // if ("requests" == activity || "tamponi" == activity) {
-                        setTimeout(checkNewData, 4000);
+                        setTimeout(checkNewData, 6000);
                     // }
                 }
             }
             else {
-                console.log("checkNewData:" + result.error);
+                // console.log("checkNewData:" + result.error);
             }
         }
     }
@@ -125,7 +125,7 @@ function loadData() {
     //readRequests(toBeCompleted);
     //readSwabs(toBeCompleted);
     getData(toBeCompleted);
-    setTimeout(checkIfComplete, 4000);
+    setTimeout(checkIfComplete, 6000);
 }
 
 function formattaData(data, lung) { // lung se impostato a true fa ottenere una data compresa dell'ora
