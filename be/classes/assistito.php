@@ -239,7 +239,12 @@
                                 $stmt->execute();
                                 $this->setId($conn->lastInsertId());
                                     if ($this->getId()!=0){
-                                    $out->status="OK";
+                                        $query="UPDATE `updates` SET last_update_ts=LOCALTIMESTAMP() WHERE table_name='assistiti'";
+                                        $stmt = $conn->prepare($query);
+                                        $stmt->execute();
+                                        if ($stmt->rowCount()==1){
+                                            $out->status="OK";
+                                        }
                                 } else {
                                     throw new Exception("ERRORE-DI-INSERIMENTO");    
                                 }
@@ -313,7 +318,12 @@
                                 $stmt->bindParam(':id_usca',$this->idUsca,PDO::PARAM_INT);
                                 $stmt->execute();
                                 if ($stmt->rowCount()==1){
-                                    $out->status="OK";
+                                    $query="UPDATE `updates` SET last_update_ts=LOCALTIMESTAMP() WHERE table_name='assistiti'";
+                                    $stmt = $conn->prepare($query);
+                                    $stmt->execute();
+                                    if ($stmt->rowCount()==1){
+                                        $out->status="OK";
+                                    }
                                 } else {
                                     throw new Exception("AGGIORNAMENTO-NON-ESEGUITO");    
                                 }
