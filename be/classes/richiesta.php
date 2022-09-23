@@ -368,7 +368,12 @@ class Richiesta
                             $this->setId($conn->lastInsertId());
 
                             if ($this->id != 0) {
-                                $out->status = "OK";
+                                $query="UPDATE `updates` SET last_update_ts=LOCALTIMESTAMP() WHERE table_name='richieste'";
+                                    $stmt = $conn->prepare($query);
+                                    $stmt->execute();
+                                    if ($stmt->rowCount()==1){
+                                        $out->status="OK";
+                                    }
                             } else {
                                 $out->errorInfo=$conn->errorInfo();
                                 $out->errorCode=$conn->errorCode();
@@ -434,7 +439,12 @@ class Richiesta
                             throw new Exception("UPDATE-ERROR");
                         }
 
-                        $out->status = "OK";
+                        $query="UPDATE `updates` SET last_update_ts=LOCALTIMESTAMP() WHERE table_name='richieste'";
+                        $stmt = $conn->prepare($query);
+                        $stmt->execute();
+                        if ($stmt->rowCount()==1){
+                            $out->status="OK";
+                        }
                         } else {
                             throw new Exception("OPERAZIONE-NON-PERMESSA");
                         } 
@@ -493,7 +503,12 @@ class Richiesta
                             throw new Exception("UPDATE-ERROR");
                         }
 
-                        $out->status = "OK";
+                        $query="UPDATE `updates` SET last_update_ts=LOCALTIMESTAMP() WHERE table_name='richieste'";
+                                    $stmt = $conn->prepare($query);
+                                    $stmt->execute();
+                                    if ($stmt->rowCount()==1){
+                                        $out->status="OK";
+                                    }
                         } else {
                             throw new Exception("OPERAZIONE-NON-PERMESSA");
                         } 
@@ -552,7 +567,12 @@ public function archive($username,$token)
                             throw new Exception("UPDATE-ERROR");
                         }
 
-                        $out->status = "OK";
+                        $query="UPDATE `updates` SET last_update_ts=LOCALTIMESTAMP() WHERE table_name='richieste'";
+                                    $stmt = $conn->prepare($query);
+                                    $stmt->execute();
+                                    if ($stmt->rowCount()==1){
+                                        $out->status="OK";
+                                    }
                         } else {
                             throw new Exception("OPERAZIONE-NON-PERMESSA");
                         } 
@@ -611,7 +631,12 @@ public function archive($username,$token)
                             throw new Exception("UPDATE-ERROR");
                         }
 
-                        $out->status = "OK";
+                        $query="UPDATE `updates` SET last_update_ts=LOCALTIMESTAMP() WHERE table_name='richieste'";
+                                    $stmt = $conn->prepare($query);
+                                    $stmt->execute();
+                                    if ($stmt->rowCount()==1){
+                                        $out->status="OK";
+                                    }
                         } else {
                             throw new Exception("OPERAZIONE-NON-PERMESSA");
                         } 
@@ -671,7 +696,12 @@ public function archive($username,$token)
                             throw new Exception("UPDATE-ERROR");
                         }
 
-                        $out->status = "OK";
+                        $query="UPDATE `updates` SET last_update_ts=LOCALTIMESTAMP() WHERE table_name='richieste'";
+                                    $stmt = $conn->prepare($query);
+                                    $stmt->execute();
+                                    if ($stmt->rowCount()==1){
+                                        $out->status="OK";
+                                    }
                         } else {
                             throw new Exception("OPERAZIONE-NON-PERMESSA");
                         } 

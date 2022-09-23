@@ -365,7 +365,12 @@ class Tampone
                                 }
                                 
                             }
-                            $out->status = "OK";
+                            $query="UPDATE `updates` SET last_update_ts=LOCALTIMESTAMP() WHERE table_name='tamponi'";
+                                    $stmt = $conn->prepare($query);
+                                    $stmt->execute();
+                                    if ($stmt->rowCount()==1){
+                                        $out->status="OK";
+                                    }
                             
                         } else {
 
@@ -428,7 +433,12 @@ class Tampone
                             throw new Exception("UPDATE-ERROR");
                         }
 
-                        $out->status = "OK";
+                        $query="UPDATE `updates` SET last_update_ts=LOCALTIMESTAMP() WHERE table_name='tamponi'";
+                                    $stmt = $conn->prepare($query);
+                                    $stmt->execute();
+                                    if ($stmt->rowCount()==1){
+                                        $out->status="OK";
+                                    }
                         } else {
                             throw new Exception("OPERAZIONE-NON-PERMESSA");
                         } 
