@@ -200,19 +200,35 @@ function changeActivity(val){
     switch(val){
         case "requests":
             $(".requests-form").show();
+            showRequests(richieste, lu);
             break;
         case "swabs":
             $(".swabs-form").show();
+            showSwabs(swabs,lu);
             break;
         case "users":
             $(".users-form").show();
             break;
         case "assistiti":
             $(".assistiti-form").show();
+            showAssistiti(assistiti,lu);
             break;
         case "home":
             $(".home-form").show();
             break;
     }
     localStorage.setItem("activity",val);
+}
+
+function spostaFirma(){
+        var op = $('#firma').offsetParent();
+        var t = op.offset().top;
+        var l = op.offset().right;
+        var w = op.width();
+        var h = op.height();
+        var dh = $(document).height();
+        var dw = $(document).width();
+        var newbottom = t + h - dh + 55;
+        var newright = l + w - dw + 20;
+        $('#firma').css('bottom', newbottom + 'px').css('right', newright + 'px');
 }

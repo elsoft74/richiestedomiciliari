@@ -10,12 +10,14 @@
         public $telefono2;
         public $telefono3;
         public $nascita;
+        public $eta;
         public $email;
         public $indirizzo;
         public $codiceFiscale;
         public $note;
         public $isactive;
         public $usca;
+        public $contatti;
 
         function __construct() {
             $id = null;
@@ -32,6 +34,8 @@
             $note = null;
             $isactive = null;
             $usca = null;
+            $eta = null;
+            $contatti = null;
         }
 
         function setId($val){
@@ -76,6 +80,12 @@
         function setNascita($val){
             $this->nascita=$val;
         }
+        function setEta($val){
+            $this->eta=$val;
+        }
+        function setContatti($val){
+            $this->contatti=$val;
+        }
 
         function getId(){
             return $this->id;
@@ -119,6 +129,12 @@
         function getNascita(){
             return $this->nascita;
         }
+        function getEta(){
+            return $this->eta;
+        }
+        function getContatti(){
+            return $this->contatti;
+        }
 
         public static function getAssistiti(/*$username,$token*/){
             $out = new stdClass();
@@ -135,7 +151,10 @@
                         $res=$stmt->fetch(PDO::FETCH_ASSOC);
                         if (User::checkToken($token) && $res && $res['is_active']==1 AND User::checkCanCreateUser($res['role_id'])){*/
 
-                            /*"SELECT
+                            /*"CREATE OR REPLACE
+ ALGORITHM = UNDEFINED
+ VIEW `vista_assistiti`
+ AS SELECT
                                 a.id AS id_assistito,
                                 a.nome AS nome,
                                 a.cognome AS cognome,
@@ -148,6 +167,7 @@
                                 a.telefono2 AS telefono2,
                                 a.telefono3 AS telefono3,
                                 a.nascita AS nascita,
+                                TIMESTAMPDIFF(YEAR,nascita,now()) as eta,
                                 a.id_usca AS id_usca,
                                 a.note AS note,
                                 u.descrizione AS usca
@@ -180,7 +200,22 @@
                                 $assistito->setNote($res['note']);
                                 $assistito->setIsActive($res['is_active']==1);
                                 $assistito->setNascita($res['nascita']);
+                                $assistito->setEta($res['eta']);
                                 $assistito->setUsca($res['usca']);
+                                $contatti = [];
+                                if ($res['telefono1']!=""){
+                                    array_push($contatti,$res['telefono1']);
+                                }
+                                if ($res['telefono2']!=""){
+                                    array_push($contatti,$res['telefono2']);
+                                }
+                                if ($res['telefono3']!=""){
+                                    array_push($contatti,$res['telefono3']);
+                                }
+                                if ($res['email']!=""){
+                                    array_push($contatti,$res['email']);
+                                }
+                                $assistito->setContatti(json_encode($contatti));
                                 array_push($out->data,$assistito);
                             }
                             $out->lastRead = (new DateTime())->format('Y-m-d H:i:s');

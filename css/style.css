@@ -32,3 +32,19 @@
 
 .tabulator-row .tabulator-cell {
     padding: 5px;}
+
+.navbar {
+    background-color: #0d6efd;
+}
+
+.menu-button {
+    width: 150px;
+}
+
+button span {
+    padding-left: 10px;
+}
+
+#user {
+    color: white;
+}

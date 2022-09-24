@@ -15,6 +15,7 @@ function showSwabs(swabs, user) {
         paginationSize: 12,         //allow 7 rows per page of data
         paginationCounter: "rows", //display count of paginated rows in footer
         movableColumns: true,      //allow column order to be changed
+        
         // initialSort: [             //set the initial sort order of the data
         //     { column: "dataRic", dir: "asc" },
         // ],
@@ -58,9 +59,9 @@ function showSwabs(swabs, user) {
         // },
         columns: [                 //define the table columns
 
-            { title: "", field: "id", width: 10, editor: false, hozAlign: "center", visible: false },
+            { title: "", field: "id", width: 10, editor: false, hozAlign: "center", vertAlign: "middle", visible: false },
 
-            { title: "#", field: "idAssistito", width: 10, editor: false, hozAlign: "center", visible: checkUserPermission(user, "canViewId") },
+            { title: "#", field: "idAssistito", width: 10, editor: false, hozAlign: "center", vertAlign: "middle", visible: checkUserPermission(user, "canViewId") },
 
             // {
             //     title: "", width: 10, hozAlign: "center", editor: false, visible: checkUserPermission(user, "canEditAssistito"), cellClick: checkUserPermission(user, "canEditAssistito") ? showAssistitoUpdate : null, formatter: function (cell, formatterParams, onRendered) {
@@ -74,28 +75,42 @@ function showSwabs(swabs, user) {
             //         return '<span class="material-icons-outlined" style="color: red">delete</span>';
             //     },
             // },
-            { title: "Cognome", field: "cognome", editor: false, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
-            { title: "Nome", field: "nome", editor: false },
+            { title: "Cognome", field: "cognome", vertAlign: "middle", editor: false, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
+            { title: "Nome", field: "nome", editor: false, vertAlign: "middle",},
             {
-                title: "Nascita", field: "nascita", editor: false, formatter: "datetime", formatterParams: {
+                title: "Nascita", field: "nascita", editor: false, vertAlign: "middle", formatter: "datetime", formatterParams: {
                     //inputFormat:"YYY-MM-DD HH:mm:ss",
                     outputFormat: "dd-MM-yyyy",
                     invalidPlaceholder: "(data non valida)",
                     timezone: "Europe/Rome",
                 }
             },
-            { title: "Codice Fiscale", field: "codiceFiscale", editor: false, hozAlign: "center", headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
-            { title: "Cont.1", field: "telefono1", editor: false, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
-            { title: "Cont.2", field: "telefono2", editor: false, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
-            { title: "Cont.3", field: "telefono3", editor: false, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
-            { title: "e-mail", field: "email", editor: false, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
-            { title: "Indirizzo", field: "indirizzo", editor: false, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
+            { title: "Codice Fiscale", field: "codiceFiscale", editor: false, hozAlign: "center", vertAlign: "middle", headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
+            { title: "Cont.1", field: "telefono1", visible:false },
+            { title: "Cont.2", field: "telefono2", visible:false },
+            { title: "Cont.3", field: "telefono3", visible:false },
+            { title: "e-mail", field: "email", visible:false },
             {
-                title: "Usca", field: "usca", editor: false, hozAlign: "center", headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like"
+                title: "Contatti", width: 150, field: "contatti", editor: false, hozAlign: "left", vertAlign: "middle", formatter: function (cell, formatterParams, onRendered) {
+                    out = "<div><ul>";
+                    val = cell.getValue();
+                    contatti = JSON.parse(val);
+                    contatti.forEach(el => {
+                        if (el != "") {
+                            out += "<li>" + el;
+                        }
+                    });
+                    out += "</ul></div>";
+                    return out;
+                }
             },
-            { title: "#", field: "idTampone", editor: false, hozAlign: "center", visible: checkUserPermission(user, "canViewId") },
+            { title: "Indirizzo", field: "indirizzo", vertAlign: "middle", editor: false, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
             {
-                title: "Data Positività", field: "dataEsecuzione", editor: false, hozAlign: "center", formatter: "datetime", formatterParams: {
+                title: "Usca", field: "usca", editor: false, hozAlign: "center", vertAlign: "middle", headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like"
+            },
+            { title: "#", field: "idTampone", editor: false, hozAlign: "center", vertAlign: "middle", visible: checkUserPermission(user, "canViewId") },
+            {
+                title: "Data Positività", field: "dataEsecuzione", editor: false, hozAlign: "center", vertAlign: "middle", headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like", formatter: "datetime", formatterParams: {
                     //inputFormat:"YYY-MM-DD HH:mm:ss",
                     outputFormat: "dd-MM-yyyy",
                     invalidPlaceholder: "(data non valida)",
@@ -103,7 +118,7 @@ function showSwabs(swabs, user) {
                 }
             },
             {
-                title: "Data Consigliata", field: "dataConsigliata", editor: false, hozAlign: "center", formatter: "datetime", formatterParams: {
+                title: "Data Consigliata", field: "dataConsigliata", editor: false, hozAlign: "center", vertAlign: "middle", formatter: "datetime", formatterParams: {
                     //inputFormat:"YYY-MM-DD HH:mm:ss",
                     outputFormat: "dd-MM-yyyy",
                     invalidPlaceholder: "(data non valida)",
@@ -111,24 +126,24 @@ function showSwabs(swabs, user) {
                 }
             },
             {
-                title: "Stato", field: "status", editor: false, hozAlign: "center", headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like"
+                title: "Stato", field: "status", editor: false, hozAlign: "center", vertAlign: "middle", headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like"
             },
             {
                 title: "", field: "idStatus", visible: false
             },
             {
-                title: "", width: 10, hozAlign: "center", editor: false, visible: checkUserPermission(user, "canCreateRequest"), cellClick: checkUserPermission(user, "canCreateRequest") ? changeSwabStatus : null, formatter: function (cell, formatterParams, onRendered) {
+                title: "", width: 10, hozAlign: "center", vertAlign: "middle", editor: false, visible: checkUserPermission(user, "canCreateRequest"), cellClick: checkUserPermission(user, "canCreateRequest") ? changeSwabStatus : null, formatter: function (cell, formatterParams, onRendered) {
 
                     return '<span class="material-icons-outlined" style="color: green">edit</span>';
                 }, tooltip: function (e, cell, onRendered) {
-                    var el = document.createElement("div");
-                    el.style.backgroundColor = "#0d6efd";
-                    el.innerText = "Modifica stato";
+                    var el1 = document.createElement("div");
+                    el1.style.backgroundColor = "#0d6efd";
+                    el2.innerText = "Modifica stato";
                     return el;
                 }
             },
             {
-                title: "", width: 8, hozAlign: "center", editor: false, visible: checkUserPermission(user, "canCreateRequest"), cellClick: checkUserPermission(user, "canCreateRequest") ? newRequest : null, formatter: function (cell, formatterParams, onRendered) {
+                title: "", width: 8, hozAlign: "center", vertAlign: "middle", editor: false, visible: checkUserPermission(user, "canCreateRequest"), cellClick: checkUserPermission(user, "canCreateRequest") ? newRequest : null, formatter: function (cell, formatterParams, onRendered) {
 
                     return '<span class="material-icons-outlined" style="color: green">add</span>';
                 }, headerSort: false, tooltip: function (e, cell, onRendered) {
@@ -139,7 +154,7 @@ function showSwabs(swabs, user) {
                 }
             },
             {
-                title: "", field: "noteAssistito", editor: false/*, formatter: "textarea" */, cellClick: cellPopupFormatterNoteAssistito, formatter: function (cell, formatterParams, onRendered) {
+                title: "", field: "noteAssistito", vertAlign: "middle", editor: false/*, formatter: "textarea" */, cellClick: cellPopupFormatterNoteAssistito, formatter: function (cell, formatterParams, onRendered) {
                     return (cell.getValue() == null) ? '' : '<span class="material-icons-outlined">notes</span>';
                 }, tooltip: function (e, cell, onRendered) {
                     var el = document.createElement("div");

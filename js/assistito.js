@@ -338,6 +338,7 @@ function showAssistiti(assistiti, user) {
         paginationSize: 12,         //allow 7 rows per page of data
         paginationCounter: "rows", //display count of paginated rows in footer
         movableColumns: true,      //allow column order to be changed
+        
         // initialSort: [             //set the initial sort order of the data
         //     { column: "dataRic", dir: "asc" },
         // ],
@@ -364,72 +365,111 @@ function showAssistiti(assistiti, user) {
         columns: [                 //define the table columns
 
 
-            { title: "#", field: "id", width: 5, editor: false, hozAlign: "center", visible: checkUserPermission(user, "canViewId") },
-            { title: "Cognome", width: 150, field: "cognome", editor: false, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
-            { title: "Nome", width: 150, field: "nome", editor: false, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
+            { title: "#", field: "id", width: 5, editor: false, hozAlign: "center", vertAlign: "middle", visible: checkUserPermission(user, "canViewId") },
+            { title: "Cognome", width: 150, field: "cognome", vertAlign: "middle", editor: false, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
+            { title: "Nome", width: 150, field: "nome", vertAlign: "middle", editor: false, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
             {
-                title: "Nascita", field: "nascita", editor: false, formatter: "datetime", formatterParams: {
+                title: "Nascita", width: 100, field: "nascita", vertAlign: "middle", editor: false, formatter: "datetime", formatterParams: {
                     //inputFormat:"YYY-MM-DD HH:mm:ss",
                     outputFormat: "dd-MM-yyyy",
                     invalidPlaceholder: "",
                     timezone: "Europe/Rome",
                 }
             },
-            { title: "Codice Fiscale", field: "codiceFiscale", editor: false, hozAlign: "center", headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
-            { title: "Cont.1", field: "telefono1", editor: false, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
-            { title: "Cont.2", field: "telefono2", editor: false, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
-            { title: "Cont.3", field: "telefono3", editor: false, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
-            { title: "e-mail", field: "email", editor: false, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
-            { title: "Indirizzo", width: 150, field: "indirizzo", formatter: "textarea", editor: false, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
+            { title: "Codice Fiscale", width: 150, field: "codiceFiscale", editor: false, hozAlign: "center", vertAlign: "middle", headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
+            { title: "Età", field: "eta", width: 80, editor: false, hozAlign: "center", vertAlign: "middle", headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
+            { title: "Fascia", field: "eta", width: 120, editor: false, hozAlign: "left", vertAlign: "middle", headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like", formatter: function (cell, formatterParams, onRendered) {
+                val = cell.getValue();
+                out = "";
+                if (val < 50) {
+                    out = "Fascia 1 (< 50)";
+                } else if (val >= 50 && val < 66) {
+                    out = "Fascia 2 (50-65)";
+                } else {
+                    out = "Fascia 3 (> 65)";
+                }
+                return out;
+            } },
+            { title: "Cont.1", field: "telefono1", visible: false },
+            { title: "Cont.2", field: "telefono2", visible: false },
+            { title: "Cont.3", field: "telefono3", visible: false },
+            { title: "e-mail", field: "email", visible: false },
             {
-                title: "Usca", field: "usca", editor: false, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like"
+                title: "Contatti", width: 150, field: "contatti", editor: false, hozAlign: "left", vertAlign: "middle", formatter: function (cell, formatterParams, onRendered) {
+                    out = "<div><ul>";
+                    val = cell.getValue();
+                    contatti = JSON.parse(val);
+                    contatti.forEach(el => {
+                        if (el != "") {
+                            out += "<li>" + el;
+                        }
+                    });
+                    out += "</ul></div>";
+                    return out;
+                }
+            },
+            { title: "Indirizzo", field: "indirizzo", formatter: "textarea", vertAlign: "middle", editor: false, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
+            {
+                title: "Usca", width: 120, field: "usca", vertAlign: "middle", editor: false, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like"
             },
 
             {
                 title: "", field: "idUsca", visible: false
             },
             {
-                title: "", width: 8, hozAlign: "center", editor: false, visible: checkUserPermission(user, "canCreateRequest"), cellClick: checkUserPermission(user, "canCreateRequest") ? newRequest : null, formatter: function (cell, formatterParams, onRendered) {
+                title: "", width: 8, hozAlign: "center", vertAlign: "middle", editor: false, visible: checkUserPermission(user, "canCreateRequest"), cellClick: checkUserPermission(user, "canCreateRequest") ? newRequest : null, formatter: function (cell, formatterParams, onRendered) {
 
                     return '<span class="material-icons-outlined" style="color: green">add</span>';
                 }, headerSort: false, tooltip: function (e, cell, onRendered) {
-                    var el = document.createElement("div");
-                    el.style.backgroundColor = "#0d6efd";
-                    el.innerText = "Aggiungi attività";
-                    return el;
+                    var el1 = document.createElement("div");
+                    el1.style.backgroundColor = "#0d6efd";
+                    var el2 = document.createElement("span");
+                    el2.style.color = "#ffffff";
+                    el2.innerText = "Nuova attività";
+                    el1.append(el2);
+                    return el1;
                 }
             },
             {
-                title: "", width: 8, hozAlign: "center", editor: false, visible: checkUserPermission(user, "canEditAssistito"), cellClick: checkUserPermission(user, "canEditAssistito") ? showAssistitoUpdate : null, formatter: function (cell, formatterParams, onRendered) {
+                title: "", width: 8, hozAlign: "center", vertAlign: "middle", editor: false, visible: checkUserPermission(user, "canEditAssistito"), cellClick: checkUserPermission(user, "canEditAssistito") ? showAssistitoUpdate : null, formatter: function (cell, formatterParams, onRendered) {
 
                     return '<span class="material-icons-outlined" style="color: green">edit</span>';
                 }, headerSort: false, tooltip: function (e, cell, onRendered) {
-                    var el = document.createElement("div");
-                    el.style.backgroundColor = "#0d6efd";
-                    el.innerText = "Modifica dati paziente";
-                    return el;
+                    var el1 = document.createElement("div");
+                    el1.style.backgroundColor = "#0d6efd";
+                    var el2 = document.createElement("span");
+                    el2.style.color = "#ffffff";
+                    el2.innerText = "Modifica dati paziente";
+                    el1.append(el2);
+                    return el1;
                 }
             },
             {
-                title: "", width: 8, field: "note", editor: false, cellClick: cellPopupFormatterNoteAssistito, formatter: function (cell, formatterParams, onRendered) {
+                title: "", width: 8, field: "note", vertAlign: "middle", editor: false, cellClick: cellPopupFormatterNoteAssistito, formatter: function (cell, formatterParams, onRendered) {
                     return (cell.getValue() == null) ? '' : '<span class="material-icons-outlined">notes</span>';
                 }, headerSort: false, tooltip: function (e, cell, onRendered) {
-                    var el = document.createElement("div");
-                    el.style.backgroundColor = "#0d6efd";
-                    el.innerText = "Note paziente";
-                    return el;
+                    var el1 = document.createElement("div");
+                    el1.style.backgroundColor = "#0d6efd";
+                    var el2 = document.createElement("span");
+                    el2.style.color = "#ffffff";
+                    el2.innerText = "Note paziente";
+                    el1.append(el2);
+                    return (cell.getValue() == null) ? null : el1;
                 }
             },
 
             {
-                title: "", width: 8, hozAlign: "center", editor: false, visible: checkUserPermission(user, "canDeleteAssistito"), cellClick: checkUserPermission(user, "canDeleteAssistito") ? deleteElement : null, formatter: function (cell, formatterParams, onRendered) {
+                title: "", width: 8, hozAlign: "center", vertAlign: "middle", editor: false, visible: checkUserPermission(user, "canDeleteAssistito"), cellClick: checkUserPermission(user, "canDeleteAssistito") ? deleteElement : null, formatter: function (cell, formatterParams, onRendered) {
 
                     return '<span class="material-icons-outlined" style="color: red">delete</span>';
                 }, headerSort: false, tooltip: function (e, cell, onRendered) {
-                    var el = document.createElement("div");
-                    el.style.backgroundColor = "red";
-                    el.innerText = "Cancella paziente";
-                    return el;
+                    var el1 = document.createElement("div");
+                    el1.style.backgroundColor = "red";
+                    var el2 = document.createElement("span");
+                    el2.style.color = "#ffffff";
+                    el2.innerText = "Cancella paziente";
+                    el1.append(el2);
+                    return el1;
                 }
             },
         ]
