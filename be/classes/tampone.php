@@ -254,6 +254,20 @@ class Tampone
                         $tmp->createdByNomeCognome=$r['created_by'];
                         $tmp->last_update=$r['last_update'];
                         $tmp->lastUpdateByNomeCognome=$r['last_update_by'];
+                        $contatti = [];
+                        if ($r['telefono1']!=""){
+                            array_push($contatti,$r['telefono1']);
+                        }
+                        if ($r['telefono2']!=""){
+                            array_push($contatti,$r['telefono2']);
+                        }
+                        if ($r['telefono3']!=""){
+                            array_push($contatti,$r['telefono3']);
+                        }
+                        if ($r['email']!=""){
+                            array_push($contatti,$r['email']);
+                        }
+                        $tmp->contatti=json_encode($contatti);
 
                         array_push($out->data, $tmp);
                     }

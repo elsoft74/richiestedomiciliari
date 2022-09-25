@@ -7,8 +7,8 @@
     <!-- <script type="text/javascript" src="https://oss.sheetjs.com/sheetjs/xlsx.full.min.js"></script> -->
     <!-- <link rel="stylesheet" href="https://fonts.sandbox.google.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" /> -->
     <link rel="stylesheet" href="font/index.css"/>
-    <link href="css/tabulator.min.css" rel="stylesheet">
-    <link href="css/tabulator_materialize.min.css" rel="stylesheet">
+    <!-- <link href="css/tabulator.min.css" rel="stylesheet"> -->
+    <link href="css/tabulator_modern.min.css" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/sweetalert2.min.css">
     <script type="text/javascript" src="js/moment-with-locales.min.js"></script>
@@ -35,40 +35,22 @@
 </head>
 
 <body>
-    <div id="menu"></div>
-    <!-- <div id="main" class="sections requests-form"></div> -->
-    <!-- <div id="mainSwabs" class="sections swabs-form"></div> -->
-    <!-- <div id="insert"></div> -->
+    <nav id="menu"></nav>
     <div id="insertUser"></div>
-    <!-- <div id="insertAssistito"></div> -->
     <div id="login" class="sections"></div>
     <div id="users" class="sections users-form"></div>
-    <!-- <div id="edit"></div> -->
     <div id="editUser"></div>
-    <!-- <div id="editAssistito"></div> -->
-    <!-- <div id="modalNoteRichiesta"></div> -->
-    <!-- <div id="tamponeEdit"></div> -->
-    <!-- <div id="tamponeUpload"></div> -->
-    <!-- <div id="assistiti"></div> -->
     <div id="firma"><a href="https://ivopugliese.it">©2022 Ivo Pugliese</a></div>
     <script>       
         if ($("#login").html() == "") {
             buildLogin();
         }
         window.addEventListener('dataLoaded', function() {
-            // buildInsertForm("insert");
-            // buildEditForm("edit");
             buildUserInsertForm("insertUser");
             buildUserEditForm("editUser");
-            // buildAssistitoInsertForm("insertAssistito");
-            // buildAssistitoEditForm("editAssistito");
             showMenu(lu);
-            // showRequests(richieste, lu);
-            // showSwabs(swabs,lu);
-            // showAssistiti(assistiti,lu);
             showUsers();
         });
-        //window.addEventListener('dataUpdated', updateTableData); 
         window.onload = function() {
             lu = JSON.parse(localStorage.getItem("ricdomloggeduser"));
             if (lu == null) {

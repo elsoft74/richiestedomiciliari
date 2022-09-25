@@ -18,6 +18,7 @@ class Richiesta
     public $deletedBy;
     public $archivedDate;
     public $archivedBy;
+    public $contatti;
 
     public function setId($val){
         $this->id=$val;
@@ -137,6 +138,14 @@ class Richiesta
 
     public function getArchivedDate(){
         return $this->archivedDate;
+    }
+
+    public function setContatti($val){
+        $this->contatti=$val;
+    }
+
+    public function getContatti(){
+        return $this->contatti;
     }
 
 
@@ -265,6 +274,20 @@ class Richiesta
                         $tmp->tipologia=$r['tipologia'];
                         $tmp->isArchived=($r['is_archived']=="1");
                         $tmp->archived=($r['is_archived']=="1")?"S":"N";
+                        $contatti = [];
+                        if ($r['telefono1']!=""){
+                            array_push($contatti,$r['telefono1']);
+                        }
+                        if ($r['telefono2']!=""){
+                            array_push($contatti,$r['telefono2']);
+                        }
+                        if ($r['telefono3']!=""){
+                            array_push($contatti,$r['telefono3']);
+                        }
+                        if ($r['email']!=""){
+                            array_push($contatti,$r['email']);
+                        }
+                        $tmp->contatti=json_encode($contatti);
 
                         array_push($out->data, $tmp);
                     }

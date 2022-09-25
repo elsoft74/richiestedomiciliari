@@ -7,7 +7,7 @@
     <!-- <script type="text/javascript" src="https://oss.sheetjs.com/sheetjs/xlsx.full.min.js"></script> -->
     <!-- <link rel="stylesheet" href="https://fonts.sandbox.google.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" /> -->
     <link rel="stylesheet" href="font/index.css"/>
-    <!-- <link href="css/tabulator.min.css" rel="stylesheet"> -->
+    <link href="css/tabulator.min.css" rel="stylesheet">
     <link href="css/tabulator_modern.min.css" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/sweetalert2.min.css">
@@ -35,30 +35,58 @@
 </head>
 
 <body>
-    <nav id="menu"></nav>
-    <div class="lds-grid position-absolute top-50 start-50 translate-middle"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
-    <div id="insert"></div>
-    <div id="insertAssistito"></div>
-    <div id="login" class="sections"></div>
-    <div id="editAssistito"></div>
-    <div id="assistiti"></div>
+<nav class="navbar navbar-expand-lg bg-light">
+  <div class="container-fluid">
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item">
+          <a class="nav-link" href="#">Utenti</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link active" aria-current="page" href="#">Elenco Pazienti</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">Elenco Attività</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">Carica Tamponi</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">Scarica Tamponi</a>
+        </li>
+        
+      </ul>
+    </div>
+    <div class="container-fluid d-flex top-0 end-0">
+    <span class="navbar-text">
+      Ivo Pugliese
+    </span>
+  </div>
+  </div>
+</nav>
     <div id="firma"><a href="https://ivopugliese.it">©2022 Ivo Pugliese</a></div>
     <script>       
         if ($("#login").html() == "") {
             buildLogin();
         }
-        window.addEventListener('dataLoaded', function() {
-            buildInsertForm("insert");
-            buildAssistitoInsertForm("insertAssistito");
-            buildAssistitoEditForm("editAssistito");
+        // window.addEventListener('dataLoaded', function() {
+            // buildInsertForm("insert");
+            // buildEditForm("edit");
+            // buildUserInsertForm("insertUser");
+            // buildUserEditForm("editUser");
+            // buildAssistitoInsertForm("insertAssistito");
+            // buildAssistitoEditForm("editAssistito");
             showMenu(lu);
-            $(".lds-grid").hide();
-            changeActivity("assistiti");
-        });
-        window.addEventListener('dataUpdated', updateTableDataAssistiti); 
+            // showRequests(richieste, lu);
+            // showSwabs(swabs,lu);
+            // showAssistiti(assistiti,lu);
+            // changeActivity("swabs");
+        // });
+        // window.addEventListener('dataUpdated', updateTableDataTamponi); 
         window.onload = function() {
-            spostaFirma();
-            $(".lds-grid").hide();
             lu = JSON.parse(localStorage.getItem("ricdomloggeduser"));
             if (lu == null) {
                 if (!$("#login").is(":visible")) {
