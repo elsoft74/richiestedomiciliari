@@ -58,7 +58,7 @@
         });
         window.addEventListener('dataUpdated', updateTableDataTamponi); 
         window.onload = function() {    
-            // spostaFirma();
+            spostaFirma();
             $(".lds-grid").hide();
             lu = JSON.parse(localStorage.getItem("ricdomloggeduser"));
             if (lu == null) {

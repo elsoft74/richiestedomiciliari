@@ -56,6 +56,7 @@
         });
         window.addEventListener('dataUpdated', updateRequestData); 
         window.onload = function() {
+            spostaFirma();
             $(".lds-grid").hide();
             lu = JSON.parse(localStorage.getItem("ricdomloggeduser"));
             if (lu == null) {
