@@ -59,8 +59,8 @@ button span {
   width: 80px;
   /* height: 80px; */
   z-index: 1000;
-  left:800;
-  top:300;
+  /* left:800;
+  top:300; */
 }
 .lds-grid div {
   position: absolute;

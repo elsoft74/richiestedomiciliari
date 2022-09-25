@@ -36,7 +36,7 @@
 
 <body>
     <nav id="menu"></nav>
-    <div class="lds-grid"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+    <div class="lds-grid position-absolute top-50 start-50 translate-middle"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
     <div id="main" class="sections requests-form"></div>
     <div id="insert"></div>
     <div id="login" class="sections"></div>
