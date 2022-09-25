@@ -483,7 +483,7 @@ function showAssistiti(assistiti, user) {
         });
     }
     $("#main").hide();
-    setTimeout(checkNewData, 6000);
+    setTimeout(checkNewData, 1000);
 
 }
 
@@ -529,16 +529,16 @@ function updateTableDataAssistiti() {
         waitingForDataAssistiti = true;
         toBeCompleted.assistiti = false;
         readAssistiti(toBeCompleted);
-        setTimeout(updateTableDataAssistiti, 6000);
+        setTimeout(updateTableDataAssistiti, 1000);
     } else {
         if (toBeCompleted.assistiti) {
             waitingForDataAssistiti = false;
             var table = Tabulator.findTable("#assistiti")[0];
             // console.log("Scrivo i dati aggiornati");
             table.updateOrAddData(assistiti);
-            setTimeout(checkNewData, 6000);
+            setTimeout(checkNewData, 1000);
         } else {
-            setTimeout(updateTableDataAssistiti, 6000);
+            setTimeout(updateTableDataAssistiti, 1000);
         }
     }
 }

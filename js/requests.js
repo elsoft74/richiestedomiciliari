@@ -222,7 +222,7 @@ function showRequests(richieste, user) {
         });
     }
     $("#main").hide();
-    setTimeout(checkNewData, 6000);
+    setTimeout(checkNewData, 1000);
 
 }
 
@@ -644,7 +644,7 @@ function updateRequestData() {
         waitingForData = true;
         toBeCompleted.richieste = false;
         readRequests(toBeCompleted);
-        setTimeout(updateRequestData, 6000);
+        setTimeout(updateRequestData, 1000);
     } else {
         if (toBeCompleted.richieste) {
             waitingForData = false;
@@ -652,10 +652,10 @@ function updateRequestData() {
             if (table != null && table != undefined) {
                 // console.log("Scrivo i dati aggiornati");
                 table.updateOrAddData(richieste);
-                setTimeout(checkNewData, 6000);
+                setTimeout(checkNewData, 1000);
             }
         } else {
-            setTimeout(updateRequestData, 6000);
+            setTimeout(updateRequestData, 1000);
         }
     }
 }

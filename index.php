@@ -36,6 +36,7 @@
 
 <body>
     <nav id="menu"></nav>
+    <div class="lds-grid"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
     <div id="main" class="sections requests-form"></div>
     <div id="mainSwabs" class="sections swabs-form"></div>
     <div id="insert"></div>
@@ -44,6 +45,7 @@
     <div id="tamponeEdit"></div>
     <div id="tamponeUpload"></div>
     <div id="firma"><a href="https://ivopugliese.it">©2022 Ivo Pugliese</a></div>
+    
     <script>       
         if ($("#login").html() == "") {
             buildLogin();
@@ -51,11 +53,13 @@
         window.addEventListener('dataLoaded', function() {
             buildInsertForm("insert");
             showMenu(lu);
+            $(".lds-grid").hide();
             changeActivity("swabs");
         });
         window.addEventListener('dataUpdated', updateTableDataTamponi); 
         window.onload = function() {    
             // spostaFirma();
+            $(".lds-grid").hide();
             lu = JSON.parse(localStorage.getItem("ricdomloggeduser"));
             if (lu == null) {
                 if (!$("#login").is(":visible")) {
@@ -65,7 +69,6 @@
                 hideLogin();
                 loadData();
             }
-
         };
         // window.addEventListener('beforeunload', function (e) {
         //     localStorage.removeItem("lastRead");

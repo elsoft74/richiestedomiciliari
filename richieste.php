@@ -36,6 +36,7 @@
 
 <body>
     <nav id="menu"></nav>
+    <div class="lds-grid"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
     <div id="main" class="sections requests-form"></div>
     <div id="insert"></div>
     <div id="login" class="sections"></div>
@@ -50,10 +51,12 @@
             buildInsertForm("insert");
             buildEditForm("edit");
             showMenu(lu);
+            $(".lds-grid").hide();
             changeActivity("requests");
         });
         window.addEventListener('dataUpdated', updateRequestData); 
         window.onload = function() {
+            $(".lds-grid").hide();
             lu = JSON.parse(localStorage.getItem("ricdomloggeduser"));
             if (lu == null) {
                 if (!$("#login").is(":visible")) {

@@ -36,6 +36,7 @@
 
 <body>
     <nav id="menu"></nav>
+    <div class="lds-grid"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
     <div id="insert"></div>
     <div id="insertAssistito"></div>
     <div id="login" class="sections"></div>
@@ -51,10 +52,12 @@
             buildAssistitoInsertForm("insertAssistito");
             buildAssistitoEditForm("editAssistito");
             showMenu(lu);
+            $(".lds-grid").hide();
             changeActivity("assistiti");
         });
         window.addEventListener('dataUpdated', updateTableDataAssistiti); 
         window.onload = function() {
+            $(".lds-grid").hide();
             lu = JSON.parse(localStorage.getItem("ricdomloggeduser"));
             if (lu == null) {
                 if (!$("#login").is(":visible")) {
