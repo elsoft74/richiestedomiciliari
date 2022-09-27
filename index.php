@@ -70,6 +70,7 @@
                 loadData();
             }
         };
+        
         // window.addEventListener('beforeunload', function (e) {
         //     localStorage.removeItem("lastRead");
         //     e.preventDefault();
