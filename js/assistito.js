@@ -1,6 +1,10 @@
 function buildAssistitoInsertForm(target) {
 
-    let canBuild = false;
+    var canBuild = false;
+    var attrs = {};
+    var tar = null;
+    var fun1 = null;
+    var fun2 = null;
     switch (target) {
         case "insertAssistito":
             tar = "#insertAssistito";
@@ -49,19 +53,19 @@ function buildAssistitoInsertForm(target) {
     }
 
     if (canBuild) {
-        let modal = $(tar).addClass("modal")/*.addClass("fade")*/.attr({ "id": target, "tabindex": "-1", "role": "dialog", "aria-labelledby": attrs.titleId, "aria-hidden": "true" });
-        let modalDialog = $("<div>").addClass("modal-dialog").attr({ "role": "document" });
-        let modalContent = $("<div>").addClass("modal-content");
-        let modalHeader = $("<div>").addClass("modal-header");
-        let modalBody = $("<div>").addClass("modal-body");
-        let modalFooter = $("<div>").addClass("modal-footer");
+        var modal = $(tar).addClass("modal")/*.addClass("fade")*/.attr({ "id": target, "tabindex": "-1", "role": "dialog", "aria-labelledby": attrs.titleId, "aria-hidden": "true" });
+        var modalDialog = $("<div>").addClass("modal-dialog").attr({ "role": "document" });
+        var modalContent = $("<div>").addClass("modal-content");
+        var modalHeader = $("<div>").addClass("modal-header");
+        var modalBody = $("<div>").addClass("modal-body");
+        var modalFooter = $("<div>").addClass("modal-footer");
 
-        let el = $("<h5>").addClass("modal-title").attr({ "id": attrs.titleId }).html(attrs.titleText);
+        var el = $("<h5>").addClass("modal-title").attr({ "id": attrs.titleId }).html(attrs.titvarext);
         modalHeader.append(el);
         modalContent.append(modalHeader);
 
-        let form = $("<form>");
-        let divFormGroup = $("<div>").addClass("form-group");
+        var form = $("<form>");
+        var divFormGroup = $("<div>").addClass("form-group");
         el = $("<input>").attr({ "type": "hidden", "id": attrs.id });
         divFormGroup.append(el);
         el = $("<label>").attr({ "for": attrs.nome }).text("Nome");
@@ -112,6 +116,7 @@ function buildAssistitoInsertForm(target) {
         el = $("<label>").attr({ "for": attrs.idUsca }).text("USCA di competenza");
         divFormGroup.append(el);
         el = $("<select>").addClass("form-richiesta").addClass("form-control").attr({ "id": attrs.idUsca });
+        var usca = JSON.parse(sessionStorage.getItem("usca"));
         if (usca != null) {
             usca.forEach(element => {
                 let option = $("<option>").attr({ "value": element.id }).text(element.descrizione);
@@ -120,12 +125,12 @@ function buildAssistitoInsertForm(target) {
         }
         divFormGroup.append(el);
 
-        let div4 = $("<div>").addClass("col");
+        var div4 = $("<div>").addClass("col");
         el = $("<label>").attr({ "for": attrs.note }).text("Note");
         div4.append(el);
         el = $("<input>").addClass('assitito-input-form').addClass("form-control").attr({ "type": "text", "id": attrs.note });
         div4.append(el);
-        let div5 = $("<div>").addClass("input-group-addon");
+        var div5 = $("<div>").addClass("input-group-addon");
         el = $("<span>").addClass("glyphicon glyphicon-th");
         div5.append(el);
         div4.append(div5);
@@ -149,14 +154,14 @@ function buildAssistitoInsertForm(target) {
 }
 
 function inserisciAssistito() {
-    let lu = sessionStorage.getItem("ricdomloggeduser");
+    var lu = sessionStorage.getItem("ricdomloggeduser");
     if (lu != null) {
-        loggedUser = JSON.parse(lu);
-        let username = loggedUser.username;
-        let token = "123456";
-        let xhr = new XMLHttpRequest();
-        let url = "be/insertAssistito.php";
-        let assistito = {};
+        var loggedUser = JSON.parse(lu);
+        var username = loggedUser.username;
+        var token = "123456";
+        var xhr = new XMLHttpRequest();
+        var url = "be/insertAssistito.php";
+        var assistito = {};
         assistito.nome = $("#nomeAssistito").val().toUpperCase();
         assistito.cognome = $("#cognomeAssistito").val().toUpperCase();
         assistito.codiceFiscale = $("#codiceFiscaleAssistito").val().toUpperCase();
@@ -168,7 +173,7 @@ function inserisciAssistito() {
         assistito.note = $("#noteAssistito").val();
         assistito.nascita = $("#nascitaAssistito").val();
         assistito.idUsca = $("#idUscaAssistito").val();
-        let err = "";
+        var err = "";
         err += (assistito.nome == "") ? "Nome vuoto\n" : "";
         err += (assistito.cognome == "") ? "Cognome vuoto\n" : "";
         err += (assistito.codiceFiscale == "") ? "Codice Fiscale vuoto\n" : "";
@@ -180,7 +185,7 @@ function inserisciAssistito() {
             xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
             xhr.onreadystatechange = function () {
                 if (xhr.readyState === 4 && xhr.status === 200) {
-                    result = JSON.parse(xhr.responseText);
+                    var result = JSON.parse(xhr.responseText);
                     if (result.status == "OK") {
                         Swal.fire({
                             text: "Operazione completata",
@@ -222,12 +227,12 @@ function inserisciAssistito() {
 function aggiornaAssistito() {
     let lu = sessionStorage.getItem("ricdomloggeduser");
     if (lu != null) {
-        loggedUser = JSON.parse(lu);
-        let username = loggedUser.username;
-        let token = "123456";
-        let xhr = new XMLHttpRequest();
-        let url = "be/editAssistito.php";
-        let assistito = {};
+        var loggedUser = JSON.parse(lu);
+        var username = loggedUser.username;
+        var token = "123456";
+        var xhr = new XMLHttpRequest();
+        var url = "be/editAssistito.php";
+        var assistito = {};
         assistito.id = $("#idAssistito_Edit").val(); // necessario per evitare id duplicati con la gestione richieste
         assistito.nome = $("#nomeAssistitoEdit").val().toUpperCase();
         assistito.cognome = $("#cognomeAssistitoEdit").val().toUpperCase();
@@ -240,7 +245,7 @@ function aggiornaAssistito() {
         assistito.note = $("#noteAssistitoEdit").val();
         assistito.nascita = $("#nascitaAssistitoEdit").val();
         assistito.idUsca = $("#idUscaAssistitoEdit").val();
-        let err = "";
+        var err = "";
         err += (assistito.nome == "") ? "Nome vuoto\n" : "";
         err += (assistito.cognome == "") ? "Cognome vuoto\n" : "";
         err += (assistito.codiceFiscale == "") ? "Codice Fiscale vuoto\n" : "";
@@ -253,7 +258,7 @@ function aggiornaAssistito() {
             xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
             xhr.onreadystatechange = function () {
                 if (xhr.readyState === 4 && xhr.status === 200) {
-                    result = JSON.parse(xhr.responseText);
+                    var result = JSON.parse(xhr.responseText);
                     if (result.status == "OK") {
                         Swal.fire({
                             text: "Operazione completata",
@@ -379,8 +384,8 @@ function showAssistiti(assistiti, user) {
             { title: "Codice Fiscale", width: 150, field: "codiceFiscale", editor: false, hozAlign: "center", vertAlign: "middle", headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
             { title: "Età", field: "eta", width: 80, editor: false, hozAlign: "center", vertAlign: "middle", headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
             { title: "Fascia", field: "eta", width: 120, editor: false, hozAlign: "left", vertAlign: "middle", headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like", formatter: function (cell, formatterParams, onRendered) {
-                val = cell.getValue();
-                out = "";
+                let val = cell.getValue();
+                let out = "";
                 if (val < 50) {
                     out = "Fascia 1 (< 50)";
                 } else if (val >= 50 && val < 66) {
@@ -396,8 +401,8 @@ function showAssistiti(assistiti, user) {
             { title: "e-mail", field: "email", visible: false },
             {
                 title: "Contatti", width: 150, field: "contatti", editor: false, hozAlign: "left", vertAlign: "middle", formatter: function (cell, formatterParams, onRendered) {
-                    out = "<div><ul>";
-                    val = cell.getValue();
+                    let out = "<div><ul>";
+                    let val = cell.getValue();
                     contatti = JSON.parse(val);
                     contatti.forEach(el => {
                         if (el != "") {
@@ -421,9 +426,9 @@ function showAssistiti(assistiti, user) {
 
                     return '<span class="material-icons-outlined" style="color: green">add</span>';
                 }, headerSort: false, tooltip: function (e, cell, onRendered) {
-                    var el1 = document.createElement("div");
+                    let el1 = document.createElement("div");
                     el1.style.backgroundColor = "#0d6efd";
-                    var el2 = document.createElement("span");
+                    let el2 = document.createElement("span");
                     el2.style.color = "#ffffff";
                     el2.innerText = "Nuova attività";
                     el1.append(el2);
@@ -435,9 +440,9 @@ function showAssistiti(assistiti, user) {
 
                     return '<span class="material-icons-outlined" style="color: green">edit</span>';
                 }, headerSort: false, tooltip: function (e, cell, onRendered) {
-                    var el1 = document.createElement("div");
+                    let el1 = document.createElement("div");
                     el1.style.backgroundColor = "#0d6efd";
-                    var el2 = document.createElement("span");
+                    let el2 = document.createElement("span");
                     el2.style.color = "#ffffff";
                     el2.innerText = "Modifica dati paziente";
                     el1.append(el2);
@@ -448,9 +453,9 @@ function showAssistiti(assistiti, user) {
                 title: "", width: 8, field: "note", vertAlign: "middle", editor: false, cellClick: cellPopupFormatterNoteAssistito, formatter: function (cell, formatterParams, onRendered) {
                     return (cell.getValue() == null) ? '' : '<span class="material-icons-outlined">notes</span>';
                 }, headerSort: false, tooltip: function (e, cell, onRendered) {
-                    var el1 = document.createElement("div");
+                    let el1 = document.createElement("div");
                     el1.style.backgroundColor = "#0d6efd";
-                    var el2 = document.createElement("span");
+                    let el2 = document.createElement("span");
                     el2.style.color = "#ffffff";
                     el2.innerText = "Note paziente";
                     el1.append(el2);
@@ -463,9 +468,9 @@ function showAssistiti(assistiti, user) {
 
                     return '<span class="material-icons-outlined" style="color: red">delete</span>';
                 }, headerSort: false, tooltip: function (e, cell, onRendered) {
-                    var el1 = document.createElement("div");
+                    let el1 = document.createElement("div");
                     el1.style.backgroundColor = "red";
-                    var el2 = document.createElement("span");
+                    let el2 = document.createElement("span");
                     el2.style.color = "#ffffff";
                     el2.innerText = "Cancella paziente";
                     el1.append(el2);
@@ -488,24 +493,24 @@ function showAssistiti(assistiti, user) {
 }
 
 function getAssistiti(toBeCompleted) {
-    var table = Tabulator.findTable("#main")[0];
-    var rowCount = 0;
-    if (table != null && table != undefined) {
-        rowCount = table.getDataCount();
-    }
-    if (rowCount == 0) {
-        sessionStorage.setItem("lastRead", null);
-    }
-    let xhr = new XMLHttpRequest();
-    let url = "be/getassistiti.php";
+    // var table = Tabulator.findTable("#main")[0];
+    // var rowCount = 0;
+    // if (table != null && table != undefined) {
+    //     rowCount = table.getDataCount();
+    // }
+    // if (rowCount == 0) {
+    //     sessionStorage.setItem("lastRead", null);
+    // }
+    var xhr = new XMLHttpRequest();
+    var url = "be/getassistiti.php";
     xhr.open("POST", url, true);
     xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-    let ready = false;
     xhr.onreadystatechange = function () {
         if (xhr.readyState === 4 && xhr.status === 200) {
-            result = JSON.parse(xhr.responseText);
+            var result = JSON.parse(xhr.responseText);
             if (result.status == "OK") {
-                assistiti = result.data;
+                var assistiti = result.data;
+                sessionStorage.setItem("assistiti",JSON.stringify(assistiti));
                 toBeCompleted.assistiti = true;
                 if (result.hasOwnProperty("lastRead")) {
                     sessionStorage.setItem("lastRead", result.lastRead);
@@ -525,16 +530,20 @@ function getAssistiti(toBeCompleted) {
 }
 
 function updateTableDataAssistiti() {
-    if (typeof (waitingForDataAssistiti) !== 'undefined' && !waitingForDataAssistiti) {
+    var waitingForDataAssistiti = JSON.parse(sessionStorage.getItem("waitingForDataAssistiti"));
+    var toBeCompleted = JSON.parse(sessionStorage.getItem(toBeCompleted));
+    if (waitingForDataAssistiti != null && !waitingForDataAssistiti) {
         waitingForDataAssistiti = true;
         toBeCompleted.assistiti = false;
+        sessionStorage.setItem("waitingForDataAssistiti",JSON.stringify(waitingForDataAssistiti));
+        sessionStorage.setItem("toBeCompleted",JSON.stringify(toBeCompleted));
         readAssistiti(toBeCompleted);
         setTimeout(updateTableDataAssistiti, 1000);
     } else {
         if (toBeCompleted.assistiti) {
             waitingForDataAssistiti = false;
+            sessionStorage.setItem("waitingForDataAssistiti",JSON.stringify(waitingForDataAssistiti));
             var table = Tabulator.findTable("#assistiti")[0];
-            // console.log("Scrivo i dati aggiornati");
             table.updateOrAddData(assistiti);
             setTimeout(checkNewData, 1000);
         } else {
@@ -544,17 +553,18 @@ function updateTableDataAssistiti() {
 }
 
 function readAssistiti(toBeCompleted) {
-    let xhr = new XMLHttpRequest();
-    let url = "be/getassistiti.php";
+    var xhr = new XMLHttpRequest();
+    var url = "be/getassistiti.php";
     xhr.open("POST", url, true);
     xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-    let ready = false;
     xhr.onreadystatechange = function () {
         if (xhr.readyState === 4 && xhr.status === 200) {
-            result = JSON.parse(xhr.responseText);
+            var result = JSON.parse(xhr.responseText);
             if (result.status == "OK") {
                 assistiti = result.data;
                 toBeCompleted.assistiti = true;
+                sessionStorage.setItem("assistiti",JSON.stringify(assistiti));
+                sessionStorage.setItem("toBeCompleted",JSON.stringify(toBeCompleted));
                 if (result.hasOwnProperty("lastRead")) {
                     sessionStorage.setItem("lastRead", result.lastRead);
                 }

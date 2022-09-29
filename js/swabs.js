@@ -13,70 +13,16 @@ function showSwabs(swabs, user) {
         paginationCounter: "rows", //display count of paginated rows in footer
         movableColumns: true,      //allow column order to be changed
         
-        // initialSort: [             //set the initial sort order of the data
-        //     { column: "dataRic", dir: "asc" },
-        // ],
-        /*
-        
-        "idAssistito":"1",
-         "nome":"IVO",
-         "cognome":"PUGLIESE",
-         "email":"elsoft74@gmail.com",
-         "telefono":"3935397897",
-         "indirizzo":"VIA DELLA LIBERTA' 15 - ROCCELLA JONICA (RC)",
-         "codiceFiscale":"PGLVIO74M20H224C",
-         "noteAssistito":"Inserimento di test",
-         "nascita":"1974-08-20 00:00:00",
-         "assistitoIsActive":"1",
-         "tamponeIsActive":"1",
-         "tamponeIsProgrammed":"0",
-         "idTampone":"1",
-         "dataEsecuzione":"2022-09-01 10:20:02",
-         "dataConsigliata":"2022-09-06 10:20:02",
-         "idUsca":"1",
-         "usca":"Messina Nord",
-         "created":"2022-09-03 10:20:20",
-         "createdByNomeCognome":"1",
-         "last_update":null,
-         "lastUpdateByNomeCognome":null
-        
-        */
-        //     columnDefaults:{
-        //     tooltip:function(e, cell, onRendered){
-        //         //e - mouseover event
-        //         //cell - cell component
-        //         //onRendered - onRendered callback registration function
-
-        //         var el = document.createElement("div");
-        //         el.style.backgroundColor = "red";
-        //         el.innerText = cell.getColumn().getField() + " - " + cell.getValue(); //return cells "field - value";
-
-        //         return el; 
-        //     },
-        // },
         columns: [                 //define the table columns
 
             { title: "", field: "id", width: 10, editor: false, hozAlign: "center", vertAlign: "middle", visible: false },
 
             { title: "#", field: "idAssistito", width: 10, editor: false, hozAlign: "center", vertAlign: "middle", visible: checkUserPermission(user, "canViewId") },
 
-            // {
-            //     title: "", width: 10, hozAlign: "center", editor: false, visible: checkUserPermission(user, "canEditAssistito"), cellClick: checkUserPermission(user, "canEditAssistito") ? showAssistitoUpdate : null, formatter: function (cell, formatterParams, onRendered) {
-
-            //         return '<span class="material-icons-outlined" style="color: green">edit</span>';
-            //     },
-            // },
-            // {
-            //     title: "", width: 10, hozAlign: "center", editor: false, visible: checkUserPermission(user, "canDeleteAssistito"), cellClick: checkUserPermission(user, "canDeleteAssistito") ? deleteElement : null, formatter: function (cell, formatterParams, onRendered) {
-
-            //         return '<span class="material-icons-outlined" style="color: red">delete</span>';
-            //     },
-            // },
             { title: "Cognome", field: "cognome", vertAlign: "middle", editor: false, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
             { title: "Nome", field: "nome", editor: false, vertAlign: "middle",},
             {
                 title: "Nascita", field: "nascita", editor: false, vertAlign: "middle", formatter: "datetime", formatterParams: {
-                    //inputFormat:"YYY-MM-DD HH:mm:ss",
                     outputFormat: "dd-MM-yyyy",
                     invalidPlaceholder: "(data non valida)",
                     timezone: "Europe/Rome",
@@ -89,9 +35,9 @@ function showSwabs(swabs, user) {
             { title: "e-mail", field: "email", visible:false },
             {
                 title: "Contatti", width: 150, field: "contatti", editor: false, hozAlign: "left", vertAlign: "middle", formatter: function (cell, formatterParams, onRendered) {
-                    out = "<div><ul>";
-                    val = cell.getValue();
-                    contatti = JSON.parse(val);
+                    var out = "<div><ul>";
+                    var val = cell.getValue();
+                    var contatti = JSON.parse(val);
                     contatti.forEach(el => {
                         if (el != "") {
                             out += "<li>" + el;
@@ -108,7 +54,6 @@ function showSwabs(swabs, user) {
             { title: "#", field: "idTampone", editor: false, hozAlign: "center", vertAlign: "middle", visible: checkUserPermission(user, "canViewId") },
             {
                 title: "Data Positività", field: "dataEsecuzione", editor: false, hozAlign: "center", vertAlign: "middle", headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like", formatter: "datetime", formatterParams: {
-                    //inputFormat:"YYY-MM-DD HH:mm:ss",
                     outputFormat: "dd-MM-yyyy",
                     invalidPlaceholder: "(data non valida)",
                     timezone: "Europe/Rome",
@@ -116,7 +61,6 @@ function showSwabs(swabs, user) {
             },
             {
                 title: "Data Consigliata", field: "dataConsigliata", editor: false, hozAlign: "center", vertAlign: "middle", formatter: "datetime", formatterParams: {
-                    //inputFormat:"YYY-MM-DD HH:mm:ss",
                     outputFormat: "dd-MM-yyyy",
                     invalidPlaceholder: "(data non valida)",
                     timezone: "Europe/Rome",
@@ -170,34 +114,26 @@ function showSwabs(swabs, user) {
             table.download("xlsx", "tamponi.xlsx", { sheetName: "Export" });
         });
     }
-    // sessionStorage.setItem("activity", "requests");
     $("#mainSwabs").hide();
     setTimeout(checkNewData, 1000);
 }
 
 function readSwabs(toBeCompleted) {
-    var table = Tabulator.findTable("#main")[0];
-    var rowCount = 0;
-    if (table != null && table != undefined) {
-        rowCount = table.getDataCount();
-    }
-    if (rowCount == 0) {
-        sessionStorage.setItem("lastRead", null);
-    }
-    let xhr = new XMLHttpRequest();
-    let url = "be/getswabs.php";
+    var xhr = new XMLHttpRequest();
+    var url = "be/getswabs.php";
     xhr.open("POST", url, true);
     xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-    let ready = false;
     xhr.onreadystatechange = function () {
         if (xhr.readyState === 4 && xhr.status === 200) {
-            result = JSON.parse(xhr.responseText);
+            var result = JSON.parse(xhr.responseText);
             if (result.status == "OK") {
-                swabs = result.data;
+                var swabs = result.data;
                 toBeCompleted.swabs = true;
                 if (result.hasOwnProperty("lastRead")) {
                     sessionStorage.setItem("lastRead", result.lastRead);
                 }
+                sessionStorage.setItem("swabs", JSON.stringify(swabs));
+                sessionStorage.setItem("toBeCompleted", JSON.stringify(toBeCompleted));
                 setTimeout(checkNewData, 1000);
             } else {
                 Swal.fire({
@@ -210,7 +146,6 @@ function readSwabs(toBeCompleted) {
             }
         }
     }
-    //xhr.send();
     xhr.send("lastRead=" + sessionStorage.getItem("lastRead"));
 }
 
@@ -228,24 +163,24 @@ function uploadSwabs() {
 }
 
 function aggiornaTampone() {
-    let lu = sessionStorage.getItem("ricdomloggeduser");
+    var lu = sessionStorage.getItem("ricdomloggeduser");
     if (lu != null) {
         loggedUser = JSON.parse(lu);
-        let username = loggedUser.username;
-        let token = "123456";
-        let tampone = {};
+        var username = loggedUser.username;
+        var token = "123456";
+        var tampone = {};
         tampone.id = $("#idTamponeEdit").val();
         tampone.status = $("#statusTamponeEdit").val();
         tampone.lastUpdateBy = "" + loggedUser.id;
 
 
-        let xhr = new XMLHttpRequest();
-        let url = "be/updateSwab.php";
+        var xhr = new XMLHttpRequest();
+        var url = "be/updateSwab.php";
         xhr.open("POST", url, true);
         xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
         xhr.onreadystatechange = function () {
             if (xhr.readyState === 4 && xhr.status === 200) {
-                result = JSON.parse(xhr.responseText);
+                var result = JSON.parse(xhr.responseText);
                 if (result.status == "OK") {
                     Swal.fire({
                         text: "Operazione completata.",
@@ -275,27 +210,27 @@ function aggiornaTampone() {
 
 function buildUpdateTamponiForm() {
 
-    fun1 = "aggiornaTampone()";
-    fun2 = "cleanTamponeEdit()";
-    attrs = {
+    var fun1 = "aggiornaTampone()";
+    var fun2 = "cleanTamponeEdit()";
+    var attrs = {
         idTampone: "idTamponeEdit",
         status: "statusTamponeEdit",
 
     }
     $("#tamponeEdit").html("");
-    let modal = $("#tamponeEdit").addClass("modal")/*.addClass("fade")*/.attr({ "id": "tamponeEdit", "tabindex": "-1", "role": "dialog", "aria-labelledby": attrs.titleId, "aria-hidden": "true" });
-    let modalDialog = $("<div>").addClass("modal-dialog").attr({ "role": "document" });
-    let modalContent = $("<div>").addClass("modal-content");
-    let modalHeader = $("<div>").addClass("modal-header");
-    let modalBody = $("<div>").addClass("modal-body");
-    let modalFooter = $("<div>").addClass("modal-footer");
+    var modal = $("#tamponeEdit").addClass("modal")/*.addClass("fade")*/.attr({ "id": "tamponeEdit", "tabindex": "-1", "role": "dialog", "aria-labelledby": attrs.titleId, "aria-hidden": "true" });
+    var modalDialog = $("<div>").addClass("modal-dialog").attr({ "role": "document" });
+    var modalContent = $("<div>").addClass("modal-content");
+    var modalHeader = $("<div>").addClass("modal-header");
+    var modalBody = $("<div>").addClass("modal-body");
+    var modalFooter = $("<div>").addClass("modal-footer");
 
-    let el = $("<h5>").addClass("modal-title").attr({ "id": attrs.titleId }).html(attrs.titleText);
+    var el = $("<h5>").addClass("modal-title").attr({ "id": attrs.titleId }).html(attrs.titvarext);
     modalHeader.append(el);
     modalContent.append(modalHeader);
 
-    let form = $("<form>");
-    let divFormGroup = $("<div>").addClass("form-group");
+    var form = $("<form>");
+    var divFormGroup = $("<div>").addClass("form-group");
     el = $("<input>").attr({ "type": "hidden", "id": attrs.idTampone });
     divFormGroup.append(el);
     el = $("<label>").attr({ "for": attrs.roleId }).text("Nuovo stato");
@@ -336,17 +271,19 @@ function cleanTamponeUpload() {
 }
 
 function getStatiTamponi(toBeCompleted) {
-    let xhr = new XMLHttpRequest();
-    let url = "be/getStatiTamponi.php";
+    var xhr = new XMLHttpRequest();
+    var url = "be/getStatiTamponi.php";
     xhr.open("POST", url, true);
     xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 
     xhr.onreadystatechange = function () {
         if (xhr.readyState === 4 && xhr.status === 200) {
-            let result = JSON.parse(xhr.responseText);
+            var result = JSON.parse(xhr.responseText);
             if (result.status == "OK") {
                 toBeCompleted.statiTamponi = true;
-                statiTamponi = result.data;
+                var statiTamponi = result.data;
+                sessionStorage.setItem("toBeCompleted",JSON.stringify(toBeCompleted));
+                sessionStorage.setItem("statiTamponi",JSON.stringify(statiTamponi));
             } else {
                 Swal.fire({
                     text: "C'è un problema con il recupero degli stati tamponi.",
@@ -364,9 +301,9 @@ function getStatiTamponi(toBeCompleted) {
 
 function buildUpLoadTamponiForm() {
 
-    fun1 = 'uploadExcelTamponi()'
-    fun2 = '$("#tamponeUpload").hide()';
-    attrs = {
+    var fun1 = 'uploadExcelTamponi()'
+    var fun2 = '$("#tamponeUpload").hide()';
+    var attrs = {
         status: "statusTamponeUpload",
         file: "uploadTamponiFile",
         fileText: "File da caricare",
@@ -374,19 +311,19 @@ function buildUpLoadTamponiForm() {
 
     }
     $("#tamponeUpload").html("");
-    let modal = $("#tamponeUpload").addClass("modal")/*.addClass("fade")*/.attr({ "id": "tamponeUpload", "tabindex": "-1", "role": "dialog", "aria-labelledby": attrs.titleId, "aria-hidden": "true" });
-    let modalDialog = $("<div>").addClass("modal-dialog").attr({ "role": "document" });
-    let modalContent = $("<div>").addClass("modal-content");
-    let modalHeader = $("<div>").addClass("modal-header");
-    let modalBody = $("<div>").addClass("modal-body");
-    let modalFooter = $("<div>").addClass("modal-footer");
+    var modal = $("#tamponeUpload").addClass("modal")/*.addClass("fade")*/.attr({ "id": "tamponeUpload", "tabindex": "-1", "role": "dialog", "aria-labelledby": attrs.titleId, "aria-hidden": "true" });
+    var modalDialog = $("<div>").addClass("modal-dialog").attr({ "role": "document" });
+    var modalContent = $("<div>").addClass("modal-content");
+    var modalHeader = $("<div>").addClass("modal-header");
+    var modalBody = $("<div>").addClass("modal-body");
+    var modalFooter = $("<div>").addClass("modal-footer");
 
-    let el = $("<h5>").addClass("modal-title").attr({ "id": attrs.titleId }).html(attrs.titleText);
+    var el = $("<h5>").addClass("modal-title").attr({ "id": attrs.titleId }).html(attrs.titvarext);
     modalHeader.append(el);
     modalContent.append(modalHeader);
 
-    let form = $("<form>").attr({ "id": "formFiles" });
-    let divFormGroup = $("<div>").addClass("form-group");
+    var form = $("<form>").attr({ "id": "formFiles" });
+    var divFormGroup = $("<div>").addClass("form-group");
     el = $("<label>").addClass("form-label").attr({ "for": attrs.file }).text(attrs.fileText);
     divFormGroup.append(el);
     el = $("<input>").addClass("form-control").attr({ "id": attrs.file, "type": "file", "name": "files", "accept": ".xls, .xlsx, .csv" });
@@ -394,6 +331,7 @@ function buildUpLoadTamponiForm() {
     el = $("<label>").attr({ "for": attrs.status }).text(attrs.statusText);
     divFormGroup.append(el);
     el = $("<select>").addClass('user-input-form').addClass("form-control").attr({ "id": attrs.status });
+    var statiTamponi = JSON.parse(sessionStorage.getItem("statiTamponi"));
     if (statiTamponi != null) {
         statiTamponi.forEach(element => {
             let option = $("<option>").attr({ "value": element.id }).text(element.descrizione);
@@ -418,11 +356,11 @@ function buildUpLoadTamponiForm() {
 }
 
 function uploadExcelTamponi() {
-    let lu = sessionStorage.getItem("ricdomloggeduser");
+    var lu = sessionStorage.getItem("ricdomloggeduser");
     if (lu != null) {
         loggedUser = JSON.parse(lu);
-        let username = loggedUser.username;
-        let token = "123456";
+        var username = loggedUser.username;
+        var token = "123456";
         var f = $("#uploadTamponiFile").prop("files");
         if (f == undefined || f.length == 0) {
             Swal.fire({
@@ -439,14 +377,13 @@ function uploadExcelTamponi() {
             formData.append("file", f[0]);
             formData.append("username", username);
             formData.append("token", token);
-            let xhr = new XMLHttpRequest();
-            let url = "be/caricaExcelTamponi.php";
+            var xhr = new XMLHttpRequest();
+            var url = "be/caricaExcelTamponi.php";
             xhr.open("POST", url, true);
-            // xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-
+            
             xhr.onreadystatechange = function () {
                 if (xhr.readyState === 4 && xhr.status === 200) {
-                    let result = JSON.parse(xhr.responseText);
+                    var result = JSON.parse(xhr.responseText);
                     if (result.status == "OK") {
                         $("#loader").hide();
                         Swal.fire({
@@ -483,16 +420,21 @@ function uploadExcelTamponi() {
 
 
 function updateTableDataTamponi() {
-    if (typeof (waitingForDataTamponi) !== 'undefined' && !waitingForDataTamponi) {
+    var waitingForDataTamponi = JSON.parse(sessionStorage.getItem("waitingForDataTamponi"));
+    var toBeCompleted = JSON.parse(sessionStorage.getItem("toBeCompleted"));
+    if (waitingForDataTamponi != null && !waitingForDataTamponi) {
         waitingForDataTamponi = true;
         toBeCompleted.swabs = false;
+        sessionStorage.setItem("toBeCompleted",JSON.stringify(toBeCompleted));
+        sessionStorage.setItem("waitingForDataTamponi",JSON.stringify(waitingForDataTamponi));
         readSwabs(toBeCompleted);
         setTimeout(updateTableDataTamponi, 200);
     } else {
         if (toBeCompleted.swabs) {
             waitingForDataTamponi = false;
+            sessionStorage.setItem("waitingForDataTamponi",JSON.stringify(waitingForDataTamponi));
             var table = Tabulator.findTable("#mainSwabs")[0];
-            // console.log("Scrivo i dati aggiornati");
+            var swabs = JSON.parse(sessionStorage.getItem("swabs"));
             table.updateOrAddData(swabs);
             setTimeout(checkNewData, 1000);
         } else {

@@ -29,10 +29,7 @@ function login() {
 }
 
 function logout() {
-    sessionStorage.removeItem("ricdomloggeduser");
-    sessionStorage.removeItem("lastRead");
-    sessionStorage.removeItem("mostraStorico");
-    sessionStorage.removeItem("mostraTamponi");
+    sessionStorage.clear();
     $("#username").val("");
     $("#password").val("");
     location.reload();
@@ -48,19 +45,19 @@ function hideLogin() {
 
 function buildLogin() {
     $("#login").html("");
-    let modal = $("#login").addClass("modal")/*.addClass("fade")*/.attr({"tabindex": "-1", "role": "dialog", "aria-labelledby": "loginTitle", "aria-hidden": "true" });
-    let modalDialog = $("<div>").addClass("modal-dialog").attr({ "role": "document" });
-    let modalContent = $("<div>").addClass("modal-content");
-    let modalHeader = $("<div>").addClass("modal-header");
-    let modalBody = $("<div>").addClass("modal-body");
-    let modalFooter = $("<div>").addClass("modal-footer");
+    var modal = $("#login").addClass("modal")/*.addClass("fade")*/.attr({"tabindex": "-1", "role": "dialog", "aria-labelledby": "loginTitle", "aria-hidden": "true" });
+    var modalDialog = $("<div>").addClass("modal-dialog").attr({ "role": "document" });
+    var modalContent = $("<div>").addClass("modal-content");
+    var modalHeader = $("<div>").addClass("modal-header");
+    var modalBody = $("<div>").addClass("modal-body");
+    var modalFooter = $("<div>").addClass("modal-footer");
 
-    let el = $("<h5>").addClass("modal-title").attr({ "id": "loginTitle" }).html("Login");
+    var el = $("<h5>").addClass("modal-title").attr({ "id": "loginTitle" }).html("Login");
     modalHeader.append(el);
     modalContent.append(modalHeader);
 
 
-    let div = $("<div>").addClass("row").addClass("align-self-center");
+    var div = $("<div>").addClass("row").addClass("align-self-center");
     el = $("<label>").attr({ "for": "username" }).text("Nome utente");
     div.append(el);
     el = $("<input>").attr({ "type": "text", "id": "username" });

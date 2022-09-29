@@ -1,6 +1,10 @@
 function buildInsertForm(target) {
 
-    let canBuild = false;
+    var canBuild = false;
+    var tar = null;
+    var fun1 = null;
+    var fun2 = null;
+    var attrs = {};
     switch (target) {
         case "insert":
             tar = "#insert";
@@ -61,21 +65,19 @@ function buildInsertForm(target) {
     }
 
     if (canBuild) {
-        let modal = $(tar).addClass("modal")/*.addClass("fade")*/.attr({ "id": target, "tabindex": "-1", "role": "dialog", "aria-labelledby": attrs.titleId, "aria-hidden": "true" });
-        let modalDialog = $("<div>").addClass("modal-dialog").attr({ "role": "document" });
-        let modalContent = $("<div>").addClass("modal-content");
-        let modalHeader = $("<div>").addClass("modal-header");
-        let modalBody = $("<div>").addClass("modal-body");
-        let modalFooter = $("<div>").addClass("modal-footer");
+        var modal = $(tar).addClass("modal")/*.addClass("fade")*/.attr({ "id": target, "tabindex": "-1", "role": "dialog", "aria-labelledby": attrs.titleId, "aria-hidden": "true" });
+        var modalDialog = $("<div>").addClass("modal-dialog").attr({ "role": "document" });
+        var modalContent = $("<div>").addClass("modal-content");
+        var modalHeader = $("<div>").addClass("modal-header");
+        var modalBody = $("<div>").addClass("modal-body");
+        var modalFooter = $("<div>").addClass("modal-footer");
 
-        let el = $("<h5>").addClass("modal-title").attr({ "id": attrs.titleId }).html(attrs.titleText);
+        var el = $("<h5>").addClass("modal-title").attr({ "id": attrs.titleId }).html(attrs.titvarext);
         modalHeader.append(el);
-        // el=$("<botton>").addClass("close").attr({"data-dismiss":"modal", "aria-label":"Close","onClick":close(tar)}).html('<span aria-hidden="true">&times;</span>');
-        // modalHeader.append(el);
         modalContent.append(modalHeader);
 
-        let form = $("<form>");
-        let divFormGroup = $("<div>").addClass("form-group");
+        var form = $("<form>");
+        var divFormGroup = $("<div>").addClass("form-group");
         el = $("<input>").attr({ "type": "hidden", "id": attrs.idAssistito });
         divFormGroup.append(el);
         el = $("<input>").attr({ "type": "hidden", "id": attrs.idRichiesta });
@@ -119,6 +121,7 @@ function buildInsertForm(target) {
         el = $("<label>").attr({ "for": attrs.idUsca }).text(attrs.uscaText);
         divFormGroup.append(el);
         el = $("<select>").addClass("form-richiesta").addClass("form-control").attr({ "id": attrs.idUsca });
+        var usca = JSON.parse(sessionStorage.getItem("usca"));
         if (usca != null) {
             usca.forEach(element => {
                 let option = $("<option>").attr({ "value": element.id }).text(element.descrizione);
@@ -130,6 +133,7 @@ function buildInsertForm(target) {
         el = $("<label>").attr({ "for": attrs.idTipologia }).text("Tipo di richiesta");
         divFormGroup.append(el);
         el = $("<select>").addClass("form-richiesta").addClass("form-control").attr({ "id": attrs.idTipologia });
+        var tipologie = JSON.parse(sessionStorage.getItem("tipologie"));
         if (tipologie != null) {
             tipologie.forEach(element => {
                 let option = $("<option>").attr({ "value": element.id }).text(element.descrizione);
@@ -141,6 +145,7 @@ function buildInsertForm(target) {
         el = $("<label>").attr({ "for": attrs.idPriorita }).text("Priorità");
         divFormGroup.append(el);
         el = $("<select>").addClass("form-richiesta").addClass("form-control").attr({ "id": attrs.idPriorita });
+        var priorita = JSON.parse(sessionStorage.getItem("priorita"));
         if (priorita != null) {
             priorita.forEach(element => {
                 let option = $("<option>").attr({ "value": element.id }).text(element.descrizione);
@@ -150,12 +155,12 @@ function buildInsertForm(target) {
         divFormGroup.append(el);
 
 
-        let div4 = $("<div>").addClass("col").addClass("date");
+        var div4 = $("<div>").addClass("col").addClass("date");
         el = $("<label>").text("Data Programmazione");
         div4.append(el);
         el = $("<input>").addClass("form-richiesta").addClass("form-control").attr({ "type": "date", "id": attrs.data });
         div4.append(el);
-        let div5 = $("<div>").addClass("input-group-addon");
+        var div5 = $("<div>").addClass("input-group-addon");
         el = $("<span>").addClass("glyphicon glyphicon-th");
         div5.append(el);
         div4.append(div5);
@@ -164,13 +169,6 @@ function buildInsertForm(target) {
 
 
         form.append(divFormGroup);
-
-        // if (attrs.hasOwnProperty("pulsante")) {
-        //     divFormGroup = $("<div>").addClass("form-group");
-        //     el = $("<button>").addClass("btn").addClass("btn-primary").text(attrs.pulsanteText).attr({ "id": attrs.pulsante, "onClick": fun3 });
-        //     divFormGroup.append(el);
-        //     form.append(divFormGroup);
-        // }
 
         if (attrs.hasOwnProperty("noteRichiesta")) {
             el = $("<label>").attr({ "for": attrs.noteRichiesta }).text(attrs.noteRichiestaText);

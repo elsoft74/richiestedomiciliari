@@ -1,11 +1,5 @@
 function showRequests(richieste, user) {
     $("#main").html("");
-    // $(".swabs-form").hide();
-    // $(".users-form").hide();
-    // $(".requests-form").show();
-    // $("#users").html("");
-    // $(".requests-form").show();
-    // $(".users-form").hide();
     var mostraStorico = JSON.parse(sessionStorage.getItem("mostraStorico"));
     if (mostraStorico == null) {
         mostraStorico = false;
@@ -54,27 +48,7 @@ function showRequests(richieste, user) {
             } : { visible: false },
 
             { title: "#", field: "idAssistito", width: 5, editor: false, hozAlign: "center", vertAlign: "middle", visible: checkUserPermission(user, "canViewId") },
-            // {
-            //     columns: [
-            //         {
-            //             title: "", width: 8, hozAlign: "center", editor: false, visible: checkUserPermission(user, "canEditAssistito"), cellClick: checkUserPermission(user, "canEditAssistito") ? showAssistitoUpdate : null, formatter: function (cell, formatterParams, onRendered) {
-
-            //                 return '<span class="material-icons-outlined" style="color: green">edit</span>';
-            //             }, headerSort: false
-            //         },
-            //         {
-            //             title: "", width: 8, hozAlign: "center", editor: false, visible: checkUserPermission(user, "canDeleteAssistito"), cellClick: checkUserPermission(user, "canDeleteAssistito") ? deleteElement : null, formatter: function (cell, formatterParams, onRendered) {
-
-            //                 return '<span class="material-icons-outlined" style="color: red">delete</span>';
-            //             }, headerSort: false
-            //         },
-            //         {
-            //             title: "", width: 8, field: "noteAssistito", editor: false, cellClick: cellPopupFormatterNoteAssistito, formatter: function (cell, formatterParams, onRendered) {
-            //                 return (cell.getValue() == null) ? '' : '<span class="material-icons-outlined">notes</span>';
-            //             }, headerSort: false
-            //         },
-            //     ]
-            // },
+            
             {
                 title: "", width: 8, field: "noteAssistito", vertAlign: "middle", editor: false, cellClick: cellPopupFormatterNoteAssistito, formatter: function (cell, formatterParams, onRendered) {
                     return (cell.getValue() == null) ? '' : '<span class="material-icons-outlined">notes</span>';
@@ -93,7 +67,6 @@ function showRequests(richieste, user) {
             { title: "Nome", width: 150, field: "nome", vertAlign: "middle", editor: false, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
             {
                 title: "Nascita", width: 100, field: "nascita", vertAlign: "middle", editor: false, formatter: "datetime", formatterParams: {
-                    //inputFormat:"YYY-MM-DD HH:mm:ss",
                     outputFormat: "dd-MM-yyyy",
                     invalidPlaceholder: "",
                     timezone: "Europe/Rome",
@@ -106,8 +79,8 @@ function showRequests(richieste, user) {
             { title: "e-mail", field: "email", visible:false},
             {
                 title: "Contatti", width: 150, field: "contatti", editor: false, hozAlign: "left", vertAlign: "middle", formatter: function (cell, formatterParams, onRendered) {
-                    out = "<div><ul>";
-                    val = cell.getValue();
+                    var out = "<div><ul>";
+                    var val = cell.getValue();
                     contatti = JSON.parse(val);
                     contatti.forEach(el => {
                         if (el != "") {
@@ -119,7 +92,6 @@ function showRequests(richieste, user) {
                 }
             },
             { title: "Indirizzo", field: "indirizzo", formatter: "textarea", vertAlign: "middle", editor: false, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
-            // (checkUserPermission(user, "canViewAllRequests")) ?
             {
                 title: "Team", width: 120, field: "usca", vertAlign: "middle", editor: false, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like"
             },
@@ -204,13 +176,6 @@ function showRequests(richieste, user) {
                 ]
             },
 
-
-            // (checkUserPermission(user, "canViewDetails")) ?
-            //     {
-            //         title: "Dettagli", editor: false/*, formatter: "textarea" */, cellClick: cellPopupFormatterDettagliRichiesta, formatter: function (cell, formatterParams, onRendered) {
-            //             return (cell.getValue() == null) ? '' : '<span class="material-icons-outlined">edit</span>';
-            //         }
-            //     } : { visible: false },
         ]
     });
 
@@ -227,23 +192,23 @@ function showRequests(richieste, user) {
 }
 
 function inserisci() {
-    let lu = sessionStorage.getItem("ricdomloggeduser");
+    var lu = sessionStorage.getItem("ricdomloggeduser");
     if (lu != null) {
-        let richiesta = {};
+        var richiesta = {};
         loggedUser = JSON.parse(lu);
-        let username = loggedUser.username;
-        let token = "123456";
+        var username = loggedUser.username;
+        var token = "123456";
         richiesta.idAssistito = $("#idAssistito").val();
         richiesta.idTipologia = $("#idTipologia").val();
         richiesta.idPriorita = $("#idPriorita").val();
         richiesta.data = $("#data").val();
-        note = [];
-        nota = ($("#noteRichiesta").val().trim() != "") ? { "date": (new luxon.DateTime.fromJSDate(new Date())).toFormat("yyyy-MM-dd HH:mm:ss"), "note": $("#noteRichiesta").val().trim(), "createdBy": loggedUser.id } : {};
+        var note = [];
+        var nota = ($("#noteRichiesta").val().trim() != "") ? { "date": (new luxon.DateTime.fromJSDate(new Date())).toFormat("yyyy-MM-dd HH:mm:ss"), "note": $("#noteRichiesta").val().trim(), "createdBy": loggedUser.id } : {};
         note.push(nota);
         richiesta.note = JSON.stringify(note);
         richiesta.createdBy = "" + loggedUser.id;
 
-        let err = checkDatiObbligatori(richiesta);
+        var err = checkDatiObbligatori(richiesta);
 
         if (err != '') {
             Swal.fire({
@@ -254,13 +219,13 @@ function inserisci() {
                 confirmButtonText: 'Ok'
             })
         } else {
-            let xhr = new XMLHttpRequest();
-            let url = "be/insertRequest.php";
+            var xhr = new XMLHttpRequest();
+            var url = "be/insertRequest.php";
             xhr.open("POST", url, true);
             xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
             xhr.onreadystatechange = function () {
                 if (xhr.readyState === 4 && xhr.status === 200) {
-                    result = JSON.parse(xhr.responseText);
+                    var result = JSON.parse(xhr.responseText);
                     if (result.status == "OK") {
                         Swal.fire({
                             text: "Operazione completata.",
@@ -290,12 +255,12 @@ function inserisci() {
 }
 
 function aggiorna() {
-    let lu = sessionStorage.getItem("ricdomloggeduser");
+    var lu = sessionStorage.getItem("ricdomloggeduser");
     if (lu != null) {
         loggedUser = JSON.parse(lu);
-        let username = loggedUser.username;
-        let token = "123456";
-        let richiesta = {};
+        var username = loggedUser.username;
+        var token = "123456";
+        var richiesta = {};
         richiesta.id = $("#idRichiestaEdit").val();
         richiesta.idTipologia = $("#idTipologiaEdit").val();
         richiesta.idPriorita = $("#idPrioritaEdit").val();
@@ -303,7 +268,7 @@ function aggiorna() {
         richiesta.note = $("#noteRichiestaEdit").val();
         richiesta.lastUpdateBy = "" + loggedUser.id;
 
-        let err = checkDatiObbligatori(richiesta);
+        var err = checkDatiObbligatori(richiesta);
 
         if (err != '') {
             Swal.fire({
@@ -315,13 +280,13 @@ function aggiorna() {
             })
         } else {
 
-            let xhr = new XMLHttpRequest();
-            let url = "be/updateRequest.php";
+            var xhr = new XMLHttpRequest();
+            var url = "be/updateRequest.php";
             xhr.open("POST", url, true);
             xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
             xhr.onreadystatechange = function () {
                 if (xhr.readyState === 4 && xhr.status === 200) {
-                    result = JSON.parse(xhr.responseText);
+                    var result = JSON.parse(xhr.responseText);
                     if (result.status == "OK") {
                         Swal.fire({
                             text: "Operazione completata.",
@@ -383,21 +348,21 @@ var deleteElement = function (e, row) {
         confirmButtonText: 'Conferma'
     }).then((result) => {
         if (result.isConfirmed) {
-            let lu = sessionStorage.getItem("ricdomloggeduser");
+            var lu = sessionStorage.getItem("ricdomloggeduser");
             if (lu != null) {
                 loggedUser = JSON.parse(lu);
-                let username = loggedUser.username;
-                let token = "123456";
-                let richiesta = {};
+                var username = loggedUser.username;
+                var token = "123456";
+                var richiesta = {};
                 richiesta.id = element.idRichiesta;
                 richiesta.deletedBy = "" + loggedUser.id;
 
-                let xhr = new XMLHttpRequest();
-                let url = "be/deleteRequest.php";
+                var xhr = new XMLHttpRequest();
+                var url = "be/deleteRequest.php";
                 xhr.open("POST", url, true);
                 xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
                 xhr.onreadystatechange = function () {
-                    result = JSON.parse(xhr.responseText);
+                    var result = JSON.parse(xhr.responseText);
                     if (result.status == "OK") {
                         Swal.fire({
                             text: "Operazione completata.",
@@ -440,21 +405,21 @@ var archiveElement = function (e, row) {
         confirmButtonText: 'Conferma'
     }).then((result) => {
         if (result.isConfirmed) {
-            let lu = sessionStorage.getItem("ricdomloggeduser");
+            var lu = sessionStorage.getItem("ricdomloggeduser");
             if (lu != null) {
                 loggedUser = JSON.parse(lu);
-                let username = loggedUser.username;
-                let token = "123456";
-                let richiesta = {};
+                var username = loggedUser.username;
+                var token = "123456";
+                var richiesta = {};
                 richiesta.id = element.idRichiesta;
                 richiesta.archivedBy = "" + loggedUser.id;
 
-                let xhr = new XMLHttpRequest();
-                let url = (element.isArchived) ? "be/unArchiveRequest.php" : "be/archiveRequest.php";
+                var xhr = new XMLHttpRequest();
+                var url = (element.isArchived) ? "be/unArchiveRequest.php" : "be/archiveRequest.php";
                 xhr.open("POST", url, true);
                 xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
                 xhr.onreadystatechange = function () {
-                    result = JSON.parse(xhr.responseText);
+                    var result = JSON.parse(xhr.responseText);
                     if (result.status == "OK") {
                         Swal.fire({
                             text: "Operazione completata.",
@@ -485,28 +450,21 @@ var archiveElement = function (e, row) {
 }
 
 function readRequests(toBeCompleted) {
-    var table = Tabulator.findTable("#main")[0];
-    var rowCount = 0;
-    if (table != null && table != undefined) {
-        rowCount = table.getDataCount();
-    }
-    if (rowCount == 0) {
-        sessionStorage.setItem("lastRead", null);
-    }
-    let xhr = new XMLHttpRequest();
-    let url = "be/getrequests.php";
+    var xhr = new XMLHttpRequest();
+    var url = "be/getrequests.php";
     xhr.open("POST", url, true);
     xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-    let ready = false;
     xhr.onreadystatechange = function () {
         if (xhr.readyState === 4 && xhr.status === 200) {
-            result = JSON.parse(xhr.responseText);
+            var result = JSON.parse(xhr.responseText);
             if (result.status == "OK") {
-                richieste = result.data;
+                var richieste = result.data;
                 toBeCompleted.richieste = true;
                 if (result.hasOwnProperty("lastRead")) {
                     sessionStorage.setItem("lastRead", result.lastRead);
                 }
+                sessionStorage.setItem("richieste", JSON.stringify(richieste));
+                sessionStorage.setItem("toBeCompleted", JSON.stringify(toBeCompleted));
                 setTimeout(checkIfUpdated, 1000);
             } else {
                 Swal.fire({
@@ -641,17 +599,22 @@ var mostraNotaEstesa = function (e, row) {
 
 
 function updateRequestData() {
-    if (typeof (waitingForData) !== 'undefined' && !waitingForData) {
+    var waitingForData = JSON.parse(sessionStorage.getItem("waitingForData"));
+    var toBeCompleted = JSON.parse(sessionStorage.getItem("toBeCompleted"));
+    if (waitingForData!=null && !waitingForData) {
         waitingForData = true;
         toBeCompleted.richieste = false;
+        sessionStorage.setItem("waitingForData",JSON.stringify(waitingForData));
+        sessionStorage.setItem("toBeCompleted",JSON.stringify(toBeCompleted));
         readRequests(toBeCompleted);
         setTimeout(updateRequestData, 1000);
     } else {
         if (toBeCompleted.richieste) {
             waitingForData = false;
+            sessionStorage.setItem("waitingForData",JSON.stringify(waitingForData));
             var table = Tabulator.findTable("#main")[0];
             if (table != null && table != undefined) {
-                // console.log("Scrivo i dati aggiornati");
+                var richieste = JSON.parse(sessionStorage.getItem("richieste"));
                 table.updateOrAddData(richieste);
                 setTimeout(checkNewData, 1000);
             }
@@ -670,32 +633,32 @@ var buildNoteRichiestaModal = function (e, row) {
         noteRichiesta = (data.noteRichiesta != null && data.noteRichiesta != "") ? [{ "date": "1970-01-01", "nota": data.noteRichiesta }] : [];
     }
     $("#modalNoteRichiesta").html("");
-    let modal = $("#modalNoteRichiesta").addClass("modal")/*.addClass("fade")*/.attr({ "tabindex": "-1", "role": "dialog", "aria-hidden": "true" });
-    let modalDialog = $("<div>").addClass("modal-dialog").attr({ "role": "document" });
-    let modalContent = $("<div>").addClass("modal-content");
-    let modalHeader = $("<div>").addClass("modal-header");
-    let modalBody = $("<div>").addClass("modal-body");
-    let modalFooter = $("<div>").addClass("modal-footer");
+    var modal = $("#modalNoteRichiesta").addClass("modal")/*.addClass("fade")*/.attr({ "tabindex": "-1", "role": "dialog", "aria-hidden": "true" });
+    var modalDialog = $("<div>").addClass("modal-dialog").attr({ "role": "document" });
+    var modalContent = $("<div>").addClass("modal-content");
+    var modalHeader = $("<div>").addClass("modal-header");
+    var modalBody = $("<div>").addClass("modal-body");
+    var modalFooter = $("<div>").addClass("modal-footer");
 
-    let el = $("<h5>").addClass("modal-title").html("Note richiesta");
+    var el = $("<h5>").addClass("modal-title").html("Note richiesta");
     modalHeader.append(el);
     modalContent.append(modalHeader);
 
-    let form = $("<form>");
-    let div1 = $("<div>");
+    var form = $("<form>");
+    var div1 = $("<div>");
     el = $("<input>").attr({ "type": "hidden", "id": "idRichiestaNuovaNota" }).val(data.idRichiesta);
     form.append(el);
     el = $("<input>").attr({ "type": "hidden", "id": "noteRichiestaAttuali" }).val(JSON.stringify(noteRichiesta));
     form.append(el);
-    let div3 = $("<div>").addClass("col").attr({ "id": "elencoNote" });
+    var div3 = $("<div>").addClass("col").attr({ "id": "elencoNote" });
     form.append(div3);
     div3 = $("<div>").addClass("col").attr({ "id": "nuovaNota" });
-    let div4 = $("<div>").addClass("col").addClass("date");
+    var div4 = $("<div>").addClass("col").addClass("date");
     el = $("<label>").text("Data Nota").attr({ "for": "nuovaNotaDate" });
     div4.append(el);
     el = $("<input>").addClass("form-richiesta").addClass("form-control").attr({ "type": "date", "id": "nuovaNotaDate" });
     div4.append(el);
-    let div5 = $("<div>").addClass("input-group-addon");
+    var div5 = $("<div>").addClass("input-group-addon");
     el = $("<span>").addClass("glyphicon glyphicon-th");
     div5.append(el);
     div4.append(div5);
@@ -767,7 +730,7 @@ function salvaNote() {
     var newNoteDate = $("#nuovaNotaDate").val() + " 00:00:00";
     var newNoteText = $("#nuovaNotaText").val();
     if (newNoteDate != "" && newNoteText.trim() != "") {
-        let lu = sessionStorage.getItem("ricdomloggeduser");
+        var lu = sessionStorage.getItem("ricdomloggeduser");
         if (lu != null) {
             loggedUser = JSON.parse(lu);
             var actualNotes = JSON.parse($("#noteRichiestaAttuali").val());
@@ -776,19 +739,18 @@ function salvaNote() {
                 newNoteObject.note = newNoteText;
             newNoteObject.createdBy = loggedUser.id;
             actualNotes.push(newNoteObject);
-            let username = loggedUser.username;
-            let token = "123456";
-            let richiesta = {};
+            var username = loggedUser.username;
+            var token = "123456";
+            var richiesta = {};
             richiesta.id = $("#idRichiestaNuovaNota").val();
             richiesta.note = actualNotes;
-            let xhr = new XMLHttpRequest();
-            let url = "be/updateRequestNote.php";
+            var xhr = new XMLHttpRequest();
+            var url = "be/updateRequestNote.php";
             xhr.open("POST", url, true);
             xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-            let ready = false;
             xhr.onreadystatechange = function () {
                 if (xhr.readyState === 4 && xhr.status === 200) {
-                    result = JSON.parse(xhr.responseText);
+                    var result = JSON.parse(xhr.responseText);
                     if (result.status == "OK") {
                         Swal.fire({
                             text: "Operazione compeltata.",
@@ -827,17 +789,19 @@ function salvaNote() {
 }
 
 function getStatiAttivita(toBeCompleted) {
-    let xhr = new XMLHttpRequest();
-    let url = "be/getstatiattivita.php";
+    var xhr = new XMLHttpRequest();
+    var url = "be/getstatiattivita.php";
     xhr.open("POST", url, true);
     xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 
     xhr.onreadystatechange = function () {
         if (xhr.readyState === 4 && xhr.status === 200) {
-            let result = JSON.parse(xhr.responseText);
+            var result = JSON.parse(xhr.responseText);
             if (result.status == "OK") {
                 toBeCompleted.statiAttivita = true;
                 statiAttivita = result.data;
+                sessionStorage.setItem("toBeCompleted",JSON.stringify(toBeCompleted));
+                sessionStorage.setItem("statiAttivita",JSON.stringify(statiAttivita));
             } else {
                 Swal.fire({
                     text: "C'è un problema con il recupero dell'elenco degli stati attività.",

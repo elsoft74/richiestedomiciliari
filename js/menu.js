@@ -1,14 +1,13 @@
 function showMenu(user) {
     $("#menu").html("").addClass("navbar");
     if (user != null) {
-        let activity = sessionStorage.getItem("activity");
-        let row = $("<div>").addClass("row");
-        let div1 = $("<div>").addClass("col-9");
-        let div2 = $("<div>").addClass("col-2");
-        let div3 = $("<div>").addClass("col-1");
+        var row = $("<div>").addClass("row");
+        var div1 = $("<div>").addClass("col-9");
+        var div2 = $("<div>").addClass("col-2");
+        var div3 = $("<div>").addClass("col-1");
 
-        let button = $("<button>").addClass("btn middle btn-primary btn-block menu-button").attr({ "onClick": "logout()" }).text("Esci");
-        let el = $("<span>").addClass("material-icons-outlined").addClass("middle");
+        var button = $("<button>").addClass("btn middle btn-primary btn-block menu-button").attr({ "onClick": "logout()" }).text("Esci");
+        var el = $("<span>").addClass("material-icons-outlined").addClass("middle");
         el.text("logout");
         button.append(el);
         div1.attr("id", "menubuttons");

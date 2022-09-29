@@ -1,15 +1,17 @@
 function getPriorita(toBeCompleted) {
-    let xhr = new XMLHttpRequest();
-    let url = "be/getpriorita.php";
+    var xhr = new XMLHttpRequest();
+    var url = "be/getpriorita.php";
     xhr.open("POST", url, true);
     xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 
     xhr.onreadystatechange = function () {
         if (xhr.readyState === 4 && xhr.status === 200) {
-            let result = JSON.parse(xhr.responseText);
+            var result = JSON.parse(xhr.responseText);
             if (result.status == "OK") {
                 toBeCompleted.priorita = true;
                 priorita = result.data;
+                sessionStorage.setItem("toBeCompleted",JSON.stringify(toBeCompleted));
+                sessionStorage.setItem("priorita",JSON.stringify(priorita));
             } else {
                 Swal.fire({
                     text: "C'è un problema con il recupero dell'elenco delle priorità.",
@@ -19,6 +21,7 @@ function getPriorita(toBeCompleted) {
                     confirmButtonText: 'Ok'
                 });
                 priorita = null;
+                sessionStorage.setItem("priorita",JSON.stringify(priorita));
             }
         }
     }
