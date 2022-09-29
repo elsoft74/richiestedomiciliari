@@ -94,7 +94,8 @@ function loadData() {
         usca: false,
         uscaFull: false,
         statiTamponi: false,
-        assistiti: false
+        assistiti: false,
+        statiAttivita: false
     };
     priorita = null;
     tipologie = null;
@@ -108,6 +109,7 @@ function loadData() {
     getUscaFull(toBeCompleted);
     getStatiTamponi(toBeCompleted);
     getAssistiti(toBeCompleted);
+    getStatiAttivita(toBeCompleted);
     //readRequests(toBeCompleted);
     //readSwabs(toBeCompleted);
     getData(toBeCompleted);
