@@ -6,7 +6,7 @@ function showRequests(richieste, user) {
     // $("#users").html("");
     // $(".requests-form").show();
     // $(".users-form").hide();
-    var mostraStorico = JSON.parse(localStorage.getItem("mostraStorico"));
+    var mostraStorico = JSON.parse(sessionStorage.getItem("mostraStorico"));
     if (mostraStorico == null) {
         mostraStorico = false;
     }
@@ -121,7 +121,7 @@ function showRequests(richieste, user) {
             { title: "Indirizzo", field: "indirizzo", formatter: "textarea", vertAlign: "middle", editor: false, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
             // (checkUserPermission(user, "canViewAllRequests")) ?
             {
-                title: "Usca", width: 120, field: "usca", vertAlign: "middle", editor: false, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like"
+                title: "Team", width: 120, field: "usca", vertAlign: "middle", editor: false, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like"
             },
             {
                 title: "", width: 8, hozAlign: "center", vertAlign: "middle", editor: false, visible: checkUserPermission(user, "canCreateRequest"), cellClick: checkUserPermission(user, "canCreateRequest") ? newRequest : null, formatter: function (cell, formatterParams, onRendered) {
@@ -227,7 +227,7 @@ function showRequests(richieste, user) {
 }
 
 function inserisci() {
-    let lu = localStorage.getItem("ricdomloggeduser");
+    let lu = sessionStorage.getItem("ricdomloggeduser");
     if (lu != null) {
         let richiesta = {};
         loggedUser = JSON.parse(lu);
@@ -290,7 +290,7 @@ function inserisci() {
 }
 
 function aggiorna() {
-    let lu = localStorage.getItem("ricdomloggeduser");
+    let lu = sessionStorage.getItem("ricdomloggeduser");
     if (lu != null) {
         loggedUser = JSON.parse(lu);
         let username = loggedUser.username;
@@ -383,7 +383,7 @@ var deleteElement = function (e, row) {
         confirmButtonText: 'Conferma'
     }).then((result) => {
         if (result.isConfirmed) {
-            let lu = localStorage.getItem("ricdomloggeduser");
+            let lu = sessionStorage.getItem("ricdomloggeduser");
             if (lu != null) {
                 loggedUser = JSON.parse(lu);
                 let username = loggedUser.username;
@@ -440,7 +440,7 @@ var archiveElement = function (e, row) {
         confirmButtonText: 'Conferma'
     }).then((result) => {
         if (result.isConfirmed) {
-            let lu = localStorage.getItem("ricdomloggeduser");
+            let lu = sessionStorage.getItem("ricdomloggeduser");
             if (lu != null) {
                 loggedUser = JSON.parse(lu);
                 let username = loggedUser.username;
@@ -491,7 +491,7 @@ function readRequests(toBeCompleted) {
         rowCount = table.getDataCount();
     }
     if (rowCount == 0) {
-        localStorage.setItem("lastRead", null);
+        sessionStorage.setItem("lastRead", null);
     }
     let xhr = new XMLHttpRequest();
     let url = "be/getrequests.php";
@@ -505,7 +505,7 @@ function readRequests(toBeCompleted) {
                 richieste = result.data;
                 toBeCompleted.richieste = true;
                 if (result.hasOwnProperty("lastRead")) {
-                    localStorage.setItem("lastRead", result.lastRead);
+                    sessionStorage.setItem("lastRead", result.lastRead);
                 }
                 setTimeout(checkIfUpdated, 1000);
             } else {
@@ -519,7 +519,7 @@ function readRequests(toBeCompleted) {
             }
         }
     }
-    xhr.send("lastRead=" + localStorage.getItem("lastRead"));
+    xhr.send("lastRead=" + sessionStorage.getItem("lastRead"));
 }
 
 //create header popup contents
@@ -611,6 +611,7 @@ var newRequest = function (e, row) {
     $("#telefono1").val(element.telefono1);
     $("#telefono2").val(element.telefono2);
     $("#telefono3").val(element.telefono3);
+    $("#idUsca").val(element.idUsca);
     $("#insert").show();
 
 }
@@ -766,7 +767,7 @@ function salvaNote() {
     var newNoteDate = $("#nuovaNotaDate").val() + " 00:00:00";
     var newNoteText = $("#nuovaNotaText").val();
     if (newNoteDate != "" && newNoteText.trim() != "") {
-        let lu = localStorage.getItem("ricdomloggeduser");
+        let lu = sessionStorage.getItem("ricdomloggeduser");
         if (lu != null) {
             loggedUser = JSON.parse(lu);
             var actualNotes = JSON.parse($("#noteRichiestaAttuali").val());

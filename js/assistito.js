@@ -149,7 +149,7 @@ function buildAssistitoInsertForm(target) {
 }
 
 function inserisciAssistito() {
-    let lu = localStorage.getItem("ricdomloggeduser");
+    let lu = sessionStorage.getItem("ricdomloggeduser");
     if (lu != null) {
         loggedUser = JSON.parse(lu);
         let username = loggedUser.username;
@@ -220,7 +220,7 @@ function inserisciAssistito() {
 }
 
 function aggiornaAssistito() {
-    let lu = localStorage.getItem("ricdomloggeduser");
+    let lu = sessionStorage.getItem("ricdomloggeduser");
     if (lu != null) {
         loggedUser = JSON.parse(lu);
         let username = loggedUser.username;
@@ -410,7 +410,7 @@ function showAssistiti(assistiti, user) {
             },
             { title: "Indirizzo", field: "indirizzo", formatter: "textarea", vertAlign: "middle", editor: false, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
             {
-                title: "Usca", width: 120, field: "usca", vertAlign: "middle", editor: false, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like"
+                title: "Team", width: 120, field: "usca", vertAlign: "middle", editor: false, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like"
             },
 
             {
@@ -494,7 +494,7 @@ function getAssistiti(toBeCompleted) {
         rowCount = table.getDataCount();
     }
     if (rowCount == 0) {
-        localStorage.setItem("lastRead", null);
+        sessionStorage.setItem("lastRead", null);
     }
     let xhr = new XMLHttpRequest();
     let url = "be/getassistiti.php";
@@ -508,7 +508,7 @@ function getAssistiti(toBeCompleted) {
                 assistiti = result.data;
                 toBeCompleted.assistiti = true;
                 if (result.hasOwnProperty("lastRead")) {
-                    localStorage.setItem("lastRead", result.lastRead);
+                    sessionStorage.setItem("lastRead", result.lastRead);
                 }
             } else {
                 Swal.fire({
@@ -521,7 +521,7 @@ function getAssistiti(toBeCompleted) {
             }
         }
     }
-    xhr.send("lastRead=" + localStorage.getItem("lastRead"));
+    xhr.send("lastRead=" + sessionStorage.getItem("lastRead"));
 }
 
 function updateTableDataAssistiti() {
@@ -556,7 +556,7 @@ function readAssistiti(toBeCompleted) {
                 assistiti = result.data;
                 toBeCompleted.assistiti = true;
                 if (result.hasOwnProperty("lastRead")) {
-                    localStorage.setItem("lastRead", result.lastRead);
+                    sessionStorage.setItem("lastRead", result.lastRead);
                 }
             } else {
                 Swal.fire({
@@ -569,5 +569,5 @@ function readAssistiti(toBeCompleted) {
             }
         }
     }
-    xhr.send("lastRead=" + localStorage.getItem("lastRead"));
+    xhr.send("lastRead=" + sessionStorage.getItem("lastRead"));
 }

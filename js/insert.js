@@ -17,6 +17,8 @@ function buildInsertForm(target) {
                 telefono1: "telefono1",
                 telefono2: "telefono2",
                 telefono3: "telefono3",
+                idUsca: "idUsca",
+                uscaText:"Team di competenza",
                 idRichiesta: "idRichiesta",
                 idTipologia: "idTipologia",
                 idPriorita: "idPriorita",
@@ -45,6 +47,8 @@ function buildInsertForm(target) {
                 telefono1: "telefono1Edit",
                 telefono2: "telefono2Edit",
                 telefono3: "telefono3Edit",
+                idUsca: "idUscaEdit",
+                uscaText:"Team di competenza",
                 idRichiesta: "idRichiestaEdit",
                 idTipologia: "idTipologiaEdit",
                 idPriorita: "idPrioritaEdit",
@@ -111,6 +115,16 @@ function buildInsertForm(target) {
         el = $("<label>").attr({ "for": attrs.telefono3 }).text("Telefono 3");
         divFormGroup.append(el);
         el = $("<input>").addClass("form-richiesta").addClass("form-control").attr({ "type": "text", "id": attrs.telefono3 }).prop("readonly", true);
+        divFormGroup.append(el);
+        el = $("<label>").attr({ "for": attrs.idUsca }).text(attrs.uscaText);
+        divFormGroup.append(el);
+        el = $("<select>").addClass("form-richiesta").addClass("form-control").attr({ "id": attrs.idUsca });
+        if (usca != null) {
+            usca.forEach(element => {
+                let option = $("<option>").attr({ "value": element.id }).text(element.descrizione);
+                el.append(option);
+            });
+        }
         divFormGroup.append(el);
 
         el = $("<label>").attr({ "for": attrs.idTipologia }).text("Tipo di richiesta");

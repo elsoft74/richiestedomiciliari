@@ -7,7 +7,7 @@ function showUsers() {
 }
 
 function getUsers() {
-    let lu = localStorage.getItem("ricdomloggeduser");
+    let lu = sessionStorage.getItem("ricdomloggeduser");
     if (lu != null) {
         loggedUser = JSON.parse(lu);
         let username = loggedUser.username;
@@ -57,7 +57,7 @@ function showUsersTable(users) {
                 { title: "Nome", field: "nome", editor: false },
                 { title: "Cognome", field: "cognome", editor: false },
                 { title: "e-mail", field: "email", editor: false },
-                { title: "USCA", field: "id_usca", editor: false,formatter: function (cell, formatterParams, onRendered) {
+                { title: "Team", field: "id_usca", editor: false,formatter: function (cell, formatterParams, onRendered) {
                     out = "";
                     usca.forEach(element => {
                         if (element.id == cell.getValue()) {
@@ -78,7 +78,7 @@ function showUsersTable(users) {
                 { title: "Attivo", field: "is_active", editor: false, formatter:"tickCross" },
             ],
         });
-        localStorage.setItem("activity","users");
+        sessionStorage.setItem("activity","users");
     } else {
         Swal.fire({
             text: result.error,
@@ -104,7 +104,7 @@ var showUserUpdate = function (e, row) {
 }
 
 function inserisciUser() {
-    let lu = localStorage.getItem("ricdomloggeduser");
+    let lu = sessionStorage.getItem("ricdomloggeduser");
     if (lu != null) {
         loggedUser = JSON.parse(lu);
         let username = loggedUser.username;
@@ -172,7 +172,7 @@ function inserisciUser() {
 }
 
 function aggiornaUser() {
-    let lu = localStorage.getItem("ricdomloggeduser");
+    let lu = sessionStorage.getItem("ricdomloggeduser");
     if (lu != null) {
         loggedUser = JSON.parse(lu);
         let username = loggedUser.username;

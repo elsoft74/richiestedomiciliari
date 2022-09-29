@@ -10,9 +10,9 @@ function login() {
             result = JSON.parse(xhr.responseText);
             if (result.status == "OK") {
                 lu = result.data;
-                localStorage.setItem("ricdomloggeduser", JSON.stringify(lu));
-                localStorage.setItem("mostraStorico",false);
-                localStorage.setItem("mostraTamponi",false);
+                sessionStorage.setItem("ricdomloggeduser", JSON.stringify(lu));
+                sessionStorage.setItem("mostraStorico",false);
+                sessionStorage.setItem("mostraTamponi",false);
                 location.reload();
             } else {
                 Swal.fire({
@@ -29,10 +29,10 @@ function login() {
 }
 
 function logout() {
-    localStorage.removeItem("ricdomloggeduser");
-    localStorage.removeItem("lastRead");
-    localStorage.removeItem("mostraStorico");
-    localStorage.removeItem("mostraTamponi");
+    sessionStorage.removeItem("ricdomloggeduser");
+    sessionStorage.removeItem("lastRead");
+    sessionStorage.removeItem("mostraStorico");
+    sessionStorage.removeItem("mostraTamponi");
     $("#username").val("");
     $("#password").val("");
     location.reload();

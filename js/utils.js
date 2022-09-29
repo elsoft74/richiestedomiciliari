@@ -59,10 +59,10 @@ function checkIfUpdated() {
 }
 
 function checkNewData() {
-    let activity = localStorage.getItem("activity");
+    let activity = sessionStorage.getItem("activity");
     let xhr = new XMLHttpRequest();
     let url = "be/checkNewData.php";
-    let lastRead = localStorage.getItem("lastRead");
+    let lastRead = sessionStorage.getItem("lastRead");
     xhr.open("POST", url, true);
     xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
     var time=Date();
@@ -138,13 +138,13 @@ function checkUserPermission(user, permissionToCheck) {
 
 function getData(toBeCompleted) {
     var table = Tabulator.findTable("#main")[0];
-    var arc = localStorage.getItem("mostraStorico");
+    var arc = sessionStorage.getItem("mostraStorico");
     var rowCount = 0;
     if (table != null && table != undefined) {
         rowCount = table.getDataCount();
     }
     if (rowCount == 0) {
-        localStorage.setItem("lastRead", null);
+        sessionStorage.setItem("lastRead", null);
     }
     let xhr = new XMLHttpRequest();
     let url = "be/getdata.php";
@@ -160,7 +160,7 @@ function getData(toBeCompleted) {
                 swabs = result.swabs;
                 toBeCompleted.swabs = true;
                 if (result.hasOwnProperty("lastRead")) {
-                    localStorage.setItem("lastRead", result.lastRead);
+                    sessionStorage.setItem("lastRead", result.lastRead);
                 }
                 //setTimeout(checkIfAreUpdatedData, 1000);
             } else {
@@ -175,7 +175,7 @@ function getData(toBeCompleted) {
         }
     }
     //xhr.send();
-    xhr.send("lastRead=" + localStorage.getItem("lastRead")+"&arc="+arc);
+    xhr.send("lastRead=" + sessionStorage.getItem("lastRead")+"&arc="+arc);
 }
 
 function changeActivity(val){
@@ -203,7 +203,7 @@ function changeActivity(val){
             $(".home-form").show();
             break;
     }
-    localStorage.setItem("activity",val);
+    sessionStorage.setItem("activity",val);
 }
 
 function spostaFirma(){

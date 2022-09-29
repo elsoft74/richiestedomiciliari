@@ -103,7 +103,7 @@ function showSwabs(swabs, user) {
             },
             { title: "Indirizzo", field: "indirizzo", vertAlign: "middle", editor: false, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
             {
-                title: "Usca", field: "usca", editor: false, hozAlign: "center", vertAlign: "middle", headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like"
+                title: "Team", field: "usca", editor: false, hozAlign: "center", vertAlign: "middle", headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like"
             },
             { title: "#", field: "idTampone", editor: false, hozAlign: "center", vertAlign: "middle", visible: checkUserPermission(user, "canViewId") },
             {
@@ -170,7 +170,7 @@ function showSwabs(swabs, user) {
             table.download("xlsx", "tamponi.xlsx", { sheetName: "Export" });
         });
     }
-    // localStorage.setItem("activity", "requests");
+    // sessionStorage.setItem("activity", "requests");
     $("#mainSwabs").hide();
     setTimeout(checkNewData, 1000);
 }
@@ -182,7 +182,7 @@ function readSwabs(toBeCompleted) {
         rowCount = table.getDataCount();
     }
     if (rowCount == 0) {
-        localStorage.setItem("lastRead", null);
+        sessionStorage.setItem("lastRead", null);
     }
     let xhr = new XMLHttpRequest();
     let url = "be/getswabs.php";
@@ -196,7 +196,7 @@ function readSwabs(toBeCompleted) {
                 swabs = result.data;
                 toBeCompleted.swabs = true;
                 if (result.hasOwnProperty("lastRead")) {
-                    localStorage.setItem("lastRead", result.lastRead);
+                    sessionStorage.setItem("lastRead", result.lastRead);
                 }
                 setTimeout(checkNewData, 1000);
             } else {
@@ -211,7 +211,7 @@ function readSwabs(toBeCompleted) {
         }
     }
     //xhr.send();
-    xhr.send("lastRead=" + localStorage.getItem("lastRead"));
+    xhr.send("lastRead=" + sessionStorage.getItem("lastRead"));
 }
 
 var changeSwabStatus = function (e, row) {
@@ -228,7 +228,7 @@ function uploadSwabs() {
 }
 
 function aggiornaTampone() {
-    let lu = localStorage.getItem("ricdomloggeduser");
+    let lu = sessionStorage.getItem("ricdomloggeduser");
     if (lu != null) {
         loggedUser = JSON.parse(lu);
         let username = loggedUser.username;
@@ -418,7 +418,7 @@ function buildUpLoadTamponiForm() {
 }
 
 function uploadExcelTamponi() {
-    let lu = localStorage.getItem("ricdomloggeduser");
+    let lu = sessionStorage.getItem("ricdomloggeduser");
     if (lu != null) {
         loggedUser = JSON.parse(lu);
         let username = loggedUser.username;

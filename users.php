@@ -52,7 +52,7 @@
             showUsers();
         });
         window.onload = function() {
-            lu = JSON.parse(localStorage.getItem("ricdomloggeduser"));
+            lu = JSON.parse(sessionStorage.getItem("ricdomloggeduser"));
             if (lu == null) {
                 if (!$("#login").is(":visible")) {
                     showLogin();
@@ -64,7 +64,7 @@
 
         };
         // window.addEventListener('beforeunload', function (e) {
-        //     localStorage.removeItem("lastRead");
+        //     sessionStorage.removeItem("lastRead");
         //     e.preventDefault();
         //     e.returnValue = '';
         // });

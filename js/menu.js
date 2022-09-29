@@ -1,7 +1,7 @@
 function showMenu(user) {
     $("#menu").html("").addClass("navbar");
     if (user != null) {
-        let activity = localStorage.getItem("activity");
+        let activity = sessionStorage.getItem("activity");
         let row = $("<div>").addClass("row");
         let div1 = $("<div>").addClass("col-9");
         let div2 = $("<div>").addClass("col-2");
@@ -24,7 +24,7 @@ function showMenu(user) {
             button = $("<button>").addClass('btn btn-primary btn-block home-form assistiti-form swabs-form requests-form menu-button').attr({"onClick":'window.open("users.php","_self")','id':'showUserButton'}).text("Utenti");
             div1.append(button);
         }
-        var mostraStorico = JSON.parse(localStorage.getItem("mostraStorico"));
+        var mostraStorico = JSON.parse(sessionStorage.getItem("mostraStorico"));
         if (mostraStorico==null) {
             mostraStorico = false;
         }
@@ -48,12 +48,12 @@ function showMenu(user) {
 }
 
 function mostraStorico(){
-    var mostraStorico = JSON.parse(localStorage.getItem("mostraStorico"));
+    var mostraStorico = JSON.parse(sessionStorage.getItem("mostraStorico"));
         if (mostraStorico==null) {
             mostraStorico = false;
         } else {
             mostraStorico = !mostraStorico;
         }
-    localStorage.setItem("mostraStorico",mostraStorico);
+    sessionStorage.setItem("mostraStorico",mostraStorico);
     location.reload();
 }

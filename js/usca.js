@@ -39,7 +39,7 @@ function getUscaFull(toBeCompleted) {
                 uscaFull = result.data;
             } else {
                 Swal.fire({
-                    text: "C'è un problema con il recupero dell'elenco delle usca.",
+                    text: "C'è un problema con il recupero dell'elenco dei team.",
                     icon: 'error',
                     showCancelButton: false,
                     confirmButtonColor: '#3085d6',
