@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Creato il: Set 27, 2022 alle 17:41
+-- Creato il: Set 29, 2022 alle 14:08
 -- Versione del server: 10.5.15-MariaDB-0+deb11u1
 -- Versione PHP: 7.4.30
 
@@ -41,6 +41,22 @@ CREATE TABLE `assistiti` (
   `note` text DEFAULT NULL,
   `is_active` tinyint(1) NOT NULL DEFAULT 1,
   `nascita` datetime DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
+-- Struttura della tabella `log`
+--
+
+CREATE TABLE `log` (
+  `id` int(11) NOT NULL,
+  `ts` timestamp NOT NULL DEFAULT current_timestamp(),
+  `id_user` int(11) NOT NULL,
+  `tipo` varchar(20) NOT NULL,
+  `id_assistito` int(11) DEFAULT NULL,
+  `id_stato` int(11) DEFAULT NULL,
+  `id_richiesta` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
@@ -90,23 +106,6 @@ CREATE TABLE `richieste` (
   `archived_by` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
---
--- Dump dei dati per la tabella `richieste`
---
-
-INSERT INTO `richieste` (`id`, `id_assistito`, `id_tipologia`, `id_priorita`, `data`, `note`, `is_active`, `is_archived`, `created`, `created_by`, `last_update`, `last_update_by`, `deleted_date`, `deleted_by`, `archived_date`, `archived_by`) VALUES
-(1, 2, 2, 2, '2022-08-15 00:00:00', '[{\"date\":\"2022-09-01 00:00:00\",\"note\":\"Richiesta aggiornata\"},{\"date\":\"2022-09-24 00:00:00\",\"note\":\"Metto un testo decisamente lungo che mi aspetto vada a capo.\\nQuesto a capo l\'ho inserito io.\\nGli altri, boh???\",\"createdBy\":\"1\"}]', 1, 0, '2022-08-14 21:24:18', 1, '2022-09-24 15:28:15', NULL, NULL, NULL, NULL, NULL),
-(2, 2, 1, 2, '2022-08-17 00:00:00', 'bbnam', 1, 0, '2022-08-15 08:46:28', 1, NULL, NULL, '2022-08-15 14:51:39', 1, NULL, NULL),
-(4, 1, 1, 1, '2022-08-31 00:00:00', '', 1, 0, '2022-08-20 06:54:31', 5, NULL, NULL, NULL, NULL, NULL, NULL),
-(5, 1, 1, 1, '2022-08-29 00:00:00', '', 1, 0, '2022-08-20 06:57:40', 5, NULL, NULL, NULL, NULL, NULL, NULL),
-(6, 1, 2, 2, '2022-09-09 00:00:00', '', 1, 0, '2022-08-22 05:38:54', 5, '2022-09-07 15:49:18', 1, NULL, NULL, NULL, NULL),
-(7, 2, 2, 3, '2022-08-23 00:00:00', '', 1, 0, '2022-08-22 05:39:12', 5, NULL, NULL, NULL, NULL, NULL, NULL),
-(8, 2, 1, 1, '2022-09-08 00:00:00', '[{\"date\":\"1970-01-01\",\"nota\":\"Array\"},{\"date\":\"2022-09-13 00:00:00\",\"nota\":\"forse \\u00e8 la volta buona\"}]', 1, 0, '2022-08-22 05:40:10', 5, '2022-09-13 20:26:26', NULL, NULL, NULL, NULL, NULL),
-(9, 4, 2, 1, '2022-09-30 00:00:00', '[{\"date\":\"2022-09-15 17:11:48\",\"note\":\"j\",\"createdBy\":\"1\"}]', 1, 0, '2022-09-15 15:11:48', 1, '2022-09-20 07:04:17', 1, NULL, NULL, NULL, NULL),
-(10, 4, 1, 1, '2022-09-30 00:00:00', '[{\"date\":\"2022-09-15 17:15:44\",\"note\":\"boh\",\"createdBy\":\"1\"},{\"date\":\"2022-09-14 00:00:00\",\"note\":\"Nota ad minchiam\",\"createdBy\":\"1\"}]', 1, 0, '2022-09-15 15:15:44', 1, '2022-09-15 15:24:10', NULL, NULL, NULL, NULL, NULL),
-(11, 60, 1, 1, '2022-09-22 00:00:00', '[{}]', 1, 0, '2022-09-21 15:58:14', 1, NULL, NULL, NULL, NULL, NULL, NULL),
-(12, 2, 1, 1, '2022-09-28 00:00:00', '[{}]', 1, 0, '2022-09-21 20:41:55', 1, NULL, NULL, NULL, NULL, NULL, NULL);
-
 -- --------------------------------------------------------
 
 --
@@ -131,6 +130,18 @@ INSERT INTO `roles` (`id`, `descrizione`, `is_active`, `permissions`) VALUES
 -- --------------------------------------------------------
 
 --
+-- Struttura della tabella `stati_attivita`
+--
+
+CREATE TABLE `stati_attivita` (
+  `id` int(11) NOT NULL,
+  `descrizione` varchar(30) NOT NULL,
+  `is_active` tinyint(1) NOT NULL DEFAULT 1
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
 -- Struttura della tabella `stati_tamponi`
 --
 
@@ -139,6 +150,14 @@ CREATE TABLE `stati_tamponi` (
   `descrizione` varchar(30) NOT NULL,
   `is_active` tinyint(1) NOT NULL DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dump dei dati per la tabella `stati_tamponi`
+--
+
+INSERT INTO `stati_tamponi` (`id`, `descrizione`, `is_active`) VALUES
+(1, 'DA PROGRAMMARE', 1),
+(2, 'PROGRAMMATO', 1);
 
 -- --------------------------------------------------------
 
@@ -205,16 +224,6 @@ CREATE TABLE `usca` (
   `is_active` tinyint(1) NOT NULL DEFAULT 1,
   `only_for_users` tinyint(1) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
---
--- Dump dei dati per la tabella `usca`
---
-
-INSERT INTO `usca` (`id`, `descrizione`, `is_active`, `only_for_users`) VALUES
-(1, 'Messina Nord', 1, 0),
-(2, 'Messina Sud', 1, 0),
-(3, 'Amministrativi', 1, 1),
-(4, 'Personale non USCA', 1, 1);
 
 -- --------------------------------------------------------
 
@@ -368,6 +377,16 @@ ALTER TABLE `assistiti`
   ADD KEY `ndx_user_usca` (`id_usca`);
 
 --
+-- Indici per le tabelle `log`
+--
+ALTER TABLE `log`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `id_user` (`id_user`),
+  ADD KEY `id_assistito` (`id_assistito`),
+  ADD KEY `id_stato` (`id_stato`),
+  ADD KEY `id_richiesta` (`id_richiesta`);
+
+--
 -- Indici per le tabelle `priorita`
 --
 ALTER TABLE `priorita`
@@ -447,6 +466,12 @@ ALTER TABLE `assistiti`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
+-- AUTO_INCREMENT per la tabella `log`
+--
+ALTER TABLE `log`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT per la tabella `priorita`
 --
 ALTER TABLE `priorita`
@@ -456,7 +481,7 @@ ALTER TABLE `priorita`
 -- AUTO_INCREMENT per la tabella `richieste`
 --
 ALTER TABLE `richieste`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT per la tabella `roles`
@@ -468,7 +493,7 @@ ALTER TABLE `roles`
 -- AUTO_INCREMENT per la tabella `stati_tamponi`
 --
 ALTER TABLE `stati_tamponi`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT per la tabella `tamponi`
@@ -492,7 +517,7 @@ ALTER TABLE `updates`
 -- AUTO_INCREMENT per la tabella `usca`
 --
 ALTER TABLE `usca`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT per la tabella `users`
