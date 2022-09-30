@@ -615,8 +615,9 @@ function updateRequestData() {
             var table = Tabulator.findTable("#main")[0];
             if (table != null && table != undefined) {
                 var richieste = JSON.parse(sessionStorage.getItem("richieste"));
-                table.updateOrAddData(richieste);
-                setTimeout(checkNewData, 2000);
+                table.updateOrAddData(richieste).then(function(){
+                    setTimeout(checkNewData, 2000);
+                })
             }
         } else {
             setTimeout(updateRequestData, 1000);
