@@ -114,6 +114,8 @@ function getData(toBeCompleted) {
                 toBeCompleted.richieste = true;
                 toBeCompleted.swabs = true;
                 sessionStorage.setItem("toBeCompleted",JSON.stringify(toBeCompleted));
+                sessionStorage.setItem("richieste",JSON.stringify(richieste));
+                sessionStorage.setItem("swabs",JSON.stringify(swabs));
                 if (result.hasOwnProperty("lastRead")) {
                     sessionStorage.setItem("lastRead", result.lastRead);
                 }
