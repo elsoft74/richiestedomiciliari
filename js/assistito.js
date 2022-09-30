@@ -510,8 +510,9 @@ function getAssistiti(toBeCompleted) {
             var result = JSON.parse(xhr.responseText);
             if (result.status == "OK") {
                 var assistiti = result.data;
-                sessionStorage.setItem("assistiti",JSON.stringify(assistiti));
                 toBeCompleted.assistiti = true;
+                sessionStorage.setItem("assistiti",JSON.stringify(assistiti));
+                sessionStorage.setItem("toBeCompleted",JSON.stringify(toBeCompleted));
                 if (result.hasOwnProperty("lastRead")) {
                     sessionStorage.setItem("lastRead", result.lastRead);
                 }
