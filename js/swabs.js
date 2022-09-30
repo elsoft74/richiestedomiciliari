@@ -115,7 +115,7 @@ function showSwabs(swabs, user) {
         });
     }
     $("#mainSwabs").hide();
-    setTimeout(checkNewData, 1000);
+    setTimeout(checkNewData, 2000);
 }
 
 function readSwabs(toBeCompleted) {
@@ -134,7 +134,7 @@ function readSwabs(toBeCompleted) {
                 }
                 sessionStorage.setItem("swabs", JSON.stringify(swabs));
                 sessionStorage.setItem("toBeCompleted", JSON.stringify(toBeCompleted));
-                setTimeout(checkNewData, 1000);
+                setTimeout(checkNewData, 2000);
             } else {
                 Swal.fire({
                     text: "Impossibile recuperare l'elenco dei tamponi.",
@@ -436,7 +436,7 @@ function updateTableDataTamponi() {
             var table = Tabulator.findTable("#mainSwabs")[0];
             var swabs = JSON.parse(sessionStorage.getItem("swabs"));
             table.updateOrAddData(swabs);
-            setTimeout(checkNewData, 1000);
+            setTimeout(checkNewData, 2000);
         } else {
             setTimeout(updateTableDataTamponi, 200);
         }

@@ -187,7 +187,7 @@ function showRequests(richieste, user) {
         });
     }
     $("#main").hide();
-    setTimeout(checkNewData, 1000);
+    setTimeout(checkNewData, 2000);
 
 }
 
@@ -616,7 +616,7 @@ function updateRequestData() {
             if (table != null && table != undefined) {
                 var richieste = JSON.parse(sessionStorage.getItem("richieste"));
                 table.updateOrAddData(richieste);
-                setTimeout(checkNewData, 1000);
+                setTimeout(checkNewData, 2000);
             }
         } else {
             setTimeout(updateRequestData, 1000);

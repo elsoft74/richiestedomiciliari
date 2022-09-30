@@ -488,7 +488,7 @@ function showAssistiti(assistiti, user) {
         });
     }
     $("#main").hide();
-    setTimeout(checkNewData, 1000);
+    setTimeout(checkNewData, 2000);
 
 }
 
@@ -545,7 +545,7 @@ function updateTableDataAssistiti() {
             sessionStorage.setItem("waitingForDataAssistiti",JSON.stringify(waitingForDataAssistiti));
             var table = Tabulator.findTable("#assistiti")[0];
             table.updateOrAddData(assistiti);
-            setTimeout(checkNewData, 1000);
+            setTimeout(checkNewData, 2000);
         } else {
             setTimeout(updateTableDataAssistiti, 1000);
         }
