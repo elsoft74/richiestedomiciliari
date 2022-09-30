@@ -531,7 +531,7 @@ function getAssistiti(toBeCompleted) {
 
 function updateTableDataAssistiti() {
     var waitingForDataAssistiti = JSON.parse(sessionStorage.getItem("waitingForDataAssistiti"));
-    var toBeCompleted = JSON.parse(sessionStorage.getItem(toBeCompleted));
+    var toBeCompleted = JSON.parse(sessionStorage.getItem("toBeCompleted"));
     if (waitingForDataAssistiti != null && !waitingForDataAssistiti) {
         waitingForDataAssistiti = true;
         toBeCompleted.assistiti = false;

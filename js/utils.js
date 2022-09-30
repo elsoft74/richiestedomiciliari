@@ -11,10 +11,10 @@ function checkIfComplete() {
     var toBeCompleted = JSON.parse(sessionStorage.getItem("toBeCompleted"));
     Object.keys(toBeCompleted).forEach(p => { out = out && toBeCompleted[p] });
     if (out) {
-        setTimeout(checkIfUpdated, 1000);
+        setTimeout(checkIfUpdated, 2000);
         window.dispatchEvent(new CustomEvent("dataLoaded"));
     } else {
-        setTimeout(checkIfComplete, 1000);
+        setTimeout(checkIfComplete, 2000);
     }
 }
 
@@ -25,7 +25,7 @@ function checkIfUpdated() {
     if (out) {
         window.dispatchEvent(new CustomEvent("dataUpdated"));
     } else {
-        setTimeout(checkIfUpdated, 200);
+        setTimeout(checkIfUpdated, 2000);
     }
 }
 
@@ -42,7 +42,7 @@ function checkNewData() {
                 if (result.data) {
                     window.dispatchEvent(new CustomEvent("dataUpdated"));
                 } else {
-                    setTimeout(checkNewData, 1000);
+                    setTimeout(checkNewData, 2000);
                 }
             }
         }
