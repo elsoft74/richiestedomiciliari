@@ -435,8 +435,9 @@ function updateTableDataTamponi() {
             sessionStorage.setItem("waitingForDataTamponi",JSON.stringify(waitingForDataTamponi));
             var table = Tabulator.findTable("#mainSwabs")[0];
             var swabs = JSON.parse(sessionStorage.getItem("swabs"));
-            table.updateOrAddData(swabs);
-            setTimeout(checkNewData, 2000);
+            table.updateOrAddData(swabs).then(function(){
+                setTimeout(checkNewData, 2000);
+            })
         } else {
             setTimeout(updateTableDataTamponi, 200);
         }
