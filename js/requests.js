@@ -48,7 +48,7 @@ function showRequests(richieste, user) {
             } : { visible: false },
 
             { title: "#", field: "idAssistito", width: 5, editor: false, hozAlign: "center", vertAlign: "middle", visible: checkUserPermission(user, "canViewId") },
-            
+
             {
                 title: "", width: 8, field: "noteAssistito", vertAlign: "middle", editor: false, cellClick: cellPopupFormatterNoteAssistito, formatter: function (cell, formatterParams, onRendered) {
                     return (cell.getValue() == null) ? '' : '<span class="material-icons-outlined">notes</span>';
@@ -73,10 +73,10 @@ function showRequests(richieste, user) {
                 }
             },
             { title: "Codice Fiscale", width: 150, field: "codiceFiscale", editor: false, hozAlign: "center", vertAlign: "middle", headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
-            { title: "Cont.1", field: "telefono1", visible:false},
-            { title: "Cont.2", field: "telefono2", visible:false},
-            { title: "Cont.3", field: "telefono3", visible:false},
-            { title: "e-mail", field: "email", visible:false},
+            { title: "Cont.1", field: "telefono1", visible: false },
+            { title: "Cont.2", field: "telefono2", visible: false },
+            { title: "Cont.3", field: "telefono3", visible: false },
+            { title: "e-mail", field: "email", visible: false },
             {
                 title: "Contatti", width: 150, field: "contatti", editor: false, hozAlign: "left", vertAlign: "middle", formatter: function (cell, formatterParams, onRendered) {
                     var out = "<div><ul>";
@@ -172,6 +172,9 @@ function showRequests(richieste, user) {
                     },
                     {
                         title: "", field: "idUsca", visible: false
+                    },
+                    {
+                        title: "", field: "statiAttuali", visible: false
                     },
                 ]
             },
@@ -316,7 +319,7 @@ function aggiorna() {
 }
 
 var showElementUpdate = function (e, row) {
-    $("#edit").show();
+    $("#edit").modal("show");
     var element = row.getData();
     $("#idAssistitoEdit").val(element.idAssistito);
     $("#nomeEdit").val(element.nome);
@@ -332,7 +335,78 @@ var showElementUpdate = function (e, row) {
     $("#idTipologiaEdit").val(element.idTipologia);
     $("#idPrioritaEdit").val(element.idPriorita);
     $("#dataEdit").val(((new luxon.DateTime.fromSQL(element.data)).toFormat("yyyy-MM-dd")));
-    $("#noteRichiestaEdit").val(element.noteRichiesta);
+    if (element.noteRichiesta.length > 0) {
+        var table = new Tabulator("#noteRichiestaEdit", {
+            data: element.noteRichiesta,           //load row data from array
+            layout: "fitColumns",      //fit columns to width of table
+            responsiveLayout: "collapse",  //hide columns that dont fit on the table
+            addRowPos: "top",          //when adding a new row, add it to the top of the table
+            history: true,             //allow undo and redo actions on the table
+            pagination: "local",       //paginate the data
+            paginationSize: 12,         //allow 7 rows per page of data
+            paginationCounter: "rows", //display count of paginated rows in footer
+            movableColumns: true,      //allow column order to be changed
+            columns: [                 //define the table columns
+                {
+                    title: "Data", width: 120, field: "date", editor: false, hozAlign: "center", vertAlign: "middle", formatter: "datetime", formatterParams: {
+                        outputFormat: "dd-MM-yyyy",
+                        invalidPlaceholder: "(data non valida)",
+                        timezone: "Europe/Rome",
+                    }, headerPopup: headerPopupFormatter,
+                },
+
+                {
+                    title: "Nota", field: "note", editor: false, hozAlign: "center", vertAlign: "middle", cellClick: mostraNotaEstesa, tooltip: function (e, cell, onRendered) {
+                        var el1 = document.createElement("div");
+                        el1.style.backgroundColor = "#0d6efd";
+                        var el2 = document.createElement("span");
+                        el2.style.color = "#ffffff";
+                        el2.innerText = "Leggi tutto";
+                        el1.append(el2);
+                        return el1;
+                    }
+                },
+            ]
+        });
+    } else {
+        $("#noteRichiestaEdit").parent().hide()
+    }
+    if (element.statiAttuali.length > 0) {
+        var table = new Tabulator("#statiAttualiEdit", {
+            data: element.statiAttuali,           //load row data from array
+            layout: "fitColumns",      //fit columns to width of table
+            responsiveLayout: "collapse",  //hide columns that dont fit on the table
+            addRowPos: "top",          //when adding a new row, add it to the top of the table
+            history: true,             //allow undo and redo actions on the table
+            pagination: "local",       //paginate the data
+            paginationSize: 12,         //allow 7 rows per page of data
+            paginationCounter: "rows", //display count of paginated rows in footer
+            movableColumns: true,      //allow column order to be changed
+            columns: [                 //define the table columns
+                {
+                    title: "Data", width: 120, field: "date", editor: false, hozAlign: "center", vertAlign: "middle", formatter: "datetime", formatterParams: {
+                        outputFormat: "dd-MM-yyyy",
+                        invalidPlaceholder: "(data non valida)",
+                        timezone: "Europe/Rome",
+                    }, headerPopup: headerPopupFormatter,
+                },
+
+                {
+                    title: "Attività svolte", field: "descrizione", editor: false, hozAlign: "center", vertAlign: "middle", cellClick: mostraNotaEstesa, tooltip: function (e, cell, onRendered) {
+                        var el1 = document.createElement("div");
+                        el1.style.backgroundColor = "#0d6efd";
+                        var el2 = document.createElement("span");
+                        el2.style.color = "#ffffff";
+                        el2.innerText = "Leggi tutto";
+                        el1.append(el2);
+                        return el1;
+                    }
+                },
+            ]
+        });
+    } else {
+        $("#statiAttualiEdit").parent().hide()
+    }
 }
 
 var deleteElement = function (e, row) {
@@ -453,7 +527,7 @@ function readRequests(toBeCompleted) {
     var xhr = new XMLHttpRequest();
     var url = "be/getrequests.php";
     var activeUsca = sessionStorage.getItem("activeUsca");
-    if(activeUsca == null){
+    if (activeUsca == null) {
         activeUsca = "ALL";
     }
     xhr.open("POST", url, true);
@@ -481,7 +555,7 @@ function readRequests(toBeCompleted) {
             }
         }
     }
-    xhr.send("lastRead=" + sessionStorage.getItem("lastRead")+"&activeUsca="+activeUsca);
+    xhr.send("lastRead=" + sessionStorage.getItem("lastRead") + "&activeUsca=" + activeUsca);
 }
 
 //create header popup contents
@@ -593,7 +667,7 @@ var cellPopupFormatterDettagliRichiesta = function (e, row) {
 var mostraNotaEstesa = function (e, row) {
     var element = row.getData();
     Swal.fire({
-        html: "<div>"+element.note+"</div>",
+        html: "<div>" + element.note + "</div>",
         icon: 'info',
         showCancelButton: false,
         confirmButtonColor: '#3085d6',
@@ -605,21 +679,21 @@ var mostraNotaEstesa = function (e, row) {
 function updateRequestData() {
     var waitingForData = JSON.parse(sessionStorage.getItem("waitingForData"));
     var toBeCompleted = JSON.parse(sessionStorage.getItem("toBeCompleted"));
-    if (waitingForData!=null && !waitingForData) {
+    if (waitingForData != null && !waitingForData) {
         waitingForData = true;
         toBeCompleted.richieste = false;
-        sessionStorage.setItem("waitingForData",JSON.stringify(waitingForData));
-        sessionStorage.setItem("toBeCompleted",JSON.stringify(toBeCompleted));
+        sessionStorage.setItem("waitingForData", JSON.stringify(waitingForData));
+        sessionStorage.setItem("toBeCompleted", JSON.stringify(toBeCompleted));
         readRequests(toBeCompleted);
         setTimeout(updateRequestData, 1000);
     } else {
         if (toBeCompleted.richieste) {
             waitingForData = false;
-            sessionStorage.setItem("waitingForData",JSON.stringify(waitingForData));
+            sessionStorage.setItem("waitingForData", JSON.stringify(waitingForData));
             var table = Tabulator.findTable("#main")[0];
             if (table != null && table != undefined) {
                 var richieste = JSON.parse(sessionStorage.getItem("richieste"));
-                table.updateOrAddData(richieste).then(function(){
+                table.updateOrAddData(richieste).then(function () {
                     setTimeout(checkNewData, 2000);
                 })
             }
@@ -710,15 +784,17 @@ var buildNoteRichiestaModal = function (e, row) {
                 }, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like"
             },
 
-            { title: "Nota", field: "note", editor: false, hozAlign: "center", vertAlign: "middle",cellClick: mostraNotaEstesa, tooltip: function (e, cell, onRendered) {
-                var el1 = document.createElement("div");
-                el1.style.backgroundColor = "#0d6efd";
-                var el2 = document.createElement("span");
-                el2.style.color = "#ffffff";
-                el2.innerText = "Leggi tutto";
-                el1.append(el2);
-                return el1;
-            }},
+            {
+                title: "Nota", field: "note", editor: false, hozAlign: "center", vertAlign: "middle", cellClick: mostraNotaEstesa, tooltip: function (e, cell, onRendered) {
+                    var el1 = document.createElement("div");
+                    el1.style.backgroundColor = "#0d6efd";
+                    var el2 = document.createElement("span");
+                    el2.style.color = "#ffffff";
+                    el2.innerText = "Leggi tutto";
+                    el1.append(el2);
+                    return el1;
+                }
+            },
         ]
     });
     $("#nuovaNota").hide();
@@ -730,8 +806,8 @@ function mostraFormNuovaNota() {
     $("#aggiungiNotaButton").hide();
 }
 
-function addStatusToRequest(){
-    
+function addStatusToRequest() {
+
 }
 
 function salvaNote() {
@@ -809,8 +885,8 @@ function getStatiAttivita(toBeCompleted) {
             if (result.status == "OK") {
                 toBeCompleted.statiAttivita = true;
                 statiAttivita = result.data;
-                sessionStorage.setItem("toBeCompleted",JSON.stringify(toBeCompleted));
-                sessionStorage.setItem("statiAttivita",JSON.stringify(statiAttivita));
+                sessionStorage.setItem("toBeCompleted", JSON.stringify(toBeCompleted));
+                sessionStorage.setItem("statiAttivita", JSON.stringify(statiAttivita));
             } else {
                 Swal.fire({
                     text: "C'è un problema con il recupero dell'elenco degli stati attività.",

@@ -123,3 +123,8 @@ button span {
     opacity: 0.5;
   }
 }
+
+.verticalScrollableList {
+  height: 170px;
+  overflow-y: scroll;
+}

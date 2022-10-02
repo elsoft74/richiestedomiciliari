@@ -294,6 +294,12 @@ class Richiesta
                             array_push($contatti,$r['email']);
                         }
                         $tmp->contatti=json_encode($contatti);
+                        $statiAttuali=[];
+                        $stato=new StdClass();
+                        $stato->date="2022-10-01 00:00:00";
+                        $stato->descrizione="Primo contatto";
+                        array_push($statiAttuali,$stato);
+                        $tmp->statiAttuali=json_encode($statiAttuali);
 
                         array_push($out->data, $tmp);
                     }
