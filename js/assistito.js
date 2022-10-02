@@ -328,7 +328,7 @@ function showAssistiti(assistiti, user) {
 
 
     var table = new Tabulator("#assistiti", {
-        height: 890,
+        height: 800,
         data: assistiti,           //load row data from array
         layout: "fitColumns",      //fit columns to width of table
         responsiveLayout: "collapse",  //hide columns that dont fit on the table
