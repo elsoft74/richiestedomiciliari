@@ -5,7 +5,7 @@ function buildEditForm(target){
 
 function cleanEdit() {
     $(".richiesta-input-form").val('')
-    $("#edit").hide();
+    $("#edit").modal("hide");
 }
 
 function buildUserEditForm(target){
@@ -14,5 +14,5 @@ function buildUserEditForm(target){
 
 function cleanUserEdit() {
     $('.user-input-form').val('');
-    $("#editUser").hide();
+    $("#editUser").modal("hide");
 }
