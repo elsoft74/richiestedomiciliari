@@ -543,8 +543,9 @@ function updateTableDataAssistiti() {
             waitingForDataAssistiti = false;
             sessionStorage.setItem("waitingForDataAssistiti", JSON.stringify(waitingForDataAssistiti));
             var table = Tabulator.findTable("#assistiti")[0];
-            table.updateOrAddData(assistiti);
-            setTimeout(checkNewData, 2000);
+            table.updateOrAddData(assistiti).then(function(){
+                setTimeout(checkNewData, 2000);
+            })
         } else {
             setTimeout(updateTableDataAssistiti, 1000);
         }

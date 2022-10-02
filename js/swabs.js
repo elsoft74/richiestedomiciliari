@@ -77,9 +77,9 @@ function showSwabs(swabs, user) {
 
                     return '<span class="material-icons-outlined" style="color: green">edit</span>';
                 }, tooltip: function (e, cell, onRendered) {
-                    var el1 = document.createElement("div");
-                    el1.style.backgroundColor = "#0d6efd";
-                    el2.innerText = "Modifica stato";
+                    var el = document.createElement("div");
+                    el.style.backgroundColor = "#0d6efd";
+                    el.innerText = "Modifica stato";
                     return el;
                 }
             },
@@ -240,6 +240,7 @@ function buildUpdateTamponiForm() {
     el = $("<label>").attr({ "for": attrs.roleId }).text("Nuovo stato");
     divFormGroup.append(el);
     el = $("<select>").addClass('user-input-form').addClass("form-control").attr({ "id": attrs.status });
+    var statiTamponi = JSON.parse(sessionStorage.getItem("statiTamponi"));
     if (statiTamponi != null) {
         statiTamponi.forEach(element => {
             let option = $("<option>").attr({ "value": element.id }).text(element.descrizione);
@@ -439,8 +440,9 @@ function updateTableDataTamponi() {
             sessionStorage.setItem("waitingForDataTamponi",JSON.stringify(waitingForDataTamponi));
             var table = Tabulator.findTable("#mainSwabs")[0];
             var swabs = JSON.parse(sessionStorage.getItem("swabs"));
-            table.updateOrAddData(swabs);
-            setTimeout(checkNewData, 2000);
+            table.updateOrAddData(swabs).then(function(){
+                setTimeout(checkNewData, 2000);
+            })
         } else {
             setTimeout(updateTableDataTamponi, 200);
         }
