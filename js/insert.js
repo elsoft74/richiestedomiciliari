@@ -247,5 +247,5 @@ function buildInsertForm(target) {
 
 function cleanInsert() {
     $(".form-richiesta").val('');
-    $("#insert").hide();
+    $("#insert").modal("hide");
 }
