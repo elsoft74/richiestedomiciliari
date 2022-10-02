@@ -2,6 +2,7 @@ function showSwabs(swabs, user) {
     $("#mainSwabs").html("");
     
     var table = new Tabulator("#mainSwabs", {
+        height: 890,
         data: swabs,           //load row data from array
         layout: "fitColumns",      //fit columns to width of table
         responsiveLayout: "collapse",  //hide columns that dont fit on the table
