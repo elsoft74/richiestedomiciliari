@@ -12,7 +12,7 @@ function showRequests(richieste, user) {
     }
 
     var table = new Tabulator("#main", {
-        height: 890,
+        height: 800,
         data: richieste,           //load row data from array
         layout: "fitColumns",      //fit columns to width of table
         responsiveLayout: "collapse",  //hide columns that dont fit on the table
