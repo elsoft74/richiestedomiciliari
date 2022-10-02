@@ -136,7 +136,7 @@
             return $this->contatti;
         }
 
-        public static function getAssistiti(/*$username,$token*/){
+        public static function getAssistiti($activeUsca/*$username,$token*/){
             $out = new stdClass();
             $out->status="KO";
             $out->data=[];
@@ -181,8 +181,14 @@
                              *
                              */
                             $query="SELECT * FROM `vista_assistiti`";
+                            if($activeUsca!="ALL"){
+                                $query.=" WHERE id_usca=:id_usca";
+                            }
                             
                             $stmt = $conn->prepare($query);
+                            if($activeUsca!="ALL"){
+                                $stmt->bindParam(':id_usca',$activeUsca,PDO::PARAM_INT);
+                            }
                             $stmt->execute();
                             $results=$stmt->fetchAll(PDO::FETCH_ASSOC);
                             foreach($results as $res){

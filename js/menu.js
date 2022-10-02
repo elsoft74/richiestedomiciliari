@@ -1,6 +1,7 @@
 function showMenu(user) {
     $("#menu").html("").addClass("navbar");
     if (user != null) {
+        var actualUsca = sessionStorage.getItem("activeUsca");
         var row = $("<div>").addClass("row");
         var div1 = $("<div>").addClass("col-9");
         var div2 = $("<div>").addClass("col-2");
@@ -14,7 +15,7 @@ function showMenu(user) {
         div2.attr("id", "user");
         div3.attr("id", "loginbutton");
         div3.append(button);
-        div2.text(user.nome + " " + user.cognome);
+        div2.text(user.nome + " " + user.cognome + ((actualUsca!=null)?(" ("+getUscaNameFromId(actualUsca)+")"):""));
         button = $("<button>").addClass("btn").addClass('btn-primary btn-block assistiti-form menu-button').attr({"onClick":'$("#insertAssistito").show()','id':'requestInsertButton'}).text("Nuovo Paziente");
         div1.append(button);
         if(user.permissions.canCreateUser){
@@ -39,6 +40,10 @@ function showMenu(user) {
         }
         button = $("<button>").addClass('btn btn-warning btn-block requests-form menu-button').attr({"onClick":'mostraStorico()','id':'mostraStoricoButton'}).text(mostraStorico?"Solo Attuali":"Tutte").hide();
         div1.append(button);
+        if(user.permissions.canChangeUsca){
+            button = $("<button>").addClass('btn btn-primary btn-block swabs-form menu-button').attr({"onClick":'buildChangeUsca()','id':'cambiaTeam'}).text("Cambia Team");
+            div1.append(button);
+        }
         row.append(div1);
         row.append(div2);
         row.append(div3);
@@ -55,4 +60,13 @@ function mostraStorico(){
         }
     sessionStorage.setItem("mostraStorico",mostraStorico);
     location.reload();
+}
+
+function getUscaNameFromId(id){
+    var usca = JSON.parse(sessionStorage.getItem("usca"));
+    usca.forEach(element => {
+        if (element.id==id){
+            return element.descrizione;
+        }
+    });
 }

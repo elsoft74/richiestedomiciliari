@@ -176,7 +176,7 @@ class Tampone
     //     }
     // }
 
-    public static function getSwabs()
+    public static function getSwabs($activeUsca)
     {
         //$val null o "A" restituisce tutte le richieste Attive
         //$val "T" restituisce tutte le richieste
@@ -222,8 +222,15 @@ class Tampone
 
                     $query = "SELECT * FROM `vista_tamponi` WHERE tampone_is_active=1";
                     
-
+                    if($activeUsca!="ALL"){
+                        $query.=" AND id_usca=:id_usca";
+                    }
+                    
                     $stmt = $conn->prepare($query);
+                    if($activeUsca!="ALL"){
+                        $stmt->bindParam(':id_usca',$activeUsca,PDO::PARAM_INT);
+                    }
+
                     $stmt->execute();
 
                     $res = $stmt->fetchAll(PDO::FETCH_ASSOC);

@@ -17,11 +17,11 @@ buildHead();
     <div id="login" class="sections"></div>
     <div id="tamponeEdit"></div>
     <div id="tamponeUpload"></div>
-    <div id="firma"><a href="https://ivopugliese.it">©2022 Ivo Pugliese</a></div>
+    <div id="changeUsca"></div>
     
     <script>       
         if ($("#login").html() == "") {
-            buildLogin();
+            buildLogin();  
         }
         window.addEventListener('dataLoaded', function() {
             buildInsertForm("insert");
@@ -31,7 +31,7 @@ buildHead();
         });
         window.addEventListener('dataUpdated', updateTableDataTamponi); 
         window.onload = function() {    
-            spostaFirma();
+            // spostaFirma();
             $(".lds-grid").hide();
             lu = JSON.parse(sessionStorage.getItem("ricdomloggeduser"));
             if (lu == null) {

@@ -8,8 +8,9 @@
     include_once("classes/tampone.php");
     include_once("classes/richiesta.php");
     $arc=(array_key_exists("arc",$_POST) && $_POST["arc"]=="true");
-    $requests=Richiesta::getRequestes($arc);
-    $swabs=Tampone::getSwabs();
+    $activeUsca = isset($_POST["activeUsca"])?$_POST["activeUsca"]:"ALL";
+    $requests=Richiesta::getRequestes($arc,$activeUsca);
+    $swabs=Tampone::getSwabs($activeUsca);
     $out=new StdClass();
     $out->status=($swabs->status==$requests->status)?$swabs->status:"KO";
     $out->requests=$requests->data;

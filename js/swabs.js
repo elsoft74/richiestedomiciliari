@@ -49,7 +49,7 @@ function showSwabs(swabs, user) {
             },
             { title: "Indirizzo", field: "indirizzo", vertAlign: "middle", editor: false, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
             {
-                title: "Team", field: "usca", editor: false, hozAlign: "center", vertAlign: "middle", headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like"
+                title: "Team", field: "usca", editor: false, hozAlign: "center", vertAlign: "middle", headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like", visible: !user.canChangeUsca
             },
             { title: "#", field: "idTampone", editor: false, hozAlign: "center", vertAlign: "middle", visible: checkUserPermission(user, "canViewId") },
             {
@@ -121,6 +121,10 @@ function showSwabs(swabs, user) {
 function readSwabs(toBeCompleted) {
     var xhr = new XMLHttpRequest();
     var url = "be/getswabs.php";
+    var activeUsca = sessionStorage.getItem("activeUsca");
+    if(activeUsca == null){
+        activeUsca = "ALL";
+    }
     xhr.open("POST", url, true);
     xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
     xhr.onreadystatechange = function () {
@@ -146,7 +150,7 @@ function readSwabs(toBeCompleted) {
             }
         }
     }
-    xhr.send("lastRead=" + sessionStorage.getItem("lastRead"));
+    xhr.send("lastRead=" + sessionStorage.getItem("lastRead")+"&activeUsca="+activeUsca);
 }
 
 var changeSwabStatus = function (e, row) {

@@ -452,6 +452,10 @@ var archiveElement = function (e, row) {
 function readRequests(toBeCompleted) {
     var xhr = new XMLHttpRequest();
     var url = "be/getrequests.php";
+    var activeUsca = sessionStorage.getItem("activeUsca");
+    if(activeUsca == null){
+        activeUsca = "ALL";
+    }
     xhr.open("POST", url, true);
     xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
     xhr.onreadystatechange = function () {
@@ -477,7 +481,7 @@ function readRequests(toBeCompleted) {
             }
         }
     }
-    xhr.send("lastRead=" + sessionStorage.getItem("lastRead"));
+    xhr.send("lastRead=" + sessionStorage.getItem("lastRead")+"&activeUsca="+activeUsca);
 }
 
 //create header popup contents
@@ -723,6 +727,10 @@ var buildNoteRichiestaModal = function (e, row) {
 function mostraFormNuovaNota() {
     $("#nuovaNota").show();
     $("#aggiungiNotaButton").hide();
+}
+
+function addStatusToRequest(){
+    
 }
 
 function salvaNote() {

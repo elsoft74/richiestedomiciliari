@@ -185,7 +185,7 @@ class Richiesta
         }
     }
 
-    public static function getRequestes($arc)
+    public static function getRequestes($arc,$activeUsca)
     {
         //$val null o "A" restituisce tutte le richieste Attive
         //$val "T" restituisce tutte le richieste
@@ -238,8 +238,14 @@ class Richiesta
                         //$query.=" AND (data >= CURRENT_DATE() OR data is null)";
                         $query.=" AND (is_archived = 0 OR is_archived is null)";
                     }
+                    if($activeUsca!="ALL"){
+                        $query.=" AND id_usca=:id_usca";
+                    }
                     
                     $stmt = $conn->prepare($query);
+                    if($activeUsca!="ALL"){
+                        $stmt->bindParam(':id_usca',$activeUsca,PDO::PARAM_INT);
+                    }
                     $stmt->execute();
 
                     $res = $stmt->fetchAll(PDO::FETCH_ASSOC);

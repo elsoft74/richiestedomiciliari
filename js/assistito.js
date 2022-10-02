@@ -343,7 +343,7 @@ function showAssistiti(assistiti, user) {
         paginationSize: 12,         //allow 7 rows per page of data
         paginationCounter: "rows", //display count of paginated rows in footer
         movableColumns: true,      //allow column order to be changed
-        
+
         // initialSort: [             //set the initial sort order of the data
         //     { column: "dataRic", dir: "asc" },
         // ],
@@ -383,18 +383,20 @@ function showAssistiti(assistiti, user) {
             },
             { title: "Codice Fiscale", width: 150, field: "codiceFiscale", editor: false, hozAlign: "center", vertAlign: "middle", headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
             { title: "Età", field: "eta", width: 80, editor: false, hozAlign: "center", vertAlign: "middle", headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
-            { title: "Fascia", field: "eta", width: 120, editor: false, hozAlign: "left", vertAlign: "middle", headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like", formatter: function (cell, formatterParams, onRendered) {
-                let val = cell.getValue();
-                let out = "";
-                if (val < 50) {
-                    out = "Fascia 1 (< 50)";
-                } else if (val >= 50 && val < 66) {
-                    out = "Fascia 2 (50-65)";
-                } else {
-                    out = "Fascia 3 (> 65)";
+            {
+                title: "Fascia", field: "eta", width: 120, editor: false, hozAlign: "left", vertAlign: "middle", headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like", formatter: function (cell, formatterParams, onRendered) {
+                    let val = cell.getValue();
+                    let out = "";
+                    if (val < 50) {
+                        out = "Fascia 1 (< 50)";
+                    } else if (val >= 50 && val < 66) {
+                        out = "Fascia 2 (50-65)";
+                    } else {
+                        out = "Fascia 3 (> 65)";
+                    }
+                    return out;
                 }
-                return out;
-            } },
+            },
             { title: "Cont.1", field: "telefono1", visible: false },
             { title: "Cont.2", field: "telefono2", visible: false },
             { title: "Cont.3", field: "telefono3", visible: false },
@@ -414,9 +416,9 @@ function showAssistiti(assistiti, user) {
                 }
             },
             { title: "Indirizzo", field: "indirizzo", formatter: "textarea", vertAlign: "middle", editor: false, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
-            {
+            (user.canChangeUsca) ? {
                 title: "Team", width: 120, field: "usca", vertAlign: "middle", editor: false, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like"
-            },
+            } : {},
 
             {
                 title: "", field: "idUsca", visible: false
@@ -493,16 +495,12 @@ function showAssistiti(assistiti, user) {
 }
 
 function getAssistiti(toBeCompleted) {
-    // var table = Tabulator.findTable("#main")[0];
-    // var rowCount = 0;
-    // if (table != null && table != undefined) {
-    //     rowCount = table.getDataCount();
-    // }
-    // if (rowCount == 0) {
-    //     sessionStorage.setItem("lastRead", null);
-    // }
     var xhr = new XMLHttpRequest();
     var url = "be/getassistiti.php";
+    var activeUsca = sessionStorage.getItem("activeUsca");
+    if(activeUsca == null){
+        activeUsca = "ALL";
+    }
     xhr.open("POST", url, true);
     xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
     xhr.onreadystatechange = function () {
@@ -511,8 +509,8 @@ function getAssistiti(toBeCompleted) {
             if (result.status == "OK") {
                 var assistiti = result.data;
                 toBeCompleted.assistiti = true;
-                sessionStorage.setItem("assistiti",JSON.stringify(assistiti));
-                sessionStorage.setItem("toBeCompleted",JSON.stringify(toBeCompleted));
+                sessionStorage.setItem("assistiti", JSON.stringify(assistiti));
+                sessionStorage.setItem("toBeCompleted", JSON.stringify(toBeCompleted));
                 if (result.hasOwnProperty("lastRead")) {
                     sessionStorage.setItem("lastRead", result.lastRead);
                 }
@@ -527,7 +525,7 @@ function getAssistiti(toBeCompleted) {
             }
         }
     }
-    xhr.send("lastRead=" + sessionStorage.getItem("lastRead"));
+    xhr.send("lastRead=" + sessionStorage.getItem("lastRead")+"&activeUsca="+activeUsca);
 }
 
 function updateTableDataAssistiti() {
@@ -536,14 +534,14 @@ function updateTableDataAssistiti() {
     if (waitingForDataAssistiti != null && !waitingForDataAssistiti) {
         waitingForDataAssistiti = true;
         toBeCompleted.assistiti = false;
-        sessionStorage.setItem("waitingForDataAssistiti",JSON.stringify(waitingForDataAssistiti));
-        sessionStorage.setItem("toBeCompleted",JSON.stringify(toBeCompleted));
+        sessionStorage.setItem("waitingForDataAssistiti", JSON.stringify(waitingForDataAssistiti));
+        sessionStorage.setItem("toBeCompleted", JSON.stringify(toBeCompleted));
         readAssistiti(toBeCompleted);
         setTimeout(updateTableDataAssistiti, 1000);
     } else {
         if (toBeCompleted.assistiti) {
             waitingForDataAssistiti = false;
-            sessionStorage.setItem("waitingForDataAssistiti",JSON.stringify(waitingForDataAssistiti));
+            sessionStorage.setItem("waitingForDataAssistiti", JSON.stringify(waitingForDataAssistiti));
             var table = Tabulator.findTable("#assistiti")[0];
             table.updateOrAddData(assistiti);
             setTimeout(checkNewData, 2000);
@@ -556,6 +554,10 @@ function updateTableDataAssistiti() {
 function readAssistiti(toBeCompleted) {
     var xhr = new XMLHttpRequest();
     var url = "be/getassistiti.php";
+    var activeUsca = sessionStorage.getItem("activeUsca");
+    if(activeUsca == null){
+        activeUsca = "ALL";
+    }
     xhr.open("POST", url, true);
     xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
     xhr.onreadystatechange = function () {
@@ -564,8 +566,8 @@ function readAssistiti(toBeCompleted) {
             if (result.status == "OK") {
                 assistiti = result.data;
                 toBeCompleted.assistiti = true;
-                sessionStorage.setItem("assistiti",JSON.stringify(assistiti));
-                sessionStorage.setItem("toBeCompleted",JSON.stringify(toBeCompleted));
+                sessionStorage.setItem("assistiti", JSON.stringify(assistiti));
+                sessionStorage.setItem("toBeCompleted", JSON.stringify(toBeCompleted));
                 if (result.hasOwnProperty("lastRead")) {
                     sessionStorage.setItem("lastRead", result.lastRead);
                 }
@@ -580,5 +582,5 @@ function readAssistiti(toBeCompleted) {
             }
         }
     }
-    xhr.send("lastRead=" + sessionStorage.getItem("lastRead"));
+    xhr.send("lastRead=" + sessionStorage.getItem("lastRead")+"&activeUsca="+activeUsca);
 }

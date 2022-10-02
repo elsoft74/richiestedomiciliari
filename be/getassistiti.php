@@ -5,4 +5,5 @@
     include_once("config/config.php");
     include_once("classes/db.php");
     include_once("classes/assistito.php");
-    print(json_encode(Assistito::getAssistiti()));
+    $activeUsca = isset($_POST["activeUsca"])?$_POST["activeUsca"]:"ALL";
+    print(json_encode(Assistito::getAssistiti($activeUsca)));
