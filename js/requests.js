@@ -4,8 +4,9 @@ function showRequests(richieste, user) {
     if (mostraStorico == null) {
         mostraStorico = false;
     }
-
+    
     var table = new Tabulator("#main", {
+        height: 890,
         data: richieste,           //load row data from array
         layout: "fitColumns",      //fit columns to width of table
         responsiveLayout: "collapse",  //hide columns that dont fit on the table
@@ -93,7 +94,7 @@ function showRequests(richieste, user) {
             },
             { title: "Indirizzo", field: "indirizzo", formatter: "textarea", vertAlign: "middle", editor: false, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
             {
-                title: "Team", width: 120, field: "usca", vertAlign: "middle", editor: false, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like"
+                title: "Team", width: 120, field: "usca", vertAlign: "middle", editor: false, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like", visible: !user.permissions.canChangeUsca
             },
             {
                 title: "", width: 8, hozAlign: "center", vertAlign: "middle", editor: false, visible: checkUserPermission(user, "canCreateRequest"), cellClick: checkUserPermission(user, "canCreateRequest") ? newRequest : null, formatter: function (cell, formatterParams, onRendered) {
@@ -135,19 +136,19 @@ function showRequests(richieste, user) {
                     return el1;
                 }
             },
-            {
-                title: "", width: 8, field: "isArchived", width: 10, hozAlign: "center", vertAlign: "middle", editor: false, visible: checkUserPermission(user, "canArchiveRequest"), cellClick: checkUserPermission(user, "canEditRequest") ? archiveElement : null, formatter: function (cell, formatterParams, onRendered) {
-                    return (cell.getValue() != null) ? (cell.getValue() ? '<span class="material-icons-outlined" style="color: green">unarchive</span>' : '<span class="material-icons-outlined" style="color: green">archive</span>') : "";
-                }, headerSort: false, tooltip: function (e, cell, onRendered) {
-                    var el1 = document.createElement("div");
-                    el1.style.backgroundColor = "#0d6efd";
-                    var el2 = document.createElement("span");
-                    el2.style.color = "#ffffff";
-                    el2.innerText = "Archiviazione/Ripristino richiesta";
-                    el1.append(el2);
-                    return el1;
-                }
-            },
+            // {
+            //     title: "", width: 8, field: "isArchived", width: 10, hozAlign: "center", vertAlign: "middle", editor: false, visible: checkUserPermission(user, "canArchiveRequest"), cellClick: checkUserPermission(user, "canEditRequest") ? archiveElement : null, formatter: function (cell, formatterParams, onRendered) {
+            //         return (cell.getValue() != null) ? (cell.getValue() ? '<span class="material-icons-outlined" style="color: green">unarchive</span>' : '<span class="material-icons-outlined" style="color: green">archive</span>') : "";
+            //     }, headerSort: false, tooltip: function (e, cell, onRendered) {
+            //         var el1 = document.createElement("div");
+            //         el1.style.backgroundColor = "#0d6efd";
+            //         var el2 = document.createElement("span");
+            //         el2.style.color = "#ffffff";
+            //         el2.innerText = "Archiviazione/Ripristino richiesta";
+            //         el1.append(el2);
+            //         return el1;
+            //     }
+            // },
             {
                 title: "", width: 8, field: "noteRichiesta", vertAlign: "middle", editor: false/*, formatter: "textarea" */, cellClick: buildNoteRichiestaModal, formatter: function (cell, formatterParams, onRendered) {
                     return (cell.getValue() == null) ? '' : '<span class="material-icons-outlined">notes</span>';
@@ -337,6 +338,7 @@ var showElementUpdate = function (e, row) {
     $("#dataEdit").val(((new luxon.DateTime.fromSQL(element.data)).toFormat("yyyy-MM-dd")));
     if (element.noteRichiesta.length > 0) {
         var table = new Tabulator("#noteRichiestaEdit", {
+            height: 170,
             data: element.noteRichiesta,           //load row data from array
             layout: "fitColumns",      //fit columns to width of table
             responsiveLayout: "collapse",  //hide columns that dont fit on the table
@@ -369,10 +371,11 @@ var showElementUpdate = function (e, row) {
             ]
         });
     } else {
-        $("#noteRichiestaEdit").parent().hide()
+        $("#noteRichiestaEdit").parent().hide();
     }
     if (element.statiAttuali.length > 0) {
         var table = new Tabulator("#statiAttualiEdit", {
+            height: 170,
             data: element.statiAttuali,           //load row data from array
             layout: "fitColumns",      //fit columns to width of table
             responsiveLayout: "collapse",  //hide columns that dont fit on the table
@@ -405,8 +408,9 @@ var showElementUpdate = function (e, row) {
             ]
         });
     } else {
-        $("#statiAttualiEdit").parent().hide()
+        $("#statiAttualiEdit").parent().hide();
     }
+    $(".note").hide();
 }
 
 var deleteElement = function (e, row) {
@@ -648,7 +652,11 @@ var newRequest = function (e, row) {
     $("#telefono2").val(element.telefono2);
     $("#telefono3").val(element.telefono3);
     $("#idUsca").val(element.idUsca);
-    $("#insert").show();
+    $("#statiAttuali").parent().hide();
+    $("#noteRichiesta").parent().hide();
+    $("#data").val((new luxon.DateTime.fromJSDate(new Date())).toFormat("yyyy-MM-dd"));
+    $("#mostraNoteButton").hide();  
+    $("#insert").modal("show");
 
 }
 

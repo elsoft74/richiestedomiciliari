@@ -15,6 +15,7 @@ buildHead();
     <div id="login" class="sections"></div>
     <div id="editAssistito"></div>
     <div id="assistiti"></div>
+    <div id="changeUsca"></div>
     <!-- <div id="firma"><a href="https://ivopugliese.it">©2022 Ivo Pugliese</a></div> -->
     <script>       
         if ($("#login").html() == "") {

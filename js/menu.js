@@ -41,7 +41,7 @@ function showMenu(user) {
         button = $("<button>").addClass('btn btn-warning btn-block requests-form menu-button').attr({"onClick":'mostraStorico()','id':'mostraStoricoButton'}).text(mostraStorico?"Solo Attuali":"Tutte").hide();
         div1.append(button);
         if(user.permissions.canChangeUsca){
-            button = $("<button>").addClass('btn btn-primary btn-block swabs-form menu-button').attr({"onClick":'buildChangeUsca()','id':'cambiaTeam'}).text("Cambia Team");
+            button = $("<button>").addClass('btn btn-primary btn-block requests-form assistiti-form swabs-form menu-button').attr({"onClick":'buildChangeUsca()','id':'cambiaTeam'}).text("Cambia Team");
             div1.append(button);
         }
         row.append(div1);
@@ -64,9 +64,16 @@ function mostraStorico(){
 
 function getUscaNameFromId(id){
     var usca = JSON.parse(sessionStorage.getItem("usca"));
-    usca.forEach(element => {
-        if (element.id==id){
-            return element.descrizione;
+    var out = "";
+    for (var i=0; i<usca.length;i++){
+        if (usca[i].id==id){
+            out = usca[i].descrizione;
         }
-    });
+    }
+    // usca.forEach(element => {
+    //     if (element.id==id){
+    //         return element.descrizione;
+    //     }
+    // });
+    return out;
 }

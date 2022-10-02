@@ -1,7 +1,8 @@
 function showSwabs(swabs, user) {
     $("#mainSwabs").html("");
-    
+
     var table = new Tabulator("#mainSwabs", {
+        height: 890,
         data: swabs,           //load row data from array
         layout: "fitColumns",      //fit columns to width of table
         responsiveLayout: "collapse",  //hide columns that dont fit on the table
@@ -12,7 +13,7 @@ function showSwabs(swabs, user) {
         paginationSize: 12,         //allow 7 rows per page of data
         paginationCounter: "rows", //display count of paginated rows in footer
         movableColumns: true,      //allow column order to be changed
-        
+
         columns: [                 //define the table columns
 
             { title: "", field: "id", width: 10, editor: false, hozAlign: "center", vertAlign: "middle", visible: false },
@@ -20,7 +21,7 @@ function showSwabs(swabs, user) {
             { title: "#", field: "idAssistito", width: 10, editor: false, hozAlign: "center", vertAlign: "middle", visible: checkUserPermission(user, "canViewId") },
 
             { title: "Cognome", field: "cognome", vertAlign: "middle", editor: false, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
-            { title: "Nome", field: "nome", editor: false, vertAlign: "middle",},
+            { title: "Nome", field: "nome", editor: false, vertAlign: "middle", },
             {
                 title: "Nascita", field: "nascita", editor: false, vertAlign: "middle", formatter: "datetime", formatterParams: {
                     outputFormat: "dd-MM-yyyy",
@@ -29,10 +30,10 @@ function showSwabs(swabs, user) {
                 }
             },
             { title: "Codice Fiscale", field: "codiceFiscale", editor: false, hozAlign: "center", vertAlign: "middle", headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
-            { title: "Cont.1", field: "telefono1", visible:false },
-            { title: "Cont.2", field: "telefono2", visible:false },
-            { title: "Cont.3", field: "telefono3", visible:false },
-            { title: "e-mail", field: "email", visible:false },
+            { title: "Cont.1", field: "telefono1", visible: false },
+            { title: "Cont.2", field: "telefono2", visible: false },
+            { title: "Cont.3", field: "telefono3", visible: false },
+            { title: "e-mail", field: "email", visible: false },
             {
                 title: "Contatti", width: 150, field: "contatti", editor: false, hozAlign: "left", vertAlign: "middle", formatter: function (cell, formatterParams, onRendered) {
                     var out = "<div><ul>";
@@ -49,7 +50,7 @@ function showSwabs(swabs, user) {
             },
             { title: "Indirizzo", field: "indirizzo", vertAlign: "middle", editor: false, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
             {
-                title: "Team", field: "usca", editor: false, hozAlign: "center", vertAlign: "middle", headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like", visible: !user.canChangeUsca
+                title: "Team", field: "usca", editor: false, hozAlign: "center", vertAlign: "middle", headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like", visible: !user.permissions.canChangeUsca
             },
             { title: "#", field: "idTampone", editor: false, hozAlign: "center", vertAlign: "middle", visible: checkUserPermission(user, "canViewId") },
             {
@@ -122,7 +123,7 @@ function readSwabs(toBeCompleted) {
     var xhr = new XMLHttpRequest();
     var url = "be/getswabs.php";
     var activeUsca = sessionStorage.getItem("activeUsca");
-    if(activeUsca == null){
+    if (activeUsca == null) {
         activeUsca = "ALL";
     }
     xhr.open("POST", url, true);
@@ -150,7 +151,7 @@ function readSwabs(toBeCompleted) {
             }
         }
     }
-    xhr.send("lastRead=" + sessionStorage.getItem("lastRead")+"&activeUsca="+activeUsca);
+    xhr.send("lastRead=" + sessionStorage.getItem("lastRead") + "&activeUsca=" + activeUsca);
 }
 
 var changeSwabStatus = function (e, row) {
@@ -287,8 +288,8 @@ function getStatiTamponi(toBeCompleted) {
             if (result.status == "OK") {
                 toBeCompleted.statiTamponi = true;
                 var statiTamponi = result.data;
-                sessionStorage.setItem("toBeCompleted",JSON.stringify(toBeCompleted));
-                sessionStorage.setItem("statiTamponi",JSON.stringify(statiTamponi));
+                sessionStorage.setItem("toBeCompleted", JSON.stringify(toBeCompleted));
+                sessionStorage.setItem("statiTamponi", JSON.stringify(statiTamponi));
             } else {
                 Swal.fire({
                     text: "C'è un problema con il recupero degli stati tamponi.",
@@ -385,7 +386,7 @@ function uploadExcelTamponi() {
             var xhr = new XMLHttpRequest();
             var url = "be/caricaExcelTamponi.php";
             xhr.open("POST", url, true);
-            
+
             xhr.onreadystatechange = function () {
                 if (xhr.readyState === 4 && xhr.status === 200) {
                     var result = JSON.parse(xhr.responseText);
@@ -430,19 +431,24 @@ function updateTableDataTamponi() {
     if (waitingForDataTamponi != null && !waitingForDataTamponi) {
         waitingForDataTamponi = true;
         toBeCompleted.swabs = false;
-        sessionStorage.setItem("toBeCompleted",JSON.stringify(toBeCompleted));
-        sessionStorage.setItem("waitingForDataTamponi",JSON.stringify(waitingForDataTamponi));
+        sessionStorage.setItem("toBeCompleted", JSON.stringify(toBeCompleted));
+        sessionStorage.setItem("waitingForDataTamponi", JSON.stringify(waitingForDataTamponi));
         readSwabs(toBeCompleted);
         setTimeout(updateTableDataTamponi, 200);
     } else {
         if (toBeCompleted.swabs) {
             waitingForDataTamponi = false;
-            sessionStorage.setItem("waitingForDataTamponi",JSON.stringify(waitingForDataTamponi));
+            sessionStorage.setItem("waitingForDataTamponi", JSON.stringify(waitingForDataTamponi));
             var table = Tabulator.findTable("#mainSwabs")[0];
             var swabs = JSON.parse(sessionStorage.getItem("swabs"));
-            table.updateOrAddData(swabs).then(function(){
+            if (swabs.length != 0) {
+                table.updateOrAddData(swabs).then(function () {
+                    setTimeout(checkNewData, 2000);
+                })
+            } else {
+                table.clearData();
                 setTimeout(checkNewData, 2000);
-            })
+            }
         } else {
             setTimeout(updateTableDataTamponi, 200);
         }

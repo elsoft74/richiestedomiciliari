@@ -39,7 +39,8 @@ function buildInsertForm(target) {
                 stati: "statiAttuali",
                 statiText:"Attività svolte",
                 nuovoStato: "nuovoStato",
-                nuovoStatoText:"Aggiungi attività"
+                nuovoStatoText:"Descrivi l'attività svolta",
+                mostraNoteButton:"mostraNoteButton"
             }
             canBuild = true;
             break;
@@ -70,11 +71,12 @@ function buildInsertForm(target) {
                 stati: "statiAttualiEdit",
                 statiText:"Attività svolte",
                 nuovoStato: "nuovoStatoEdit",
-                nuovoStatoText:"Aggiungi attività",
+                nuovoStatoText:"Descrivi l'attività svolta",
                 noteRichiesta: "noteRichiestaEdit",
                 noteRichiestaText: "Note",
                 nuovaNotaRichiesta: "nuovaNotaRichiestaEdit",
                 nuovaNotaRichiestaText: "Nuova nota",
+                mostraNoteButton:"mostraNoteButtonEdit"
             }
             canBuild = true;
             break;
@@ -212,15 +214,21 @@ function buildInsertForm(target) {
         }
         divFormGroup.append(el);
         form.append(divFormGroup);
-
-        divFormGroup = $("<div>").addClass("col-md-12 verticalScrollableList");
+        
+        var div = $("<div>").addClass("col-md-12");
+        el = $("<button>").addClass("btn btn-primary").text("Mostra note").attr({"type":"button","id":attrs.mostraNoteButton,"onClick":"mostraNote()"});
+        div.append(el);
+        form.append(div);
+        
+        var divNote = $("<div>").addClass("note");
+        divFormGroup = $("<div>").addClass("col-md-12");
         if (attrs.hasOwnProperty("noteRichiesta")) {
             el = $("<label>").attr({ "for": attrs.noteRichiesta }).text(attrs.noteRichiestaText);
             divFormGroup.append(el);
             el = $("<div>").addClass("form-richiesta").addClass("form-control").attr({ "type": "hidden", "id": attrs.noteRichiesta });
             divFormGroup.append(el);
         }
-        form.append(divFormGroup);
+        divNote.append(divFormGroup);
         divFormGroup = $("<div>").addClass("col-md-12");
         if (attrs.hasOwnProperty("nuovaNotaRichiesta")) {
             el = $("<label>").attr({ "for": attrs.nuovaNotaRichiesta }).text(attrs.nuovaNotaRichiestaText);
@@ -228,7 +236,8 @@ function buildInsertForm(target) {
             el = $("<textarea>").addClass("form-richiesta").addClass("form-control").attr({ "type": "hidden", "id": attrs.nuovaNotaRichiesta });
             divFormGroup.append(el);
         }
-        form.append(divFormGroup);
+        divNote.append(divFormGroup);
+        form.append(divNote);
         modalBody.append(form);
         modalContent.append(modalBody);
 
@@ -248,4 +257,14 @@ function buildInsertForm(target) {
 function cleanInsert() {
     $(".form-richiesta").val('');
     $("#insert").modal("hide");
+}
+
+function mostraNote(){
+    $(".note").fadeIn();
+    $("button[id^=mostraNoteButton]").text("Nascondi note").attr({"onClick":"nascondiNote()"});
+}
+
+function nascondiNote(){
+    $(".note").fadeOut();
+    $("button[id^=mostraNoteButton]").text("Mostra note").attr({"onClick":"mostraNote()"});
 }
