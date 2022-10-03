@@ -213,14 +213,15 @@ class Tampone
                     t.created_by AS created_by,
                     t.last_update AS last_update,
                     t.last_update_by AS last_update_by,
-                    u.descrizione AS usca
+                    u.descrizione AS usca,
+                    s.to_show AS to_show
                     FROM `assistiti` AS a JOIN `tamponi` AS t ON a.id=t.id_assistito
                     LEFT JOIN `stati_tamponi` AS s ON t.status=s.id
                     LEFT JOIN `usca` AS u ON a.id_usca=u.id
                     WHERE a.is_active=1"
                     */
 
-                    $query = "SELECT * FROM `vista_tamponi` WHERE tampone_is_active=1";
+                    $query = "SELECT * FROM `vista_tamponi` WHERE tampone_is_active=1 AND to_show=1";
                     
                     if($activeUsca!="ALL"){
                         $query.=" AND id_usca=:id_usca";
