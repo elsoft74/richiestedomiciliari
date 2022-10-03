@@ -221,7 +221,7 @@ class Tampone
                     WHERE a.is_active=1"
                     */
 
-                    $query = "SELECT * FROM `vista_tamponi` WHERE tampone_is_active=1";
+                    $query = "SELECT * FROM `vista_tamponi` WHERE tampone_is_active=1 AND to_show=1";
                     
 
                     $stmt = $conn->prepare($query);
