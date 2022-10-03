@@ -6,7 +6,7 @@ function showRequests(richieste, user) {
     }
     
     var table = new Tabulator("#main", {
-        height: 890,
+        height: 800,
         data: richieste,           //load row data from array
         layout: "fitColumns",      //fit columns to width of table
         responsiveLayout: "collapse",  //hide columns that dont fit on the table
@@ -814,8 +814,30 @@ function mostraFormNuovaNota() {
     $("#aggiungiNotaButton").hide();
 }
 
-function addStatusToRequest() {
-
+function confirmAndArchive() {
+    Swal.fire({
+        html: "<p>Vuoi archiviare la richiesta?</p><p>Per future operazioni sul paziente sarà necessario creare una nuova richiesta</p>",
+        icon: 'info',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        confirmButtonText: 'Ok'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            if($("input[name='nuoviStati']:checked").length==0){
+                Swal.fire({
+                    html: "Non hai selezionato alcun nuovo stato per questa attività",
+                    icon: 'warning',
+                    showCancelButton: false,
+                    confirmButtonColor: '#3085d6',
+                    confirmButtonText: 'Ok'
+                })
+            } else{ 
+                alert("funzione non ancora implementata");
+                $("#insert").modal("hide");
+                $("#update").modal("hide"); 
+            }
+        }
+    })
 }
 
 function salvaNote() {
