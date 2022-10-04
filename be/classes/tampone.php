@@ -382,6 +382,7 @@ class Tampone
                                 $this->setId($conn->lastInsertId());
                                     if ($this->getId()!=0){
                                     $out->data=$this->getId();
+                                    $out->status="OK";
                                 } else {
                                     throw new Exception("ERRORE-DI-INSERIMENTO");    
                                 }
@@ -390,9 +391,6 @@ class Tampone
                             $query="UPDATE `updates` SET last_update_ts=LOCALTIMESTAMP() WHERE table_name='tamponi'";
                                     $stmt = $conn->prepare($query);
                                     $stmt->execute();
-                                    if ($stmt->rowCount()==1){
-                                        $out->status="OK";
-                                    }
                             
                         } else {
 
