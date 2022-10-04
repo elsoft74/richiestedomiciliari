@@ -56,8 +56,11 @@
             $tampone->setDataConsigliata(formattaData($row["GIORNO TAMPONE"]));
             $tampone->setIdStatus(($status!=null)?intval($status):null);
             $assistito->getIdOrInsert($username,$token);
+            var_dump($assistito);
             $tampone->setIdAssistito($assistito->getId());
+            var_dump($tampone);
             $ins=$tampone->insert($username,$token);
+            var_dump($ins);
             if($ins->status=="OK"){
                 if($ins->data==null){
                     $out->report->presenti++;
