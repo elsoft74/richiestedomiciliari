@@ -410,8 +410,10 @@
                             $results=$stmt->fetch(PDO::FETCH_ASSOC);
                             if($results){
                                 $this->id=$results['id'];
+                                $out->data="exists";
                             } else {
                                 $this->insert($username,$token);
+                                $out->data="new";
                             }
                             $out->status="OK";
                                 

@@ -12,7 +12,9 @@
     $out->report=new StdClass();
     $out->report->righe=0;
     $out->report->inseriti=0;
-    $out->report->presenti=0;
+    $out->report->assistitiPresenti=0;
+    $out->report->assistitiNuovi=0;
+    $out->report->tamponiPresenti=0;
     $out->report->errori=0;
     $out->errors=[];
     try{
@@ -55,14 +57,25 @@
             $tampone->setDataEsecuzione(formattaData($row["DATA TAMPONE"]));
             $tampone->setDataConsigliata(formattaData($row["GIORNO TAMPONE"]));
             $tampone->setIdStatus(($status!=null)?intval($status):null);
-            $assistito->getIdOrInsert($username,$token);
-            $tampone->setIdAssistito($assistito->getId());
-            $ins=$tampone->insert($username,$token);
+            $ins=$assistito->getIdOrInsert($username,$token);
             if($ins->status=="OK"){
-                if($ins->data==null){
-                    $out->report->presenti++;
-                } else  {
-                    $out->report->inseriti++;
+                if($ins->data=="new"){
+                    $out->report->assistitiNuovi++;
+                } else {
+                    $out->report->assistitiPresenti++;
+                }
+
+                $tampone->setIdAssistito($assistito->getId());
+                $ins=$tampone->insert($username,$token);
+                if($ins->status=="OK"){
+                    if($ins->data==null){
+                        $out->report->presenti++;
+                    } else  {
+                        $out->report->inseriti++;
+                    }
+                } else {
+                    $out->report->errori++;
+                    array_push($out->errors,$out->report->righe+1);
                 }
             } else {
                 $out->report->errori++;

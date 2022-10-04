@@ -389,5 +389,5 @@ function buildUserInsertForm(target) {
 
 function cleanUserInsert() {
     $(".user-input-form").val('');
-    $("#insertUser").hide();
+    $("#insertUser").modal("hide");
 }

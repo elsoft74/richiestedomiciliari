@@ -159,12 +159,12 @@ var changeSwabStatus = function (e, row) {
     var element = row.getData();
     $("#idTamponeEdit").val(element.idTampone);
     $("#statusTamponeEdit").val(element.idStatus);
-    $("#tamponeEdit").show();
+    $("#tamponeEdit").modal("show");
 }
 
 function uploadSwabs() {
     buildUpLoadTamponiForm();
-    $("#tamponeUpload").show();
+    $("#tamponeUpload").modal("show");
 }
 
 function aggiornaTampone() {
@@ -268,11 +268,11 @@ function buildUpdateTamponiForm() {
 function cleanTamponeEdit() {
     $("#idTamponeEdit").val('');
     $("#statusTamponeEdit").val('');
-    $("#tamponeEdit").hide();
+    $("#tamponeEdit").modal("hide");
 }
 
 function cleanTamponeUpload() {
-    $("#tamponeUpload").hide();
+    $("#tamponeUpload").modal("hide");
     $("#tamponeUpload").html('');
 }
 

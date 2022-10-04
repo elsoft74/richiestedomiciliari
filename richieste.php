@@ -13,7 +13,6 @@ buildHead();
     <div id="main" class="sections requests-form"></div>
     <div id="insert"></div>
     <div id="login" class="sections"></div>
-    <div id="edit"></div>
     <div id="modalNoteRichiesta"></div>
     <div id="changeUsca"></div>
     <!-- <div id="firma"><a href="https://ivopugliese.it">©2022 Ivo Pugliese</a></div> -->
@@ -23,7 +22,6 @@ buildHead();
         }
         window.addEventListener('dataLoaded', function() {
             buildInsertForm("insert");
-            buildEditForm("edit");
             showMenu(lu);
             $(".lds-grid").hide();
             changeActivity("requests");

@@ -1,94 +1,51 @@
-function buildInsertForm(target) {
+function buildInsertForm() {
 
-    var canBuild = false;
-    var tar = null;
-    var fun1 = null;
-    var fun2 = null;
-    var attrs = {};
-    var user = JSON.parse(sessionStorage.getItem("ricdomloggeduser"));
-    if (user!=null){
-        switch (target) {
-            case "insert":
-                tar = "#insert";
-                fun1 = "inserisci()";
-                fun2 = "cleanInsert()";
-                fun3 = "confirmAndArchive()";
-                attrs = {
-                    idAssistito: "idAssistito",
-                    nome: "nome",
-                    cognome: "cognome",
-                    email: "email",
-                    indirizzo: "indirizzo",
-                    codiceFiscale: "codiceFiscale",
-                    noteAssistito: "noteAssistito",
-                    telefono1: "telefono1",
-                    telefono2: "telefono2",
-                    telefono3: "telefono3",
-                    idUsca: "idUsca",
-                    uscaText:"Team di competenza",
-                    idRichiesta: "idRichiesta",
-                    idTipologia: "idTipologia",
-                    idPriorita: "idPriorita",
-                    data: "data",
-                    noteRichiesta: "noteRichiesta",
-                    noteRichiestaText: "Note",
-                    nuovaNotaRichiesta: "nuovaNotaRichiesta",
-                    nuovaNotaRichiestaText: "Nuova nota",
-                    pulsante: "aggiungiNota",
-                    pulsanteText: "Aggiungi nota",
-                    titleId: "modalTitle",
-                    titleText: "Inserisci nuova richiesta",
-                    stati: "statiAttuali",
-                    statiText:"Attività svolte",
-                    nuovoStato: "nuovoStato",
-                    nuovoStatoText:"Descrivi l'attività svolta",
-                    mostraNoteButton:"mostraNoteButton",
-                    idTamponePartenza:"idTamponePartenza"
-                }
-                canBuild = true;
-                break;
-            case "edit":
-                tar = "#edit";
-                fun1 = "aggiorna()";
-                fun2 = "cleanEdit()";
-                fun3 = "confirmAndArchive()";
-                attrs = {
-                    idAssistito: "idAssistitoEdit",
-                    nome: "nomeEdit",
-                    cognome: "cognomeEdit",
-                    email: "emailEdit",
-                    indirizzo: "indirizzoEdit",
-                    codiceFiscale: "codiceFiscaleEdit",
-                    noteAssistito: "noteAssistitoEdit",
-                    telefono1: "telefono1Edit",
-                    telefono2: "telefono2Edit",
-                    telefono3: "telefono3Edit",
-                    idUsca: "idUscaEdit",
-                    uscaText:"Team di competenza",
-                    idRichiesta: "idRichiestaEdit",
-                    idTipologia: "idTipologiaEdit",
-                    idPriorita: "idPrioritaEdit",
-                    data: "dataEdit",
-                    titleId: "editModalTitle",
-                    titleText: "Modifica richiesta",
-                    stati: "statiAttualiEdit",
-                    statiText:"Attività svolte",
-                    nuovoStato: "nuovoStatoEdit",
-                    nuovoStatoText:"Descrivi l'attività svolta",
-                    noteRichiesta: "noteRichiestaEdit",
-                    noteRichiestaText: "Note",
-                    nuovaNotaRichiesta: "nuovaNotaRichiestaEdit",
-                    nuovaNotaRichiestaText: "Nuova nota",
-                    mostraNoteButton:"mostraNoteButtonEdit"
-                }
-                canBuild = true;
-                break;
+   var user = JSON.parse(sessionStorage.getItem("ricdomloggeduser"));
+    if (user != null) {
+        var tar = "#insert";
+        var fun1 = "";// inserisci() - aggiorna()
+        var fun2 = "";// cleanInsert()- cleanEdit()
+        var fun3 = "confirmAndArchive()";
+        attrs = {
+            idAssistito: "idAssistito",
+            nome: "nome",
+            cognome: "cognome",
+            email: "email",
+            indirizzo: "indirizzo",
+            codiceFiscale: "codiceFiscale",
+            noteAssistito: "noteAssistito",
+            telefono1: "telefono1",
+            telefono2: "telefono2",
+            telefono3: "telefono3",
+            idUsca: "idUsca",
+            nascita: "nascita",
+            uscaText: "Team di competenza",
+            idRichiesta: "idRichiesta",
+            idTipologia: "idTipologia",
+            idPriorita: "idPriorita",
+            data: "data",
+            noteRichiesta: "noteRichiesta",
+            noteRichiestaText: "Note",
+            nuovaNotaRichiesta: "nuovaNotaRichiesta",
+            nuovaNotaRichiestaText: "Nuova nota",
+            pulsante: "aggiungiNota",
+            pulsanteText: "Aggiungi nota",
+            titleId: "modalTitle",
+            titleText: "Inserisci nuova richiesta",
+            stati: "statiAttuali",
+            statiText: "Attività svolte",
+            nuovoStato: "nuovoStato",
+            nuovoStatoText: "Descrivi l'attività svolta",
+            mostraNoteButton: "mostraNoteButton",
+            idTamponePartenza: "idTamponePartenza",
+            isArchived: "isArchived",
+            noteRichiestaAttuali: "noteRichiestaAttuali",
+            action: "actionType",
+            idButton1: "insertFormButton1",
+            idButton2: "insertFormButton2",
+            idButton3: "insertFormButton3",
         }
-    }
-    
-
-    if (canBuild) {
-        var modal = $(tar).addClass("modal")/*.addClass("fade")*/.attr({ "id": target, "tabindex": "-1", "role": "dialog", "aria-labelledby": attrs.titleId, "aria-hidden": "true" });
+        var modal = $("#insert").addClass("modal")/*.addClass("fade")*/.attr({ "id": "insert", "tabindex": "-1", "role": "dialog", "aria-labelledby": attrs.titleId, "aria-hidden": "true" });
         var modalDialog = $("<div>").addClass("modal-dialog modal-lg").attr({ "role": "document" });
         var modalContent = $("<div>").addClass("modal-content");
         // var modalHeader = $("<div>").addClass("modal-header");
@@ -105,26 +62,50 @@ function buildInsertForm(target) {
         divFormGroup.append(el);
         el = $("<input>").attr({ "type": "hidden", "id": attrs.idRichiesta });
         divFormGroup.append(el);
-        if (user.permissions.caChangeUsca){
+        if (user.permissions.caChangeUsca) {
             el = $("<input>").attr({ "type": "hidden", "id": attrs.idUsca });
             divFormGroup.append(el);
         }
-        el = $("<input>").attr({ "type": "hidden", "id": attrs.idTamponePartenza });
+        el = $("<input>").addClass("form-richiesta").attr({ "type": "hidden", "id": attrs.idTamponePartenza });
+        divFormGroup.append(el);
+        el = $("<input>").addClass("form-richiesta").attr({ "type": "hidden", "id": attrs.isArchived, "value": false });
         divFormGroup.append(el);
         form.append(divFormGroup);
-        divFormGroup = $("<div>").addClass("col-md-3");
+        el = $("<input>").addClass("form-richiesta").attr({ "type": "hidden", "id": attrs.noteRichiestaAttuali, "value": "[{}]" });
+        divFormGroup.append(el);
+        form.append(divFormGroup);
+        el = $("<input>").addClass("form-richiesta").attr({ "type": "hidden", "id": attrs.action, "value": "" });
+        divFormGroup.append(el);
+        form.append(divFormGroup);
+        el = $("<input>").addClass("form-richiesta").attr({ "type": "hidden", "id": attrs.noteAssistito, "value": "" });
+        divFormGroup.append(el);
+        form.append(divFormGroup);
+        divFormGroup = $("<div>").addClass("col-md-2");
         el = $("<label>").attr({ "for": attrs.nome }).text("Nome");
         divFormGroup.append(el);
         el = $("<input>").addClass("form-richiesta").addClass("form-control").attr({ "type": "text", "id": attrs.nome })/*.prop("readonly", true)*/;
         divFormGroup.append(el);
         form.append(divFormGroup);
-        divFormGroup = $("<div>").addClass("col-md-4");
+        divFormGroup = $("<div>").addClass("col-md-3");
         el = $("<label>").attr({ "for": attrs.cognome }).text("Cognome");
         divFormGroup.append(el);
-        el = $("<input>").addClass("form-richiesta").addClass("form-control").attr({ "type": "text", "id": attrs.cognome })/*.prop("readonly", true)*/;
+        el = $("<input>").addClass("form-richiesta").addClass("form-control").attr({ "type": "text", "id": attrs.cognome })
         divFormGroup.append(el);
         form.append(divFormGroup);
-        divFormGroup = $("<div>").addClass("col-md-5");
+        divFormGroup = $("<div>").addClass("col-md-3");
+        el = $("<label>").attr({ "for": attrs.nascita }).text("Nascita");
+        var div4 = $("<div>").addClass("col").addClass("date");
+        el = $("<label>").text("Nascita").attr({"for":attrs.nascita});
+        div4.append(el);
+        el = $("<input>").addClass("form-richiesta").addClass("form-control").attr({ "type": "date", "id": attrs.nascita });
+        div4.append(el);
+        var div5 = $("<div>").addClass("input-group-addon");
+        el = $("<span>").addClass("glyphicon glyphicon-th");
+        div5.append(el);
+        div4.append(div5);
+        divFormGroup.append(div4);
+        form.append(divFormGroup);
+        divFormGroup = $("<div>").addClass("col-md-4");
         el = $("<label>").attr({ "for": attrs.codiceFiscale }).text("Codice Fiscale");
         divFormGroup.append(el);
         el = $("<input>").addClass("form-richiesta").addClass("form-control").attr({ "type": "text", "id": attrs.codiceFiscale })/*.prop("readonly", true)*/;
@@ -159,9 +140,9 @@ function buildInsertForm(target) {
         divFormGroup.append(el);
         form.append(divFormGroup);
 
-        if (!user.permissions.caChangeUsca){
+        if (!user.permissions.caChangeUsca) {
             divFormGroup = $("<div>").addClass("col-md-12");
-            el = $("<label>").attr({ "for": attrs.idUsca}).text(attrs.uscaText);
+            el = $("<label>").attr({ "for": attrs.idUsca }).text(attrs.uscaText);
             divFormGroup.append(el);
             el = $("<select>").addClass("form-richiesta").addClass("form-control").attr({ "id": attrs.idUsca });
             var usca = JSON.parse(sessionStorage.getItem("usca"));
@@ -175,14 +156,14 @@ function buildInsertForm(target) {
             form.append(divFormGroup);
         }
         divFormGroup = $("<div>").addClass("col-md-12");
-        el = $("<label>").attr({ "for": attrs.nuovoStato}).text(attrs.nuovoStatoText);
+        el = $("<label>").attr({ "for": attrs.nuovoStato }).text(attrs.nuovoStatoText);
         divFormGroup.append(el);
         el = $("<div>").attr({ "id": attrs.nuovoStato });
         var statiAttivita = JSON.parse(sessionStorage.getItem("statiAttivita"));
         if (statiAttivita != null) {
             statiAttivita.forEach(element => {
-                let input = $("<input>").attr({"id":attrs.stati+element.id,"type":"checkbox","autocomplete":"off","name":"nuoviStati","value":element.id}).addClass("btn-check");
-                let label = $("<label>").addClass("btn btn-outline-primary").attr({"for":attrs.stati+element.id}).text(element.descrizione);
+                let input = $("<input>").attr({ "id": attrs.stati + element.id, "type": "checkbox", "autocomplete": "off", "name": "nuoviStati", "value": element.id }).addClass("btn-check");
+                let label = $("<label>").addClass("btn btn-outline-primary").attr({ "for": attrs.stati + element.id }).text(element.descrizione);
                 el.append(input);
                 el.append(label);
             });
@@ -194,23 +175,23 @@ function buildInsertForm(target) {
         // el = $("<label>").attr({ "for": attrs.stati }).text(attrs.statiText);
         // divFormGroup.append(el);
         el = $("<div>").addClass("form-richiesta").addClass("form-control").attr({ "id": attrs.stati });
-        
+
         divFormGroup.append(el);
         form.append(divFormGroup);
 
         divFormGroup = $("<div>").addClass("col-md-4");
-        var div4 = $("<div>").addClass("col").addClass("date");
+        div4 = $("<div>").addClass("col").addClass("date");
         el = $("<label>").text("Data Programmazione");
         div4.append(el);
         el = $("<input>").addClass("form-richiesta").addClass("form-control").attr({ "type": "date", "id": attrs.data });
         div4.append(el);
-        var div5 = $("<div>").addClass("input-group-addon");
+        div5 = $("<div>").addClass("input-group-addon");
         el = $("<span>").addClass("glyphicon glyphicon-th");
         div5.append(el);
         div4.append(div5);
         divFormGroup.append(div4);
         form.append(divFormGroup);
-        
+
         divFormGroup = $("<div>").addClass("col-md-4");
         el = $("<label>").attr({ "for": attrs.idTipologia }).text("Tipo di richiesta");
         divFormGroup.append(el);
@@ -238,12 +219,12 @@ function buildInsertForm(target) {
         }
         divFormGroup.append(el);
         form.append(divFormGroup);
-        
+
         var div = $("<div>").addClass("col-md-12");
-        el = $("<button>").addClass("btn btn-primary").text("Mostra note").attr({"type":"button","id":attrs.mostraNoteButton,"onClick":"mostraNote()"});
+        el = $("<button>").addClass("btn btn-primary").text("Mostra note").attr({ "type": "button", "id": attrs.mostraNoteButton, "onClick": "mostraNote()" });
         div.append(el);
         form.append(div);
-        
+
         var divNote = $("<div>").addClass("note");
         divFormGroup = $("<div>").addClass("col-md-12");
         if (attrs.hasOwnProperty("noteRichiesta")) {
@@ -265,30 +246,32 @@ function buildInsertForm(target) {
         modalBody.append(form);
         modalContent.append(modalBody);
 
-        el = $("<button>").addClass("btn").addClass("btn-warning").text("Conferma ed Archivia").attr({ "onClick": fun3 });
+        el = $("<button>").addClass("btn").addClass("btn-warning").text("Conferma ed Archivia").attr({ "id": attrs.idButton3, "onClick": fun3 });
         modalFooter.append(el);
-        el = $("<button>").addClass("btn").addClass("btn-primary").text("Conferma").attr({ "onClick": fun1 });
+        el = $("<button>").addClass("btn").addClass("btn-primary").text("Conferma").attr({ "id": attrs.idButton1, "onClick": fun1 });
         modalFooter.append(el);
-        el = $("<button>").addClass("btn").addClass("btn-secondary").text("Annulla").attr({ "onClick": fun2/*"data-dismiss":"modal"*/ });
+        el = $("<button>").addClass("btn").addClass("btn-secondary").text("Annulla").attr({ "id": attrs.idButton2, "onClick": fun2/*"data-dismiss":"modal"*/ });
         modalFooter.append(el);
         modalContent.append(modalFooter);
 
         modalDialog.append(modalContent);
         modal.append(modalDialog);
+
     }
 }
 
-function cleanInsert() {
-    $(".form-richiesta").val('');
-    $("#insert").modal("hide");
-}
+    function cleanInsert() {
+        $(".form-richiesta").val('');
+        $("input[name='nuoviStati']").prop("checked", false);
+        $("#insert").modal("hide");
+    }
 
-function mostraNote(){
-    $(".note").fadeIn();
-    $("button[id^=mostraNoteButton]").text("Nascondi note").attr({"onClick":"nascondiNote()"});
-}
+    function mostraNote() {
+        $(".note").fadeIn();
+        $("button[id^=mostraNoteButton]").text("Nascondi note").attr({ "onClick": "nascondiNote()" });
+    }
 
-function nascondiNote(){
-    $(".note").fadeOut();
-    $("button[id^=mostraNoteButton]").text("Mostra note").attr({"onClick":"mostraNote()"});
-}
+    function nascondiNote() {
+        $(".note").fadeOut();
+        $("button[id^=mostraNoteButton]").text("Mostra note").attr({ "onClick": "mostraNote()" });
+    }

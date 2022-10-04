@@ -7,6 +7,7 @@
     include_once("config/config.php");
     // include_once("classes/user.php");
     include_once("classes/richiesta.php"); 
+    include_once("classes/assistito.php");
     try {
         $tmp = json_decode($_POST['richiesta']);
         $username = $_POST['username'];
@@ -15,12 +16,26 @@
         if ($tmp != null/* && $user != null*/) {
             $ric = new Richiesta();
             
+            $assistito = new Assistito();
+            $assistito->setId($tmp->assistito->id);
+            $assistito->setNome($tmp->assistito->nome);
+            $assistito->setCognome($tmp->assistito->cognome);
+            $assistito->setNascita($tmp->assistito->nascita);
+            $assistito->setTelefono1($tmp->assistito->telefono1);
+            $assistito->setTelefono2($tmp->assistito->telefono2);
+            $assistito->setTelefono3($tmp->assistito->telefono3);
+            $assistito->setEmail($tmp->assistito->email);
+            $assistito->setCodiceFiscale($tmp->assistito->codiceFiscale);
+            $assistito->setNote($tmp->assistito->note);
+            $assistito->setIdUsca($tmp->assistito->idUsca);
+            $assistito->update($username,$token);
             $ric->setIdAssistito($tmp->idAssistito);
             $ric->setIdTipologia($tmp->idTipologia);
             $ric->setIdPriorita($tmp->idPriorita);
             $ric->setData($tmp->data);
             $ric->setNote($tmp->note);
             $ric->setCreatedBy($tmp->createdBy);
+            $ric->setNewStates($tmp->nuoviStati);
             $tmp=$ric;
 
             $out=$ric->insert($username,$token);

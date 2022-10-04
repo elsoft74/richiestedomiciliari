@@ -320,12 +320,12 @@ function buildAssistitoEditForm(target) {
 
 function cleanAssistitoEdit() {
     $(".assitito-input-form").val('');
-    $("#editAssistito").hide();
+    $("#editAssistito").modal("hide");
 }
 
 function cleanAssistitoInsert() {
     $(".assitito-input-form").val('');
-    $("#insertAssistito").hide();
+    $("#insertAssistito").modal("hide");
 }
 
 function showAssistiti(assistiti, user) {

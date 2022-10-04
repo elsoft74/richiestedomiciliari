@@ -24,7 +24,7 @@ buildHead();
             buildLogin();  
         }
         window.addEventListener('dataLoaded', function() {
-            buildInsertForm("insert");
+            buildInsertForm();
             showMenu(lu);
             $(".lds-grid").hide();
             changeActivity("swabs");

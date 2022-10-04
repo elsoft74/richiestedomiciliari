@@ -19,6 +19,7 @@ class Richiesta
     public $archivedDate;
     public $archivedBy;
     public $contatti;
+    public $newStates;
 
     public function setId($val){
         $this->id=$val;
@@ -146,6 +147,14 @@ class Richiesta
 
     public function getContatti(){
         return $this->contatti;
+    }
+
+    public function setNewStates($val){
+        $this->newStates=$val;
+    }
+
+    public function getNewStates(){
+        return $this->newStates;
     }
 
 
@@ -294,11 +303,20 @@ class Richiesta
                             array_push($contatti,$r['email']);
                         }
                         $tmp->contatti=json_encode($contatti);
+                        
                         $statiAttuali=[];
-                        $stato=new StdClass();
-                        $stato->date="2022-10-01 00:00:00";
-                        $stato->descrizione="Primo contatto";
-                        array_push($statiAttuali,$stato);
+                        $query = "SELECT a.created AS date, s.descrizione FROM `attivita_svolte` AS a JOIN `stati_attivita` AS s ON a.id_stato=s.id WHERE id_attivita = :id_attivita ORDER BY created";
+                        $stmt = $conn->prepare($query);
+                        $stmt->bindParam(':id_attivita',$tmp->id,PDO::PARAM_INT);
+                        $stmt->execute();
+                        $resStati = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+                        foreach ($resStati as $rs) {
+                            $stato = new StdClass();
+                            $stato->date = $rs['date'];
+                            $stato->descrizione = $rs['descrizione'];
+                            array_push($statiAttuali,$stato);
+                        }
                         $tmp->statiAttuali=json_encode($statiAttuali);
 
                         array_push($out->data, $tmp);
@@ -402,7 +420,29 @@ class Richiesta
                             
                             $this->setId($conn->lastInsertId());
 
-                            if ($this->id != 0) {
+                            $insStati = true;
+                            
+                            foreach ($this->getNewStates() as $stato){
+                                $query = "INSERT INTO `attivita_svolte` (
+                                    `id_attivita`,
+                                    `id_stato`,
+                                    `created_by`
+                                ) VALUES (:id_attivita,
+                                    :id_stato,
+                                    :created_by)";
+    
+                                $stmt = $conn->prepare($query);
+                                $stmt->bindParam(':id_attivita', $this->id, PDO::PARAM_INT);
+                                $stmt->bindParam(':id_stato', $stato, PDO::PARAM_INT);
+                                $stmt->bindParam(':created_by', $this->createdBy, PDO::PARAM_INT);
+                                $stmt->execute();
+    
+                                if ($conn->lastInsertId() == 0){
+                                    $insStati = $insStati && false;
+                                }
+                            }
+
+                            if ($this->id != 0 && $insStati) {
                                 $query="UPDATE `updates` SET last_update_ts=LOCALTIMESTAMP() WHERE table_name='richieste'";
                                     $stmt = $conn->prepare($query);
                                     $stmt->execute();
@@ -412,7 +452,11 @@ class Richiesta
                             } else {
                                 $out->errorInfo=$conn->errorInfo();
                                 $out->errorCode=$conn->errorCode();
-                                throw new Exception("Errore d'inserimento");
+                                if ($this->id==0){
+                                    throw new Exception("Errore d'inserimento");
+                                } else {
+                                    throw new Exception("Errore durante l'inserimento degli stati");
+                                }
                             } 
                         } else {
                             throw new Exception("OPERAZIONE-NON-PERMESSA");
