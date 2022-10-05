@@ -36,8 +36,13 @@
             $ric->setNote($tmp->note);
             $ric->setCreatedBy($tmp->createdBy);
             $ric->setNewStates($tmp->nuoviStati);
+            
+            if ($tmp->isArchived){
+                $ric->setIsArchived($tmp->isArchived);
+                $ric->setArchivedBy($tmp->archivedBy);
+                $ric->setArchivedDate((new DateTime())->format("Y-m-d H:i:s"));
+            }
             $tmp=$ric;
-
             $out=$ric->insert($username,$token);
             $out->debug=print_r($tmp,true);
         }

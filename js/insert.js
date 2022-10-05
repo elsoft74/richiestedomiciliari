@@ -35,7 +35,7 @@ function buildInsertForm() {
             stati: "statiAttuali",
             statiText: "Attività svolte",
             nuovoStato: "nuovoStato",
-            nuovoStatoText: "Descrivi l'attività svolta",
+            nuovoStatoText: "Cosa sto facendo",
             mostraNoteButton: "mostraNoteButton",
             idTamponePartenza: "idTamponePartenza",
             isArchived: "isArchived",
@@ -44,6 +44,7 @@ function buildInsertForm() {
             idButton1: "insertFormButton1",
             idButton2: "insertFormButton2",
             idButton3: "insertFormButton3",
+            indirizzo:"indirizzo"
         }
         var modal = $("#insert").addClass("modal")/*.addClass("fade")*/.attr({ "id": "insert", "tabindex": "-1", "role": "dialog", "aria-labelledby": attrs.titleId, "aria-hidden": "true" });
         var modalDialog = $("<div>").addClass("modal-dialog modal-lg").attr({ "role": "document" });
@@ -109,6 +110,13 @@ function buildInsertForm() {
         el = $("<label>").attr({ "for": attrs.codiceFiscale }).text("Codice Fiscale");
         divFormGroup.append(el);
         el = $("<input>").addClass("form-richiesta").addClass("form-control").attr({ "type": "text", "id": attrs.codiceFiscale })/*.prop("readonly", true)*/;
+        divFormGroup.append(el);
+        form.append(divFormGroup);
+
+        divFormGroup = $("<div>").addClass("col-md-12");
+        el = $("<label>").attr({ "for": attrs.indirizzo }).text("Indirizzo");
+        divFormGroup.append(el);
+        el = $("<input>").addClass("form-richiesta").addClass("form-control").attr({ "type": "text", "id": attrs.indirizzo })/*.prop("readonly", true)*/;
         divFormGroup.append(el);
         form.append(divFormGroup);
 

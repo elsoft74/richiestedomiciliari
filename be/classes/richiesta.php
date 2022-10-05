@@ -16,6 +16,7 @@ class Richiesta
     public $lastUpdateBy;
     public $deletedDate;
     public $deletedBy;
+    public $isArchived;
     public $archivedDate;
     public $archivedBy;
     public $contatti;
@@ -125,6 +126,14 @@ class Richiesta
         return $this->deletedBy;
     }
 
+    public function setIsArchived($val){
+        $this->isArchived=$val;
+    }
+
+    public function getIsArchived(){
+        return $this->isArchived;
+    }
+
     public function setArchivedBy($val){
         $this->archivedBy=$val;
     }
@@ -155,6 +164,27 @@ class Richiesta
 
     public function getNewStates(){
         return $this->newStates;
+    }
+
+    function __construct() {
+        $this->id = null;
+        $this->idAssistito = null;
+        $this->idTipologia = null;
+        $this->idPriorita = null;
+        $this->data = null;
+        $this->note = null;
+        $this->isactive = null;
+        $this->created = null;
+        $this->createdBy = null;
+        $this->lastUpdate = null;
+        $this->lastUpdateBy = null;
+        $this->deletedDate = null;
+        $this->deletedBy = null;
+        $this->archivedDate = null;
+        $this->archivedBy = null;
+        $this->contatti = null;
+        $this->newStates = null;
+        $this->isArchived = false;
     }
 
 
@@ -398,12 +428,14 @@ class Richiesta
                                 `id_assistito`,
                                 `id_tipologia`,
                                 `id_priorita`,
+                                `is_archived`,
                                 `data`,
                                 `note`,
                                 `created_by`
                             ) VALUES (:id_assistito,
                                 :id_tipologia,
                                 :id_priorita,
+                                :is_archived,
                                 :data,
                                 :note,
                                 :created_by)";
@@ -412,6 +444,7 @@ class Richiesta
                             $stmt->bindParam(':id_assistito', $this->idAssistito, PDO::PARAM_INT);
                             $stmt->bindParam(':id_tipologia', $this->idTipologia, PDO::PARAM_INT);
                             $stmt->bindParam(':id_priorita', $this->idPriorita, PDO::PARAM_INT);
+                            $stmt->bindParam(':is_archived', $this->isArchived, PDO::PARAM_INT);
                             $stmt->bindParam(':data', $this->data, PDO::PARAM_STR);
                             $stmt->bindParam(':note', $this->note, PDO::PARAM_STR);
                             $stmt->bindParam(':created_by', $this->createdBy, PDO::PARAM_INT);

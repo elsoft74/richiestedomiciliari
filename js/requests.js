@@ -219,7 +219,9 @@ function inserisci() {
         assistito.email = $("#email").val().trim();
         assistito.idUsca = $("#idUsca").val();
         assistito.note = $("#noteAssistito").val().trim();
+        assistito.indirizzo = $("#indirizzo").val().trim();
         richiesta.assistito=assistito;
+        richiesta.isArchived = false;
         var actualNotes = [];
         if ($("#noteRichiestaAttuali").val()!=undefined){
             actualNotes = JSON.parse($("#noteRichiestaAttuali").val());
@@ -296,124 +298,125 @@ function inserisci() {
     }
 }
 
-function aggiorna() {
-    var lu = sessionStorage.getItem("ricdomloggeduser");
-    if (lu != null) {
-        loggedUser = JSON.parse(lu);
-        var username = loggedUser.username;
-        var token = "123456";
-        var richiesta = {};
+// function aggiorna() {
+//     var lu = sessionStorage.getItem("ricdomloggeduser");
+//     if (lu != null) {
+//         loggedUser = JSON.parse(lu);
+//         var username = loggedUser.username;
+//         var token = "123456";
+//         var richiesta = {};
 
-        var actualNotes = [];
-        if ($("#noteRichiestaAttuali").val()!=undefined){
-            JSON.parse($("#noteRichiestaAttuali").val());
-        }
-        var newNoteText = $("#nuovaNotaRichiesta").val();
-        if (newNoteText.trim() != "") {
-            var newNoteDate = (new luxon.DateTime.fromJSDate(new Date())).toFormat("yyyy-MM-dd HH:mm:ss");
-            var newNoteObject = {};
-            newNoteObject.date = newNoteDate,
-            newNoteObject.note = newNoteText;
-            newNoteObject.createdBy = loggedUser.id;
-            actualNotes.push(newNoteObject);
-        }
-        richiesta.note = actualNotes;
-        richiesta.id = $("#idRichiestaEdit").val();
-        richiesta.idTipologia = $("#idTipologiaEdit").val();
-        richiesta.idPriorita = $("#idPrioritaEdit").val();
-        richiesta.data = $("#dataEdit").val();
-        richiesta.lastUpdateBy = "" + loggedUser.id;
-        if ($("#isArchived").val()!=undefined && JSON.parse($("#isArchived").val())){
-            richiesta.isArchived = true;
-            richiesta.archivedBy = "" + loggedUser.id;
-        }
-        richiesta.nuoviStati=[];
-        var nuoviStati = $("input[name='nuoviStati']:checked");
-        for (var i=0; i<nuoviStati.length;i++){
-            let tmp=$(nuoviStati[i]);
-            richiesta.nuoviStati.push(tmp.val());
-        }
-        var assistito = {};
-        assistito.id = richiesta.idAssistito;
-        assistito.nome = $("#nome").val().trim();
-        assistito.cognome = $("#cognome").val().trim();
-        assistito.codiceFiscale = $("#codiceFiscale").val().trim();
-        assistito.telefono1 = $("#telefono1").val().trim();
-        assistito.telefono2 = $("#telefono2").val().trim();
-        assistito.telefono3 = $("#telefono3").val().trim();
-        assistito.email = $("#email").val().trim();
-        assistito.idUsca = $("#idUsca").val();
-        richiesta.assistito=assistito;
+//         var actualNotes = [];
+//         if ($("#noteRichiestaAttuali").val()!=undefined){
+//             JSON.parse($("#noteRichiestaAttuali").val());
+//         }
+//         var newNoteText = $("#nuovaNotaRichiesta").val();
+//         if (newNoteText.trim() != "") {
+//             var newNoteDate = (new luxon.DateTime.fromJSDate(new Date())).toFormat("yyyy-MM-dd HH:mm:ss");
+//             var newNoteObject = {};
+//             newNoteObject.date = newNoteDate,
+//             newNoteObject.note = newNoteText;
+//             newNoteObject.createdBy = loggedUser.id;
+//             actualNotes.push(newNoteObject);
+//         }
+//         richiesta.note = actualNotes;
+//         richiesta.id = $("#idRichiestaEdit").val();
+//         richiesta.idTipologia = $("#idTipologiaEdit").val();
+//         richiesta.idPriorita = $("#idPrioritaEdit").val();
+//         richiesta.data = $("#dataEdit").val();
+//         richiesta.lastUpdateBy = "" + loggedUser.id;
+//         if ($("#isArchived").val()!=undefined && JSON.parse($("#isArchived").val())){
+//             richiesta.isArchived = true;
+//             richiesta.archivedBy = "" + loggedUser.id;
+//         }
+//         richiesta.nuoviStati=[];
+//         var nuoviStati = $("input[name='nuoviStati']:checked");
+//         for (var i=0; i<nuoviStati.length;i++){
+//             let tmp=$(nuoviStati[i]);
+//             richiesta.nuoviStati.push(tmp.val());
+//         }
+//         var assistito = {};
+//         assistito.id = richiesta.idAssistito;
+//         assistito.nome = $("#nome").val().trim();
+//         assistito.cognome = $("#cognome").val().trim();
+//         assistito.codiceFiscale = $("#codiceFiscale").val().trim();
+//         assistito.telefono1 = $("#telefono1").val().trim();
+//         assistito.telefono2 = $("#telefono2").val().trim();
+//         assistito.telefono3 = $("#telefono3").val().trim();
+//         assistito.email = $("#email").val().trim();
+//         assistito.idUsca = $("#idUsca").val();
+//         richiesta.assistito=assistito;
 
-        var err = checkDatiObbligatori(richiesta);
+//         var err = checkDatiObbligatori(richiesta);
 
-        if (err != '') {
-            Swal.fire({
-                html: err,
-                icon: 'error',
-                showCancelButton: false,
-                confirmButtonColor: '#3085d6',
-                confirmButtonText: 'Ok'
-            })
-        } else {
+//         if (err != '') {
+//             Swal.fire({
+//                 html: err,
+//                 icon: 'error',
+//                 showCancelButton: false,
+//                 confirmButtonColor: '#3085d6',
+//                 confirmButtonText: 'Ok'
+//             })
+//         } else {
 
-            var xhr = new XMLHttpRequest();
-            var url = "be/updateRequest.php";
-            xhr.open("POST", url, true);
-            xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-            xhr.onreadystatechange = function () {
-                if (xhr.readyState === 4 && xhr.status === 200) {
-                    var result = JSON.parse(xhr.responseText);
-                    if (result.status == "OK") {
-                        Swal.fire({
-                            text: "Operazione completata.",
-                            icon: 'info',
-                            showCancelButton: false,
-                            confirmButtonColor: '#3085d6',
-                            confirmButtonText: 'Ok'
-                        }).then((result) => {
-                            if (result.isConfirmed) {
-                                cleanEdit();
-                            }
-                        })
-                    } else {
-                        Swal.fire({
-                            text: "Impossibile completare l'operazione",
-                            icon: 'error',
-                            showCancelButton: false,
-                            confirmButtonColor: '#3085d6',
-                            confirmButtonText: 'Ok'
-                        })
-                    }
-                }
-            }
-            xhr.send("username=" + username + "&token=" + token + "&richiesta=" + JSON.stringify(richiesta));
-        }
-    }
-}
+//             var xhr = new XMLHttpRequest();
+//             var url = "be/updateRequest.php";
+//             xhr.open("POST", url, true);
+//             xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+//             xhr.onreadystatechange = function () {
+//                 if (xhr.readyState === 4 && xhr.status === 200) {
+//                     var result = JSON.parse(xhr.responseText);
+//                     if (result.status == "OK") {
+//                         Swal.fire({
+//                             text: "Operazione completata.",
+//                             icon: 'info',
+//                             showCancelButton: false,
+//                             confirmButtonColor: '#3085d6',
+//                             confirmButtonText: 'Ok'
+//                         }).then((result) => {
+//                             if (result.isConfirmed) {
+//                                 cleanEdit();
+//                             }
+//                         })
+//                     } else {
+//                         Swal.fire({
+//                             text: "Impossibile completare l'operazione",
+//                             icon: 'error',
+//                             showCancelButton: false,
+//                             confirmButtonColor: '#3085d6',
+//                             confirmButtonText: 'Ok'
+//                         })
+//                     }
+//                 }
+//             }
+//             xhr.send("username=" + username + "&token=" + token + "&richiesta=" + JSON.stringify(richiesta));
+//         }
+//     }
+// }
 
 var showElementUpdate = function (e, row) {
     var element = row.getData();
+    $("#idRichiesta").val(element.idRichiesta);
     $("#idAssistito").val(element.idAssistito);
     $("#nome").val(element.nome);
     $("#cognome").val(element.cognome);
     $("#email").val(element.email);
-    $("#indirizzo").val(element.indirizzo);
     $("#codiceFiscale").val(element.codiceFiscale);
+    $("#indirizzo").val(element.indirizzo);
     $("#noteAssistito").val(element.noteAssistito);
     $("#telefono1").val(element.telefono1);
     $("#telefono2").val(element.telefono2);
     $("#telefono3").val(element.telefono3);
-    $("#idRichiesta").val(element.idRichiesta);
     $("#idTipologia").val(element.idTipologia);
     $("#idPriorita").val(element.idPriorita);
     $("#idUsca").val(element.idUsca);
     $("#noteRichiestaAttuali").val(element.noteRichiesta);
     $("#data").val(((new luxon.DateTime.fromSQL(element.data)).toFormat("yyyy-MM-dd")));
     $("#actionType").val("update");
-    $("#insertFormButton1").attr({"onClick":"aggiorna()"});
-    $("#insertFormButton2").attr({"onClick":"cleanInsert()"}); 
-    if (element.noteRichiesta.length > 0) {
+    $("#insertFormButton1").attr({"onClick":"inserisci()"});
+    $("#insertFormButton2").attr({"onClick":"cleanInsert()"});
+    $("#nascita").val(((new luxon.DateTime.fromSQL(element.nascita)).toFormat("yyyy-MM-dd"))); 
+    if (JSON.parse(element.noteRichiesta).length > 0) {
         var table = new Tabulator("#noteRichiesta", {
             height: 170,
             data: element.noteRichiesta,           //load row data from array
@@ -450,7 +453,7 @@ var showElementUpdate = function (e, row) {
     } else {
         $("#noteRichiesta").parent().hide();
     }
-    if (element.statiAttuali.length > 0) {
+    if (JSON.parse(element.statiAttuali).length > 0) {
         var table = new Tabulator("#statiAttuali", {
             height: 170,
             data: element.statiAttuali,           //load row data from array
@@ -642,29 +645,29 @@ function checkDatiObbligatori(richiesta) {
     return out;
 }
 
-function checkAndShowMessage(result) {
-    if (result.status == "OK") {
-        Swal.fire({
-            text: "Operazione completata.",
-            icon: 'info',
-            showCancelButton: false,
-            confirmButtonColor: '#3085d6',
-            confirmButtonText: 'Ok'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                cleanEdit();
-            }
-        })
-    } else {
-        Swal.fire({
-            text: "Impossibile completare l'operazione",
-            icon: 'error',
-            showCancelButton: false,
-            confirmButtonColor: '#3085d6',
-            confirmButtonText: 'Ok'
-        })
-    }
-}
+// function checkAndShowMessage(result) {
+//     if (result.status == "OK") {
+//         Swal.fire({
+//             text: "Operazione completata.",
+//             icon: 'info',
+//             showCancelButton: false,
+//             confirmButtonColor: '#3085d6',
+//             confirmButtonText: 'Ok'
+//         }).then((result) => {
+//             if (result.isConfirmed) {
+//                 cleanEdit();
+//             }
+//         })
+//     } else {
+//         Swal.fire({
+//             text: "Impossibile completare l'operazione",
+//             icon: 'error',
+//             showCancelButton: false,
+//             confirmButtonColor: '#3085d6',
+//             confirmButtonText: 'Ok'
+//         })
+//     }
+// }
 
 var newRequest = function (e, row) {
     var element = row.getData();
@@ -672,8 +675,8 @@ var newRequest = function (e, row) {
     $("#nome").val(element.nome);
     $("#cognome").val(element.cognome);
     $("#email").val(element.email);
-    $("#indirizzo").val(element.indirizzo);
     $("#codiceFiscale").val(element.codiceFiscale);
+    $("#indirizzo").val(element.indirizzo);
     $("#noteAssistito").val(element.noteAssistito);
     $("#telefono1").val(element.telefono1);
     $("#telefono2").val(element.telefono2);
@@ -865,80 +868,76 @@ function confirmAndArchive() {
             confirmButtonText: 'Ok'
         }).then((result) => {
             if (result.isConfirmed) {
-                $("#isArchived").val(true)
-                if ($("#actionType").val()=="update") {
-                    aggiorna();
-                }
-                if ($("#actionType").val()=="insert"){
-                    inserisci();
-                }
+                $("#isArchived").val(true);
+                inserisci();
+
             }
         })
     }
 }
 
-function salvaNote() {
-    event.preventDefault();
-    var newNoteDate = $("#nuovaNotaDate").val() + " 00:00:00";
-    var newNoteText = $("#nuovaNotaText").val();
-    if (newNoteDate != "" && newNoteText.trim() != "") {
-        var lu = sessionStorage.getItem("ricdomloggeduser");
-        if (lu != null) {
-            loggedUser = JSON.parse(lu);
-            var actualNotes = JSON.parse($("#noteRichiestaAttuali").val());
-            var newNoteObject = {};
-            newNoteObject.date = newNoteDate,
-                newNoteObject.note = newNoteText;
-            newNoteObject.createdBy = loggedUser.id;
-            actualNotes.push(newNoteObject);
-            var username = loggedUser.username;
-            var token = "123456";
-            var richiesta = {};
-            richiesta.id = $("#idRichiestaNuovaNota").val();
-            richiesta.note = actualNotes;
-            var xhr = new XMLHttpRequest();
-            var url = "be/updateRequestNote.php";
-            xhr.open("POST", url, true);
-            xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-            xhr.onreadystatechange = function () {
-                if (xhr.readyState === 4 && xhr.status === 200) {
-                    var result = JSON.parse(xhr.responseText);
-                    if (result.status == "OK") {
-                        Swal.fire({
-                            text: "Operazione compeltata.",
-                            icon: 'info',
-                            showCancelButton: false,
-                            confirmButtonColor: '#3085d6',
-                            confirmButtonText: 'Ok'
-                        }).then((result) => {
-                            if (result.isConfirmed) {
-                                $("#modalNoteRichiesta").hide();
-                            }
-                        })
-                    } else {
-                        Swal.fire({
-                            text: "Errore durante l'aggiornamento.",
-                            icon: 'error',
-                            showCancelButton: false,
-                            confirmButtonColor: '#3085d6',
-                            confirmButtonText: 'Ok'
-                        })
-                    }
-                }
-            }
-            xhr.send("username=" + username + "&token=" + token + "&richiesta=" + JSON.stringify(richiesta));
-        }
+// function salvaNote() {
+//     event.preventDefault();
+//     var newNoteDate = $("#nuovaNotaDate").val() + " 00:00:00";
+//     var newNoteText = $("#nuovaNotaText").val();
+//     if (newNoteDate != "" && newNoteText.trim() != "") {
+//         var lu = sessionStorage.getItem("ricdomloggeduser");
+//         if (lu != null) {
+//             loggedUser = JSON.parse(lu);
+//             var actualNotes = JSON.parse($("#noteRichiestaAttuali").val());
+//             var newNoteObject = {};
+//             newNoteObject.date = newNoteDate,
+//                 newNoteObject.note = newNoteText;
+//             newNoteObject.createdBy = loggedUser.id;
+//             actualNotes.push(newNoteObject);
+//             var username = loggedUser.username;
+//             var token = "123456";
+//             var richiesta = {};
+//             richiesta.id = $("#idRichiestaNuovaNota").val();
+//             richiesta.note = actualNotes;
+//             var xhr = new XMLHttpRequest();
+//             var url = "be/updateRequestNote.php";
+//             xhr.open("POST", url, true);
+//             xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+//             xhr.onreadystatechange = function () {
+//                 if (xhr.readyState === 4 && xhr.status === 200) {
+//                     var result = JSON.parse(xhr.responseText);
+//                     if (result.status == "OK") {
+//                         Swal.fire({
+//                             text: "Operazione compeltata.",
+//                             icon: 'info',
+//                             showCancelButton: false,
+//                             confirmButtonColor: '#3085d6',
+//                             confirmButtonText: 'Ok'
+//                         }).then((result) => {
+//                             if (result.isConfirmed) {
+//                                 $("#modalNoteRichiesta").hide();
+//                             }
+//                         })
+//                     } else {
+//                         Swal.fire({
+//                             text: "Errore durante l'aggiornamento.",
+//                             icon: 'error',
+//                             showCancelButton: false,
+//                             confirmButtonColor: '#3085d6',
+//                             confirmButtonText: 'Ok'
+//                         })
+//                     }
+//                 }
+//             }
+//             xhr.send("username=" + username + "&token=" + token + "&richiesta=" + JSON.stringify(richiesta));
+//         }
 
-    } else {
-        Swal.fire({
-            text: "Data e testo sono obbligatori",
-            icon: 'error',
-            showCancelButton: false,
-            confirmButtonColor: '#3085d6',
-            confirmButtonText: 'Ok'
-        });
-    }
-}
+//     } else {
+//         Swal.fire({
+//             text: "Data e testo sono obbligatori",
+//             icon: 'error',
+//             showCancelButton: false,
+//             confirmButtonColor: '#3085d6',
+//             confirmButtonText: 'Ok'
+//         });
+//     }
+// }
 
 function getStatiAttivita(toBeCompleted) {
     var xhr = new XMLHttpRequest();
