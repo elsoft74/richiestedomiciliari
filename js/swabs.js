@@ -442,6 +442,16 @@ function updateTableDataTamponi() {
             var table = Tabulator.findTable("#mainSwabs")[0];
             var swabs = JSON.parse(sessionStorage.getItem("swabs"));
             if (swabs.length != 0) {
+                var rows = table.getRows();
+                var newIds = [];
+                swabs.forEach(el=>{
+                    newIds.push(parseInt(el.id));
+                });
+                rows.forEach(el=>{
+                    if (!newIds.includes(parseInt(el.getIndex()))){
+                        table.deleteRow(parseInt(el.getIndex()));
+                    }
+                })
                 table.updateOrAddData(swabs).then(function () {
                     setTimeout(checkNewData, 2000);
                 })
