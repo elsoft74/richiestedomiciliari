@@ -201,7 +201,7 @@ function buildInsertForm() {
         form.append(divFormGroup);
 
         divFormGroup = $("<div>").addClass("col-md-4");
-        el = $("<label>").attr({ "for": attrs.idTipologia }).text("Tipo di richiesta");
+        el = $("<label>").attr({ "for": attrs.idTipologia }).text("Tipo di attività");
         divFormGroup.append(el);
         el = $("<select>").addClass("form-richiesta").addClass("form-control").attr({ "id": attrs.idTipologia });
         var tipologie = JSON.parse(sessionStorage.getItem("tipologie"));
@@ -258,9 +258,9 @@ function buildInsertForm() {
         modalBody.append(form);
         modalContent.append(modalBody);
 
-        el = $("<button>").addClass("btn").addClass("btn-warning").text("Conferma ed Archivia").attr({ "id": attrs.idButton3, "onClick": fun3 });
+        el = $("<button>").addClass("btn").addClass("btn-warning").text("Salva ed Archivia").attr({ "id": attrs.idButton3, "onClick": fun3 });
         modalFooter.append(el);
-        el = $("<button>").addClass("btn").addClass("btn-primary").text("Conferma").attr({ "id": attrs.idButton1, "onClick": fun1 });
+        el = $("<button>").addClass("btn").addClass("btn-primary").text("Programma").attr({ "id": attrs.idButton1, "onClick": fun1 });
         modalFooter.append(el);
         el = $("<button>").addClass("btn").addClass("btn-secondary").text("Annulla").attr({ "id": attrs.idButton2, "onClick": fun2/*"data-dismiss":"modal"*/ });
         modalFooter.append(el);

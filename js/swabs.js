@@ -93,7 +93,7 @@ function showSwabs(swabs, user) {
                     var el = document.createElement("div");
                     el.style.backgroundColor = "#0d6efd";
                     el.style.color = "#ffffff";
-                    el.innerText = "Aggiungi richiesta";
+                    el.innerText = "Aggiungi attività";
                     return el;
                 }
             },

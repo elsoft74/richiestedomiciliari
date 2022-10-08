@@ -105,7 +105,7 @@ function showRequests(richieste, user) {
                     el1.style.backgroundColor = "#0d6efd";
                     var el2 = document.createElement("span");
                     el2.style.color = "#ffffff";
-                    el2.innerText = "Aggiungi richiesta";
+                    el2.innerText = "Aggiungi attività";
                     el1.append(el2);
                     return el1;
                 }
@@ -118,7 +118,7 @@ function showRequests(richieste, user) {
                     el1.style.backgroundColor = "#0d6efd";
                     var el2 = document.createElement("span");
                     el2.style.color = "#ffffff";
-                    el2.innerText = "Modifica richiesta";
+                    el2.innerText = "Modifica attività";
                     el1.append(el2);
                     return el1;
                 }
@@ -131,37 +131,11 @@ function showRequests(richieste, user) {
                     el1.style.backgroundColor = "red";
                     var el2 = document.createElement("span");
                     el2.style.color = "#ffffff";
-                    el2.innerText = "Cancella richiesta";
+                    el2.innerText = "Cancella attività";
                     el1.append(el2);
                     return el1;
                 }
             },
-            // {
-            //     title: "", width: 8, field: "isArchived", width: 10, hozAlign: "center", vertAlign: "middle", editor: false, visible: checkUserPermission(user, "canArchiveRequest"), cellClick: checkUserPermission(user, "canEditRequest") ? archiveElement : null, formatter: function (cell, formatterParams, onRendered) {
-            //         return (cell.getValue() != null) ? (cell.getValue() ? '<span class="material-icons-outlined" style="color: green">unarchive</span>' : '<span class="material-icons-outlined" style="color: green">archive</span>') : "";
-            //     }, headerSort: false, tooltip: function (e, cell, onRendered) {
-            //         var el1 = document.createElement("div");
-            //         el1.style.backgroundColor = "#0d6efd";
-            //         var el2 = document.createElement("span");
-            //         el2.style.color = "#ffffff";
-            //         el2.innerText = "Archiviazione/Ripristino richiesta";
-            //         el1.append(el2);
-            //         return el1;
-            //     }
-            // },
-            // {
-            //     title: "", width: 8, field: "noteRichiesta", vertAlign: "middle", editor: false/*, formatter: "textarea" */, cellClick: buildNoteRichiestaModal, formatter: function (cell, formatterParams, onRendered) {
-            //         return (cell.getValue() == null) ? '' : '<span class="material-icons-outlined">notes</span>';
-            //     }, headerSort: false, tooltip: function (e, cell, onRendered) {
-            //         var el1 = document.createElement("div");
-            //         el1.style.backgroundColor = "#0d6efd";
-            //         var el2 = document.createElement("span");
-            //         el2.style.color = "#ffffff";
-            //         el2.innerText = "Note richiesta";
-            //         el1.append(el2);
-            //         return el1;
-            //     }
-            // },
             {
                 columns: [
                     { title: "#", field: "idRichiesta", editor: false, hozAlign: "center", vertAlign: "middle", visible: checkUserPermission(user, "canViewId") },
@@ -298,102 +272,6 @@ function inserisci() {
         }
     }
 }
-
-// function aggiorna() {
-//     var lu = sessionStorage.getItem("ricdomloggeduser");
-//     if (lu != null) {
-//         loggedUser = JSON.parse(lu);
-//         var username = loggedUser.username;
-//         var token = "123456";
-//         var richiesta = {};
-
-//         var actualNotes = [];
-//         if ($("#noteRichiestaAttuali").val()!=undefined){
-//             JSON.parse($("#noteRichiestaAttuali").val());
-//         }
-//         var newNoteText = $("#nuovaNotaRichiesta").val();
-//         if (newNoteText.trim() != "") {
-//             var newNoteDate = (new luxon.DateTime.fromJSDate(new Date())).toFormat("yyyy-MM-dd HH:mm:ss");
-//             var newNoteObject = {};
-//             newNoteObject.date = newNoteDate,
-//             newNoteObject.note = newNoteText;
-//             newNoteObject.createdBy = loggedUser.id;
-//             actualNotes.push(newNoteObject);
-//         }
-//         richiesta.note = actualNotes;
-//         richiesta.id = $("#idRichiestaEdit").val();
-//         richiesta.idTipologia = $("#idTipologiaEdit").val();
-//         richiesta.idPriorita = $("#idPrioritaEdit").val();
-//         richiesta.data = $("#dataEdit").val();
-//         richiesta.lastUpdateBy = "" + loggedUser.id;
-//         if ($("#isArchived").val()!=undefined && JSON.parse($("#isArchived").val())){
-//             richiesta.isArchived = true;
-//             richiesta.archivedBy = "" + loggedUser.id;
-//         }
-//         richiesta.nuoviStati=[];
-//         var nuoviStati = $("input[name='nuoviStati']:checked");
-//         for (var i=0; i<nuoviStati.length;i++){
-//             let tmp=$(nuoviStati[i]);
-//             richiesta.nuoviStati.push(tmp.val());
-//         }
-//         var assistito = {};
-//         assistito.id = richiesta.idAssistito;
-//         assistito.nome = $("#nome").val().trim();
-//         assistito.cognome = $("#cognome").val().trim();
-//         assistito.codiceFiscale = $("#codiceFiscale").val().trim();
-//         assistito.telefono1 = $("#telefono1").val().trim();
-//         assistito.telefono2 = $("#telefono2").val().trim();
-//         assistito.telefono3 = $("#telefono3").val().trim();
-//         assistito.email = $("#email").val().trim();
-//         assistito.idUsca = $("#idUsca").val();
-//         richiesta.assistito=assistito;
-
-//         var err = checkDatiObbligatori(richiesta);
-
-//         if (err != '') {
-//             Swal.fire({
-//                 html: err,
-//                 icon: 'error',
-//                 showCancelButton: false,
-//                 confirmButtonColor: '#3085d6',
-//                 confirmButtonText: 'Ok'
-//             })
-//         } else {
-
-//             var xhr = new XMLHttpRequest();
-//             var url = "be/updateRequest.php";
-//             xhr.open("POST", url, true);
-//             xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-//             xhr.onreadystatechange = function () {
-//                 if (xhr.readyState === 4 && xhr.status === 200) {
-//                     var result = JSON.parse(xhr.responseText);
-//                     if (result.status == "OK") {
-//                         Swal.fire({
-//                             text: "Operazione completata.",
-//                             icon: 'info',
-//                             showCancelButton: false,
-//                             confirmButtonColor: '#3085d6',
-//                             confirmButtonText: 'Ok'
-//                         }).then((result) => {
-//                             if (result.isConfirmed) {
-//                                 cleanEdit();
-//                             }
-//                         })
-//                     } else {
-//                         Swal.fire({
-//                             text: "Impossibile completare l'operazione",
-//                             icon: 'error',
-//                             showCancelButton: false,
-//                             confirmButtonColor: '#3085d6',
-//                             confirmButtonText: 'Ok'
-//                         })
-//                     }
-//                 }
-//             }
-//             xhr.send("username=" + username + "&token=" + token + "&richiesta=" + JSON.stringify(richiesta));
-//         }
-//     }
-// }
 
 var showElementUpdate = function (e, row) {
     var element = row.getData();
@@ -634,6 +512,12 @@ var cellPopupFormatter = function (title, text) {
 
 function checkDatiObbligatori(richiesta) {
     let out = '';
+    if(!richiesta.isArchived && richiesta.idTipologia==""){
+        out+="<p>Non hai selezionato la tipologia di attività da programmare</p>";
+    }
+    if(!richiesta.isArchived && richiesta.idPriorita==""){
+        out+="<p>Non hai selezionato la priorità dell'attività da programmare</p>";
+    }
     if (richiesta.data == null || richiesta.data == "") {
         out += "<p>La data è obbligatoria</p>";
     }
@@ -645,30 +529,6 @@ function checkDatiObbligatori(richiesta) {
     }
     return out;
 }
-
-// function checkAndShowMessage(result) {
-//     if (result.status == "OK") {
-//         Swal.fire({
-//             text: "Operazione completata.",
-//             icon: 'info',
-//             showCancelButton: false,
-//             confirmButtonColor: '#3085d6',
-//             confirmButtonText: 'Ok'
-//         }).then((result) => {
-//             if (result.isConfirmed) {
-//                 cleanEdit();
-//             }
-//         })
-//     } else {
-//         Swal.fire({
-//             text: "Impossibile completare l'operazione",
-//             icon: 'error',
-//             showCancelButton: false,
-//             confirmButtonColor: '#3085d6',
-//             confirmButtonText: 'Ok'
-//         })
-//     }
-// }
 
 var newRequest = function (e, row) {
     var element = row.getData();
@@ -749,109 +609,6 @@ function updateRequestData() {
     }
 }
 
-// var buildNoteRichiestaModal = function (e, row) {
-//     var data = row.getData();
-//     var noteRichiesta = null;
-//     try {
-//         noteRichiesta = JSON.parse(data.noteRichiesta);
-//     } catch {
-//         noteRichiesta = (data.noteRichiesta != null && data.noteRichiesta != "") ? [{ "date": "1970-01-01", "nota": data.noteRichiesta }] : [];
-//     }
-//     $("#modalNoteRichiesta").html("");
-//     var modal = $("#modalNoteRichiesta").addClass("modal")/*.addClass("fade")*/.attr({ "tabindex": "-1", "role": "dialog", "aria-hidden": "true" });
-//     var modalDialog = $("<div>").addClass("modal-dialog").attr({ "role": "document" });
-//     var modalContent = $("<div>").addClass("modal-content");
-//     var modalHeader = $("<div>").addClass("modal-header");
-//     var modalBody = $("<div>").addClass("modal-body");
-//     var modalFooter = $("<div>").addClass("modal-footer");
-
-//     var el = $("<h5>").addClass("modal-title").html("Note richiesta");
-//     modalHeader.append(el);
-//     modalContent.append(modalHeader);
-
-//     var form = $("<form>");
-//     var div1 = $("<div>");
-//     el = $("<input>").attr({ "type": "hidden", "id": "idRichiestaNuovaNota" }).val(data.idRichiesta);
-//     form.append(el);
-//     el = $("<input>").attr({ "type": "hidden", "id": "noteRichiestaAttuali" }).val(JSON.stringify(noteRichiesta));
-//     form.append(el);
-//     var div3 = $("<div>").addClass("col").attr({ "id": "elencoNote" });
-//     form.append(div3);
-//     div3 = $("<div>").addClass("col").attr({ "id": "nuovaNota" });
-//     var div4 = $("<div>").addClass("col").addClass("date");
-//     el = $("<label>").text("Data Nota").attr({ "for": "nuovaNotaDate" });
-//     div4.append(el);
-//     el = $("<input>").addClass("form-richiesta").addClass("form-control").attr({ "type": "date", "id": "nuovaNotaDate" });
-//     div4.append(el);
-//     var div5 = $("<div>").addClass("input-group-addon");
-//     el = $("<span>").addClass("glyphicon glyphicon-th");
-//     div5.append(el);
-//     div4.append(div5);
-//     div5 = $("<div>").addClass("form-group");
-//     el = $("<label>").text("Data Nota").attr({ "for": "nuovaNotaText" });
-//     div5.append(el);
-//     el = $("<textarea>").addClass("form-richiesta").addClass("form-control").attr({ "type": "text", "id": "nuovaNotaText" });
-//     div5.append(el);
-//     el = $("<button>").addClass("btn").addClass("btn-primary").text("Salva").attr({ "id": "salvaNotaButton", "onClick": "salvaNote()" });
-//     div5.append(el);
-//     div4.append(div5);
-//     div3.append(div4);
-//     form.append(div3);
-//     div1.append(form);
-//     el = $("<button>").addClass("btn").addClass("btn-primary").text("Aggiungi nota").attr({ "id": "aggiungiNotaButton", "onClick": 'mostraFormNuovaNota()' });
-//     div1.append(el);
-
-
-//     modalBody.append(div1);
-//     modalContent.append(modalBody);
-
-//     el = $("<button>").addClass("btn").addClass("btn-primary").text("Chiudi").attr({ "onClick": '$("#modalNoteRichiesta").hide()' });
-//     modalFooter.append(el);
-//     modalContent.append(modalFooter);
-
-//     modalDialog.append(modalContent);
-//     modal.append(modalDialog);
-//     var table = new Tabulator("#elencoNote", {
-//         data: noteRichiesta,           //load row data from array
-//         layout: "fitColumns",      //fit columns to width of table
-//         responsiveLayout: "collapse",  //hide columns that dont fit on the table
-//         addRowPos: "top",          //when adding a new row, add it to the top of the table
-//         history: true,             //allow undo and redo actions on the table
-//         pagination: "local",       //paginate the data
-//         paginationSize: 12,         //allow 7 rows per page of data
-//         paginationCounter: "rows", //display count of paginated rows in footer
-//         movableColumns: true,      //allow column order to be changed
-//         columns: [                 //define the table columns
-//             {
-//                 title: "Data", width: 120, field: "date", editor: false, hozAlign: "center", vertAlign: "middle", formatter: "datetime", formatterParams: {
-//                     outputFormat: "dd-MM-yyyy",
-//                     invalidPlaceholder: "(data non valida)",
-//                     timezone: "Europe/Rome",
-//                 }, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like"
-//             },
-
-//             {
-//                 title: "Nota", field: "note", editor: false, hozAlign: "center", vertAlign: "middle", cellClick: mostraNotaEstesa, tooltip: function (e, cell, onRendered) {
-//                     var el1 = document.createElement("div");
-//                     el1.style.backgroundColor = "#0d6efd";
-//                     var el2 = document.createElement("span");
-//                     el2.style.color = "#ffffff";
-//                     el2.innerText = "Leggi tutto";
-//                     el1.append(el2);
-//                     return el1;
-//                 }
-//             },
-//         ]
-//     });
-//     $("#nuovaNota").hide();
-//     $("#modalNoteRichiesta").modal("show");
-// }
-
-// function mostraFormNuovaNota() {
-//     $("#nuovaNota").show();
-//     $("#aggiungiNotaButton").hide();
-// }
-
 function confirmAndArchive() {
     if($("input[name='nuoviStati']:checked").length==0){
         Swal.fire({
@@ -863,7 +620,7 @@ function confirmAndArchive() {
         })
     } else {
         Swal.fire({
-            html: "<p>Vuoi archiviare la richiesta?</p><p>Per future operazioni sul paziente sarà necessario creare una nuova richiesta</p>",
+            html: "<p>Vuoi archiviare l'attività?</p><p>Per future operazioni sul paziente sarà necessario crearne una nuova.</p>",
             icon: 'info',
             showCancelButton: true,
             confirmButtonColor: '#3085d6',
@@ -877,69 +634,6 @@ function confirmAndArchive() {
         })
     }
 }
-
-// function salvaNote() {
-//     event.preventDefault();
-//     var newNoteDate = $("#nuovaNotaDate").val() + " 00:00:00";
-//     var newNoteText = $("#nuovaNotaText").val();
-//     if (newNoteDate != "" && newNoteText.trim() != "") {
-//         var lu = sessionStorage.getItem("ricdomloggeduser");
-//         if (lu != null) {
-//             loggedUser = JSON.parse(lu);
-//             var actualNotes = JSON.parse($("#noteRichiestaAttuali").val());
-//             var newNoteObject = {};
-//             newNoteObject.date = newNoteDate,
-//                 newNoteObject.note = newNoteText;
-//             newNoteObject.createdBy = loggedUser.id;
-//             actualNotes.push(newNoteObject);
-//             var username = loggedUser.username;
-//             var token = "123456";
-//             var richiesta = {};
-//             richiesta.id = $("#idRichiestaNuovaNota").val();
-//             richiesta.note = actualNotes;
-//             var xhr = new XMLHttpRequest();
-//             var url = "be/updateRequestNote.php";
-//             xhr.open("POST", url, true);
-//             xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-//             xhr.onreadystatechange = function () {
-//                 if (xhr.readyState === 4 && xhr.status === 200) {
-//                     var result = JSON.parse(xhr.responseText);
-//                     if (result.status == "OK") {
-//                         Swal.fire({
-//                             text: "Operazione compeltata.",
-//                             icon: 'info',
-//                             showCancelButton: false,
-//                             confirmButtonColor: '#3085d6',
-//                             confirmButtonText: 'Ok'
-//                         }).then((result) => {
-//                             if (result.isConfirmed) {
-//                                 $("#modalNoteRichiesta").hide();
-//                             }
-//                         })
-//                     } else {
-//                         Swal.fire({
-//                             text: "Errore durante l'aggiornamento.",
-//                             icon: 'error',
-//                             showCancelButton: false,
-//                             confirmButtonColor: '#3085d6',
-//                             confirmButtonText: 'Ok'
-//                         })
-//                     }
-//                 }
-//             }
-//             xhr.send("username=" + username + "&token=" + token + "&richiesta=" + JSON.stringify(richiesta));
-//         }
-
-//     } else {
-//         Swal.fire({
-//             text: "Data e testo sono obbligatori",
-//             icon: 'error',
-//             showCancelButton: false,
-//             confirmButtonColor: '#3085d6',
-//             confirmButtonText: 'Ok'
-//         });
-//     }
-// }
 
 function getStatiAttivita(toBeCompleted) {
     var xhr = new XMLHttpRequest();
