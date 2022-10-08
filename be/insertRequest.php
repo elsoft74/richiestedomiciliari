@@ -28,6 +28,7 @@
             $assistito->setCodiceFiscale($tmp->assistito->codiceFiscale);
             $assistito->setNote($tmp->assistito->note);
             $assistito->setIdUsca($tmp->assistito->idUsca);
+            $assistito->setIndirizzo($tmp->assistito->indirizzo);
             $assistito->update($username,$token);
             $ric->setIdAssistito($tmp->idAssistito);
             $ric->setIdTipologia($tmp->idTipologia);

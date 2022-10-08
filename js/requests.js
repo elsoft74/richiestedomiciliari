@@ -693,7 +693,8 @@ var newRequest = function (e, row) {
     
     $("#actionType").val("insert");
     $("#insertFormButton1").attr({"onClick":"inserisci()"});
-    $("#insertFormButton2").attr({"onClick":"cleanInsert()"});  
+    $("#insertFormButton2").attr({"onClick":"cleanInsert()"});
+    $("#isArchived").val(false)  
     $("#insert").modal("show");
 }
 
