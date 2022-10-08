@@ -843,7 +843,7 @@ public function archive($username,$token)
             $conn=DB::conn();
             if ($conn!=null){
                 try {
-                    $query="SELECT id,descrizione FROM `stati_attivita` WHERE `is_active`=1";
+                    $query="SELECT id,descrizione FROM `stati_attivita` WHERE `is_active`=1 ORDER BY descrizione";
                     
                     $stmt = $conn->prepare($query);
                     $stmt->execute();
