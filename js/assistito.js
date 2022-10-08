@@ -298,7 +298,7 @@ function aggiornaAssistito() {
 }
 
 var showAssistitoUpdate = function (e, row) {
-    $("#editAssistito").show();
+    $("#editAssistito").modal("show");
     var element = row.getData();
     $("#idAssistito_Edit").val((element.hasOwnProperty("idAssistito")) ? element.idAssistito : element.id);
     $("#idUscaAssistitoEdit").val(element.idUsca);

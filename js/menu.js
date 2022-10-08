@@ -16,10 +16,10 @@ function showMenu(user) {
         div3.attr("id", "loginbutton");
         div3.append(button);
         div2.text(user.nome + " " + user.cognome + ((actualUsca!=null)?(" ("+getUscaNameFromId(actualUsca)+")"):""));
-        button = $("<button>").addClass("btn").addClass('btn-primary btn-block assistiti-form menu-button').attr({"onClick":'$("#insertAssistito").show()','id':'requestInsertButton'}).text("Nuovo Paziente");
+        button = $("<button>").addClass("btn").addClass('btn-primary btn-block assistiti-form menu-button').attr({"onClick":'$("#insertAssistito").modal("show")','id':'requestInsertButton'}).text("Nuovo Paziente");
         div1.append(button);
         if(user.permissions.canCreateUser){
-            button = $("<button>").addClass('btn btn-primary btn-block users-form menu-button').attr({"onClick":'$("#insertUser").show()','id':'userInsertButton'}).text("Nuovo Utente");
+            button = $("<button>").addClass('btn btn-primary btn-block users-form menu-button').attr({"onClick":'$("#insertUser").modal("show")','id':'userInsertButton'}).text("Nuovo Utente");
             div1.append(button);
             button = $("<button>").addClass('btn btn-primary btn-block home-form assistiti-form swabs-form requests-form menu-button').attr({"onClick":'window.open("users.php","_self")','id':'showUserButton'}).text("Utenti");
             div1.append(button);
