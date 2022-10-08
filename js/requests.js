@@ -218,12 +218,13 @@ function inserisci() {
         assistito.telefono3 = $("#telefono3").val().trim();
         assistito.email = $("#email").val().trim();
         assistito.idUsca = $("#idUsca").val();
+        richiesta.idUsca = $("#idUsca").val();
         assistito.note = $("#noteAssistito").val().trim();
         assistito.indirizzo = $("#indirizzo").val().trim();
         richiesta.assistito=assistito;
         richiesta.isArchived = false;
         var actualNotes = [];
-        if ($("#noteRichiestaAttuali").val()!=undefined){
+        if ($("#noteRichiestaAttuali").val()!=""){
             actualNotes = JSON.parse($("#noteRichiestaAttuali").val());
         }
         var newNoteText = $("#nuovaNotaRichiesta").val().trim();

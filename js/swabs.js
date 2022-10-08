@@ -16,7 +16,7 @@ function showSwabs(swabs, user) {
 
         columns: [                 //define the table columns
 
-            { title: "", field: "id", width: 10, editor: false, hozAlign: "center", vertAlign: "middle", visible: false },
+            { title: "", field: "id", width: 10, editor: false, hozAlign: "center", vertAlign: "middle", visible:true },
 
             { title: "#", field: "idAssistito", width: 10, editor: false, hozAlign: "center", vertAlign: "middle", visible: checkUserPermission(user, "canViewId") },
 
@@ -80,6 +80,7 @@ function showSwabs(swabs, user) {
                 }, tooltip: function (e, cell, onRendered) {
                     var el = document.createElement("div");
                     el.style.backgroundColor = "#0d6efd";
+                    el.style.color = "#ffffff";
                     el.innerText = "Modifica stato";
                     return el;
                 }
@@ -91,6 +92,7 @@ function showSwabs(swabs, user) {
                 }, headerSort: false, tooltip: function (e, cell, onRendered) {
                     var el = document.createElement("div");
                     el.style.backgroundColor = "#0d6efd";
+                    el.style.color = "#ffffff";
                     el.innerText = "Aggiungi richiesta";
                     return el;
                 }
@@ -101,6 +103,7 @@ function showSwabs(swabs, user) {
                 }, tooltip: function (e, cell, onRendered) {
                     var el = document.createElement("div");
                     el.style.backgroundColor = "#0d6efd";
+                    el.style.color = "#ffffff";
                     el.innerText = "Note assistito";
                     return el;
                 }
