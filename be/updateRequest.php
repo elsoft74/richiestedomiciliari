@@ -31,8 +31,8 @@
             $assistito->setIdUsca($tmp->assistito->idUsca);
             $assistito->update($username,$token);
             $ric->setIdAssistito($tmp->idAssistito);
-            $ric->setIdTipologia($tmp->idTipologia);
-            $ric->setIdPriorita($tmp->idPriorita);
+            $ric->setIdTipologia(($tmp->idTipologia!="")?$tmp->idTipologia:null);
+            $ric->setIdPriorita(($tmp->idPriorita!="")?$tmp->idPriorita:null);
             $ric->setData($tmp->data);
             $ric->setNote($tmp->note);
             $ric->setCreatedBy($tmp->createdBy);

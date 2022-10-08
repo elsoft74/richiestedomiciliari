@@ -205,9 +205,11 @@ function buildInsertForm() {
         divFormGroup.append(el);
         el = $("<select>").addClass("form-richiesta").addClass("form-control").attr({ "id": attrs.idTipologia });
         var tipologie = JSON.parse(sessionStorage.getItem("tipologie"));
+        let option = $("<option>").attr({ "value": "" }).text("");
+        el.append(option);
         if (tipologie != null) {
             tipologie.forEach(element => {
-                let option = $("<option>").attr({ "value": element.id }).text(element.descrizione);
+                option = $("<option>").attr({ "value": element.id }).text(element.descrizione);
                 el.append(option);
             });
         }
@@ -219,9 +221,11 @@ function buildInsertForm() {
         divFormGroup.append(el);
         el = $("<select>").addClass("form-richiesta").addClass("form-control").attr({ "id": attrs.idPriorita });
         var priorita = JSON.parse(sessionStorage.getItem("priorita"));
+        option = $("<option>").attr({ "value": "" }).text("");
+        el.append(option);
         if (priorita != null) {
             priorita.forEach(element => {
-                let option = $("<option>").attr({ "value": element.id }).text(element.descrizione);
+                option = $("<option>").attr({ "value": element.id }).text(element.descrizione);
                 el.append(option);
             });
         }
