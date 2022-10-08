@@ -187,7 +187,9 @@ function buildInsertForm() {
         divFormGroup.append(el);
         form.append(divFormGroup);
 
-        divFormGroup = $("<div>").addClass("col-md-4");
+        el = $("<label>").text("Cosa sto programmando").attr({"for":"datiNuovaRichiesta"});
+        form.append(el);
+        divFormGroup = $("<div>").attr({"id":"datiNuovaRichiesta"}).addClass("col-md-4");
         div4 = $("<div>").addClass("col").addClass("date");
         el = $("<label>").text("Data Programmazione");
         div4.append(el);
