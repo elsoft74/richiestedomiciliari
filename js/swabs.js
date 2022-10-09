@@ -492,7 +492,7 @@ function updateTableDataTamponi() {
         if (toBeCompleted.swabs) {
             waitingForDataTamponi = false;
             var table = Tabulator.findTable("#mainSwabs")[0];
-            var swabs = JSON.parse(sessionStorage.getItem("swabs"));
+            //var swabs = JSON.parse(sessionStorage.getItem("swabs"));
             if (swabs.length != 0) {
                 var rows = table.getRows();
                 var newIds = [];
@@ -551,7 +551,7 @@ function updateTableDataTamponi() {
             waitingForDataTamponi = false;
             sessionStorage.setItem("waitingForDataTamponi", JSON.stringify(waitingForDataTamponi));
             var table = Tabulator.findTable("#mainSwabs")[0];
-            var swabs = JSON.parse(sessionStorage.getItem("swabs"));
+            //var swabs = JSON.parse(sessionStorage.getItem("swabs"));
             if (swabs.length != 0) {
                 var rows = table.getRows();
                 var newIds = [];
