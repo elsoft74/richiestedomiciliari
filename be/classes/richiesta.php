@@ -423,7 +423,7 @@ class Richiesta
                         $stmt->execute();
                         $res=$stmt->fetch(PDO::FETCH_ASSOC);
                         if (User::checkToken($token) && $res && $res['is_active']==1 AND User::checkCanCreateRequest($res['role_id'])){
-                            $this->idUsca=$res['id_usca'];
+                            // $this->idUsca=$res['id_usca'];
                             $query = "INSERT INTO `richieste` (
                                 `id_assistito`,
                                 `id_tipologia`,

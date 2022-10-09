@@ -521,7 +521,7 @@ function checkDatiObbligatori(richiesta) {
     if (richiesta.data == null || richiesta.data == "") {
         out += "<p>La data è obbligatoria</p>";
     }
-    if (richiesta.assistito.idUsca == null){
+    if (!richiesta.isArchived && richiesta.assistito.idUsca == null){
         out += "<p>Non è selezionato alcun Team</p>";
     }
     if (richiesta.nuoviStati.length==0){

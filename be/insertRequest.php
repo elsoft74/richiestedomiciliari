@@ -31,8 +31,8 @@
             $assistito->setIndirizzo($tmp->assistito->indirizzo);
             $assistito->update($username,$token);
             $ric->setIdAssistito($tmp->idAssistito);
-            $ric->setIdTipologia($tmp->idTipologia);
-            $ric->setIdPriorita($tmp->idPriorita);
+            $ric->setIdTipologia(($tmp->idTipologia!="")?$tmp->idTipologia:null);
+            $ric->setIdPriorita(($tmp->idPriorita!="")?$tmp->idPriorita:null);
             $ric->setData($tmp->data);
             $ric->setNote($tmp->note);
             $ric->setCreatedBy($tmp->createdBy);
@@ -43,9 +43,8 @@
                 $ric->setArchivedBy($tmp->archivedBy);
                 $ric->setArchivedDate((new DateTime())->format("Y-m-d H:i:s"));
             }
-            $tmp=$ric;
             $out=$ric->insert($username,$token);
-            $out->debug=print_r($tmp,true);
+            $out->debug=print_r($ric,true);
         }
     } catch (Exception $ex) {
         $out->error = $ex->getMessage();
