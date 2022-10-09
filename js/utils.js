@@ -103,6 +103,10 @@ function getData(toBeCompleted) {
     var arc = sessionStorage.getItem("mostraStorico");
     var xhr = new XMLHttpRequest();
     var url = "be/getdata.php";
+    var activeUsca = sessionStorage.getItem("activeUsca");
+    if (activeUsca==null){
+        activeUsca="ALL";
+    }
     xhr.open("POST", url, true);
     xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
     xhr.onreadystatechange = function () {
@@ -130,7 +134,7 @@ function getData(toBeCompleted) {
             }
         }
     }
-    xhr.send("lastRead=" + sessionStorage.getItem("lastRead")+"&arc="+arc);
+    xhr.send("lastRead=" + sessionStorage.getItem("lastRead")+"&arc="+arc+"&activeUsca="+activeUsca);
 }
 
 function changeActivity(val){
