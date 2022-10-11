@@ -1,125 +1,247 @@
 function showSwabs(swabs, user) {
     $("#mainSwabs").html("");
-
-    var table = new Tabulator("#mainSwabs", {
-        height: 800,
-        data: swabs,           //load row data from array 
-        layout: "fitColumns",      //fit columns to width of table
-        responsiveLayout: "collapse",  //hide columns that dont fit on the table
-        //tooltips: true,            //show tool tips on cells
-        addRowPos: "top",          //when adding a new row, add it to the top of the table
-        history: true,             //allow undo and redo actions on the table
-        pagination: "local",       //paginate the data
-        paginationSize: 12,         //allow 7 rows per page of data
-        paginationCounter: "rows", //display count of paginated rows in footer
-        movableColumns: true,      //allow column order to be changed
-
-        columns: [                 //define the table columns
-
-            { title: "", field: "id", width: 10, editor: false, hozAlign: "center", vertAlign: "middle", visible:true },
-
-            { title: "#", field: "idAssistito", width: 10, editor: false, hozAlign: "center", vertAlign: "middle", visible: checkUserPermission(user, "canViewId") },
-
-            { title: "Cognome", field: "cognome", vertAlign: "middle", editor: false, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
-            { title: "Nome", field: "nome", editor: false, vertAlign: "middle", },
-            {
-                title: "Nascita", field: "nascita", editor: false, vertAlign: "middle", formatter: "datetime", formatterParams: {
-                    outputFormat: "dd-MM-yyyy",
-                    invalidPlaceholder: "(data non valida)",
-                    timezone: "Europe/Rome",
-                }
-            },
-            { title: "Codice Fiscale", field: "codiceFiscale", editor: false, hozAlign: "center", vertAlign: "middle", headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
-            { title: "Cont.1", field: "telefono1", visible: false },
-            { title: "Cont.2", field: "telefono2", visible: false },
-            { title: "Cont.3", field: "telefono3", visible: false },
-            { title: "e-mail", field: "email", visible: false },
-            {
-                title: "Contatti", width: 150, field: "contatti", editor: false, hozAlign: "left", vertAlign: "middle", formatter: function (cell, formatterParams, onRendered) {
-                    var out = "<div><ul>";
-                    var val = cell.getValue();
-                    var contatti = JSON.parse(val);
-                    contatti.forEach(el => {
-                        if (el != "") {
-                            out += "<li>" + el;
-                        }
-                    });
-                    out += "</ul></div>";
-                    return out;
-                }
-            },
-            { title: "Indirizzo", field: "indirizzo", vertAlign: "middle", editor: false, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
-            {
-                title: "Team", field: "usca", editor: false, hozAlign: "center", vertAlign: "middle", headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like", visible: !user.permissions.canChangeUsca
-            },
-            { title: "#", field: "idTampone", editor: false, hozAlign: "center", vertAlign: "middle", visible: checkUserPermission(user, "canViewId") },
-            {
-                title: "Data Positività", field: "dataEsecuzione", editor: false, hozAlign: "center", vertAlign: "middle", headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like", formatter: "datetime", formatterParams: {
-                    outputFormat: "dd-MM-yyyy",
-                    invalidPlaceholder: "(data non valida)",
-                    timezone: "Europe/Rome",
-                }
-            },
-            {
-                title: "Data Consigliata", field: "dataConsigliata", editor: false, hozAlign: "center", vertAlign: "middle", formatter: "datetime", formatterParams: {
-                    outputFormat: "dd-MM-yyyy",
-                    invalidPlaceholder: "(data non valida)",
-                    timezone: "Europe/Rome",
-                }
-            },
-            {
-                title: "Stato", field: "status", editor: false, hozAlign: "center", vertAlign: "middle", headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like"
-            },
-            {
-                title: "", field: "idStatus", visible: false
-            },
-            {
-                title: "", width: 10, hozAlign: "center", vertAlign: "middle", editor: false, visible: checkUserPermission(user, "canCreateRequest"), cellClick: checkUserPermission(user, "canCreateRequest") ? changeSwabStatus : null, formatter: function (cell, formatterParams, onRendered) {
-
-                    return '<span class="material-icons-outlined" style="color: green">edit</span>';
-                }, tooltip: function (e, cell, onRendered) {
-                    var el = document.createElement("div");
-                    el.style.backgroundColor = "#0d6efd";
-                    el.style.color = "#ffffff";
-                    el.innerText = "Modifica stato";
-                    return el;
-                }
-            },
-            {
-                title: "", width: 8, hozAlign: "center", vertAlign: "middle", editor: false, visible: checkUserPermission(user, "canCreateRequest"), cellClick: checkUserPermission(user, "canCreateRequest") ? newRequest : null, formatter: function (cell, formatterParams, onRendered) {
-
-                    return '<span class="material-icons-outlined" style="color: green">add</span>';
-                }, headerSort: false, tooltip: function (e, cell, onRendered) {
-                    var el = document.createElement("div");
-                    el.style.backgroundColor = "#0d6efd";
-                    el.style.color = "#ffffff";
-                    el.innerText = "Aggiungi attività";
-                    return el;
-                }
-            },
-            {
-                title: "", field: "noteAssistito", vertAlign: "middle", editor: false/*, formatter: "textarea" */, cellClick: cellPopupFormatterNoteAssistito, formatter: function (cell, formatterParams, onRendered) {
-                    return (cell.getValue() == null) ? '' : '<span class="material-icons-outlined">notes</span>';
-                }, tooltip: function (e, cell, onRendered) {
-                    var el = document.createElement("div");
-                    el.style.backgroundColor = "#0d6efd";
-                    el.style.color = "#ffffff";
-                    el.innerText = "Note assistito";
-                    return el;
-                }
-            },
-        ]
-    });
-
-    if (checkUserPermission(user, "canExport")) {
-        let button = $("<button>").addClass("btn btn-primary btn-block swabs-form").attr({ "id": "swabsDownLoadButton" }).html("Scarica tamponi");
-        $("#menubuttons").append(button);
-        document.getElementById("swabsDownLoadButton").addEventListener("click", function () {
-            table.download("xlsx", "tamponi.xlsx", { sheetName: "Export" });
-        });
+    var tableHead=$("<thead>");
+    var tr = $("<tr>");
+    var el = $("<th>").html("id");
+    tr.append(el);
+    el=$("<th>").hide();
+    tr.append(el);
+    el=$("<th>").html("Cognome");
+    tr.append(el);
+    el=$("<th>").html("Nome");
+    tr.append(el);
+    el=$("<th>").html("Nascita");
+    tr.append(el);
+    el=$("<th>").hide();
+    tr.append(el);
+    el=$("<th>").html("Codice Fiscale");
+    tr.append(el);
+    el=$("<th>").hide();
+    tr.append(el);
+    el=$("<th>").hide();
+    tr.append(el);
+    el=$("<th>").hide();
+    tr.append(el);
+    el=$("<th>").hide();
+    tr.append(el);
+    el=$("<th>").html("Contatti");
+    tr.append(el);
+    el=$("<th>").html("Indirizzo");
+    tr.append(el);
+    if(!checkUserPermission(user, "canChangeUsca")){
+        el=$("<th>").html("Team");
+        tr.append(el);
     }
-    $("#mainSwabs").hide();
-    setTimeout(checkNewData, 2000);
+    el=$("<th>").html("Data Positività");
+    tr.append(el);
+    el=$("<th>").hide();
+    tr.append(el);
+    el=$("<th>").html("Data Consigliata");
+    tr.append(el);
+    el=$("<th>").html("").hide();
+    tr.append(el);
+    el=$("<th>").html("Stato");
+    tr.append(el);
+    el=$("<th>").html("").hide();
+    tr.append(el);
+    el=$("<th>");
+    tr.append(el);
+    el=$("<th>");
+    tr.append(el);
+    el=$("<th>");
+    tr.append(el);
+    tableHead.append(tr);
+    $("#mainSwabs").append(tableHead);
+    var tableBody = $("<tbody>");
+    swabs.forEach(e=>{
+        tr = $("<tr>");
+        el = $("<td>").html(e.id);
+        tr.append(el);
+        el = $("<td>").html(e.idAssistito).hide();
+        tr.append(el);
+        el = $("<td>").html(e.cognome);
+        tr.append(el);
+        el = $("<td>").html(e.nome);
+        tr.append(el);
+        el = $("<td>").html(formattaData(e.nascita,false));
+        tr.append(el);
+        el = $("<td>").html(e.nascita).hide();
+        tr.append(el);
+        el = $("<td>").html(e.codiceFiscale);
+        tr.append(el);
+        el = $("<td>").html(e.telefono1).hide();
+        tr.append(el);
+        el = $("<td>").html(e.telefono2).hide();
+        tr.append(el);
+        el = $("<td>").html(e.telefono3).hide();
+        tr.append(el);
+        el = $("<td>").html(e.email).hide();
+        tr.append(el);
+        el = $("<td>").html(formattaContatti(e.contatti));
+        tr.append(el);
+        el = $("<td>").html(e.indirizzo);
+        tr.append(el);
+        if(!checkUserPermission(user, "canChangeUsca")){
+            el = $("<td>").html(e.usca);
+            tr.append(el);
+        }
+        el = $("<td>").html(formattaData(e.dataEsecuzione,false));
+        tr.append(el);
+        el = $("<td>").html(e.dataEsecuzione).hide();
+        tr.append(el);
+        el = $("<td>").html(formattaData(e.dataConsigliata,false));
+        tr.append(el);
+        el = $("<td>").html(e.dataConsigliata).hide();
+        tr.append(el);
+        el = $("<td>").html(e.status);
+        tr.append(el);
+        el = $("<td>").html(e.idStatus).hide();
+        tr.append(el);
+        el = $("<td>").html('<span class="material-icons-outlined" style="color: green">edit</span>');
+        tr.append(el);
+        el = $("<td>").html('<span class="material-icons-outlined" style="color: green">add</span>');
+        tr.append(el);
+        el = $("<td>").html('<span class="material-icons-outlined">notes</span>');
+        tr.append(el);
+        tableBody.append(tr)
+    })
+    $("#mainSwabs").append(tableBody);
+
+    // $(document).ready( function () {
+        $('#mainSwabs').DataTable();
+    // } );
+
+    // var table = new Tabulator("#mainSwabs", {
+    //     height: 800,
+    //     data: swabs,           //load row data from array 
+    //     layout: "fitColumns",      //fit columns to width of table
+    //     responsiveLayout: "collapse",  //hide columns that dont fit on the table
+    //     //tooltips: true,            //show tool tips on cells
+    //     addRowPos: "top",          //when adding a new row, add it to the top of the table
+    //     history: true,             //allow undo and redo actions on the table
+    //     pagination: "local",       //paginate the data
+    //     paginationSize: 12,         //allow 7 rows per page of data
+    //     paginationCounter: "rows", //display count of paginated rows in footer
+    //     movableColumns: true,      //allow column order to be changed
+
+    //     columns: [                 //define the table columns
+
+    //         { title: "", field: "id", width: 10, editor: false, hozAlign: "center", vertAlign: "middle", visible:true },
+
+    //         { title: "#", field: "idAssistito", width: 10, editor: false, hozAlign: "center", vertAlign: "middle", visible: checkUserPermission(user, "canViewId") },
+
+    //         { title: "Cognome", field: "cognome", vertAlign: "middle", editor: false, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
+    //         { title: "Nome", field: "nome", editor: false, vertAlign: "middle", },
+    //         {
+    //             title: "Nascita", field: "nascita", editor: false, vertAlign: "middle", formatter: "datetime", formatterParams: {
+    //                 outputFormat: "dd-MM-yyyy",
+    //                 invalidPlaceholder: "(data non valida)",
+    //                 timezone: "Europe/Rome",
+    //             }
+    //         },
+    //         { title: "Codice Fiscale", field: "codiceFiscale", editor: false, hozAlign: "center", vertAlign: "middle", headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
+    //         { title: "Cont.1", field: "telefono1", visible: false },
+    //         { title: "Cont.2", field: "telefono2", visible: false },
+    //         { title: "Cont.3", field: "telefono3", visible: false },
+    //         { title: "e-mail", field: "email", visible: false },
+    //         {
+    //             title: "Contatti", width: 150, field: "contatti", editor: false, hozAlign: "left", vertAlign: "middle", formatter: function (cell, formatterParams, onRendered) {
+    //                 var out = "<div><ul>";
+    //                 var val = cell.getValue();
+    //                 var contatti = JSON.parse(val);
+    //                 contatti.forEach(el => {
+    //                     if (el != "") {
+    //                         out += "<li>" + el;
+    //                     }
+    //                 });
+    //                 out += "</ul></div>";
+    //                 return out;
+    //             }
+    //         },
+    //         { title: "Indirizzo", field: "indirizzo", vertAlign: "middle", editor: false, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
+    //         {
+    //             title: "Team", field: "usca", editor: false, hozAlign: "center", vertAlign: "middle", headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like", visible: !user.permissions.canChangeUsca
+    //         },
+    //         { title: "#", field: "idTampone", editor: false, hozAlign: "center", vertAlign: "middle", visible: checkUserPermission(user, "canViewId") },
+    //         {
+    //             title: "Data Positività", field: "dataEsecuzione", editor: false, hozAlign: "center", vertAlign: "middle", headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like", formatter: "datetime", formatterParams: {
+    //                 outputFormat: "dd-MM-yyyy",
+    //                 invalidPlaceholder: "(data non valida)",
+    //                 timezone: "Europe/Rome",
+    //             }
+    //         },
+    //         {
+    //             title: "Data Consigliata", field: "dataConsigliata", editor: false, hozAlign: "center", vertAlign: "middle", formatter: "datetime", formatterParams: {
+    //                 outputFormat: "dd-MM-yyyy",
+    //                 invalidPlaceholder: "(data non valida)",
+    //                 timezone: "Europe/Rome",
+    //             }
+    //         },
+    //         {
+    //             title: "Stato", field: "status", editor: false, hozAlign: "center", vertAlign: "middle", headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like"
+    //         },
+    //         {
+    //             title: "", field: "idStatus", visible: false
+    //         },
+    //         {
+    //             title: "", width: 10, hozAlign: "center", vertAlign: "middle", editor: false, visible: checkUserPermission(user, "canCreateRequest"), cellClick: checkUserPermission(user, "canCreateRequest") ? changeSwabStatus : null, formatter: function (cell, formatterParams, onRendered) {
+
+    //                 return '<span class="material-icons-outlined" style="color: green">edit</span>';
+    //             }, tooltip: function (e, cell, onRendered) {
+    //                 var el = document.createElement("div");
+    //                 el.style.backgroundColor = "#0d6efd";
+    //                 el.style.color = "#ffffff";
+    //                 el.innerText = "Modifica stato";
+    //                 return el;
+    //             }
+    //         },
+    //         {
+    //             title: "", width: 8, hozAlign: "center", vertAlign: "middle", editor: false, visible: checkUserPermission(user, "canCreateRequest"), cellClick: checkUserPermission(user, "canCreateRequest") ? newRequest : null, formatter: function (cell, formatterParams, onRendered) {
+
+    //                 return '<span class="material-icons-outlined" style="color: green">add</span>';
+    //             }, headerSort: false, tooltip: function (e, cell, onRendered) {
+    //                 var el = document.createElement("div");
+    //                 el.style.backgroundColor = "#0d6efd";
+    //                 el.style.color = "#ffffff";
+    //                 el.innerText = "Aggiungi attività";
+    //                 return el;
+    //             }
+    //         },
+    //         {
+    //             title: "", field: "noteAssistito", vertAlign: "middle", editor: false/*, formatter: "textarea" */, cellClick: cellPopupFormatterNoteAssistito, formatter: function (cell, formatterParams, onRendered) {
+    //                 return (cell.getValue() == null) ? '' : '<span class="material-icons-outlined">notes</span>';
+    //             }, tooltip: function (e, cell, onRendered) {
+    //                 var el = document.createElement("div");
+    //                 el.style.backgroundColor = "#0d6efd";
+    //                 el.style.color = "#ffffff";
+    //                 el.innerText = "Note assistito";
+    //                 return el;
+    //             }
+    //         },
+    //     ]
+    // });
+
+    // if (checkUserPermission(user, "canExport")) {
+    //     let button = $("<button>").addClass("btn btn-primary btn-block swabs-form").attr({ "id": "swabsDownLoadButton" }).html("Scarica tamponi");
+    //     $("#menubuttons").append(button);
+    //     document.getElementById("swabsDownLoadButton").addEventListener("click", function () {
+    //         table.download("xlsx", "tamponi.xlsx", { sheetName: "Export" });
+    //     });
+    // }
+    // $("#mainSwabs").hide();
+    // setTimeout(checkNewData, 2000);
+}
+
+function formattaContatti(val) {
+    var out = "<div><ul>";
+    var contatti = JSON.parse(val);
+    contatti.forEach(el => {
+        if (el != "") {
+            out += "<li>" + el;
+        }
+    });
+    out += "</ul></div>";
+    return out;
 }
 
 function readSwabs(toBeCompleted) {
@@ -440,28 +562,28 @@ function updateTableDataTamponi() {
         setTimeout(updateTableDataTamponi, 200);
     } else {
         if (toBeCompleted.swabs) {
-            waitingForDataTamponi = false;
-            sessionStorage.setItem("waitingForDataTamponi", JSON.stringify(waitingForDataTamponi));
-            var table = Tabulator.findTable("#mainSwabs")[0];
-            var swabs = JSON.parse(sessionStorage.getItem("swabs"));
-            if (swabs.length != 0) {
-                var rows = table.getRows();
-                var newIds = [];
-                swabs.forEach(el=>{
-                    newIds.push(parseInt(el.id));
-                });
-                rows.forEach(el=>{
-                    if (!newIds.includes(parseInt(el.getIndex()))){
-                        table.deleteRow(parseInt(el.getIndex()));
-                    }
-                })
-                table.updateOrAddData(swabs).then(function () {
-                    setTimeout(checkNewData, 2000);
-                })
-            } else {
-                table.clearData();
-                setTimeout(checkNewData, 2000);
-            }
+            // waitingForDataTamponi = false;
+            // sessionStorage.setItem("waitingForDataTamponi", JSON.stringify(waitingForDataTamponi));
+            // var table = Tabulator.findTable("#mainSwabs")[0];
+            // var swabs = JSON.parse(sessionStorage.getItem("swabs"));
+            // if (swabs.length != 0) {
+            //     var rows = table.getRows();
+            //     var newIds = [];
+            //     swabs.forEach(el=>{
+            //         newIds.push(parseInt(el.id));
+            //     });
+            //     rows.forEach(el=>{
+            //         if (!newIds.includes(parseInt(el.getIndex()))){
+            //             table.deleteRow(parseInt(el.getIndex()));
+            //         }
+            //     })
+            //     table.updateOrAddData(swabs).then(function () {
+            //         setTimeout(checkNewData, 2000);
+            //     })
+            // } else {
+            //     table.clearData();
+            //     setTimeout(checkNewData, 2000);
+            // }
         } else {
             setTimeout(updateTableDataTamponi, 200);
         }
