@@ -349,7 +349,6 @@ function elementFromRow(row) {
     element.dataEsecuzione = row[15];
     element.dataConsigliata = row[17];
     element.idStatus = row[19];
-    alert(JSON.stringify(element));
     return element;
 }
 
