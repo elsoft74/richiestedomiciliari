@@ -1,114 +1,166 @@
 function showSwabs(swabs, user) {
-    $("#mainSwabs").html("");
-    var tableHead=$("<thead>");
-    var tr = $("<tr>");
-    var el = $("<th>").html("id");
-    tr.append(el);
-    el=$("<th>").hide();
-    tr.append(el);
-    el=$("<th>").html("Cognome");
-    tr.append(el);
-    el=$("<th>").html("Nome");
-    tr.append(el);
-    el=$("<th>").html("Nascita");
-    tr.append(el);
-    el=$("<th>").hide();
-    tr.append(el);
-    el=$("<th>").html("Codice Fiscale");
-    tr.append(el);
-    el=$("<th>").hide();
-    tr.append(el);
-    el=$("<th>").hide();
-    tr.append(el);
-    el=$("<th>").hide();
-    tr.append(el);
-    el=$("<th>").hide();
-    tr.append(el);
-    el=$("<th>").html("Contatti");
-    tr.append(el);
-    el=$("<th>").html("Indirizzo");
-    tr.append(el);
-    if(!checkUserPermission(user, "canChangeUsca")){
-        el=$("<th>").html("Team");
+    $.extend(true, $.fn.dataTable.defaults, {
+        "stateSave": true,
+        "stateDuration": -1,
+        language: {
+            lengthMenu: 'Mostra _MENU_ elementi per pagina',
+            zeroRecords: 'Nessun risultato',
+            info: 'Pagina _PAGE_ di _PAGES_',
+            infoEmpty: 'Dati non disponibili',
+            infoFiltered: '(filtrati da un totale di _MAX_ elementi)',
+            "paginate": {
+                "first": "<<",
+                "last": ">>",
+                "next": ">",
+                "previous": "<"
+            },
+        }
+    });
+    if ($.fn.DataTable.isDataTable('#mainSwabs')) {
+        // $('#mainSwabs').dataTable().fnClearTable();
+    } else {
+        var tableHead = $("<thead>");
+        var tr = $("<tr>");
+        var el = $("<th>").html("id");
         tr.append(el);
+        el = $("<th>").hide();
+        tr.append(el);
+        el = $("<th>").html("Cognome");
+        tr.append(el);
+        el = $("<th>").html("Nome");
+        tr.append(el);
+        el = $("<th>").html("Nascita");
+        tr.append(el);
+        el = $("<th>").hide();
+        tr.append(el);
+        el = $("<th>").html("Codice Fiscale");
+        tr.append(el);
+        el = $("<th>").hide();
+        tr.append(el);
+        el = $("<th>").hide();
+        tr.append(el);
+        el = $("<th>").hide();
+        tr.append(el);
+        el = $("<th>").hide();
+        tr.append(el);
+        el = $("<th>").html("Contatti");
+        tr.append(el);
+        el = $("<th>").html("Indirizzo");
+        tr.append(el);
+        el = $("<th>").html("Team");
+        if (!checkUserPermission(user, "canChangeUsca")) {
+            el.hide();
+        }
+        tr.append(el);
+        el = $("<th>").html("Data Positività");
+        tr.append(el);
+        el = $("<th>").hide();
+        tr.append(el);
+        el = $("<th>").html("Data Consigliata");
+        tr.append(el);
+        el = $("<th>").html("").hide();
+        tr.append(el);
+        el = $("<th>").html("Stato");
+        tr.append(el);
+        el = $("<th>").html("").hide();
+        tr.append(el);
+        el = $("<th>");
+        tr.append(el);
+        el = $("<th>");
+        tr.append(el);
+        el = $("<th>");
+        tr.append(el);
+        tableHead.append(tr);
+        $("#mainSwabs").append(tableHead);
+        tableBody = $("<tbody>");
+        $("#mainSwabs").append(tableBody);
     }
-    el=$("<th>").html("Data Positività");
-    tr.append(el);
-    el=$("<th>").hide();
-    tr.append(el);
-    el=$("<th>").html("Data Consigliata");
-    tr.append(el);
-    el=$("<th>").html("").hide();
-    tr.append(el);
-    el=$("<th>").html("Stato");
-    tr.append(el);
-    el=$("<th>").html("").hide();
-    tr.append(el);
-    el=$("<th>");
-    tr.append(el);
-    el=$("<th>");
-    tr.append(el);
-    el=$("<th>");
-    tr.append(el);
-    tableHead.append(tr);
-    $("#mainSwabs").append(tableHead);
-    var tableBody = $("<tbody>");
-    swabs.forEach(e=>{
+    // $("#mainSwabs").html("");
+    var tableBody = tableBody = $("#mainSwabs").find("tbody");
+    tableBody.html("");
+
+    swabs.forEach(e => {
         tr = $("<tr>");
-        el = $("<td>").html(e.id);
+        el = $("<td>").html(e.id); // 0
         tr.append(el);
-        el = $("<td>").html(e.idAssistito).hide();
+        el = $("<td>").html(e.idAssistito).hide(); // 1
         tr.append(el);
-        el = $("<td>").html(e.cognome);
+        el = $("<td>").html(e.cognome); // 2
         tr.append(el);
-        el = $("<td>").html(e.nome);
+        el = $("<td>").html(e.nome); // 3
         tr.append(el);
-        el = $("<td>").html(formattaData(e.nascita,false));
+        el = $("<td>").html(formattaData(e.nascita, false));
         tr.append(el);
-        el = $("<td>").html(e.nascita).hide();
+        el = $("<td>").html(e.nascita).hide(); // 4
         tr.append(el);
-        el = $("<td>").html(e.codiceFiscale);
+        el = $("<td>").html(e.codiceFiscale); // 5
         tr.append(el);
-        el = $("<td>").html(e.telefono1).hide();
+        el = $("<td>").html(e.telefono1).hide(); // 6
         tr.append(el);
-        el = $("<td>").html(e.telefono2).hide();
+        el = $("<td>").html(e.telefono2).hide(); // 7
         tr.append(el);
-        el = $("<td>").html(e.telefono3).hide();
+        el = $("<td>").html(e.telefono3).hide(); // 8
         tr.append(el);
-        el = $("<td>").html(e.email).hide();
+        el = $("<td>").html(e.email).hide(); // 9
         tr.append(el);
         el = $("<td>").html(formattaContatti(e.contatti));
         tr.append(el);
-        el = $("<td>").html(e.indirizzo);
+        el = $("<td>").html(e.indirizzo); // 10
         tr.append(el);
-        if(!checkUserPermission(user, "canChangeUsca")){
-            el = $("<td>").html(e.usca);
-            tr.append(el);
+        el = $("<td>").html(e.usca); // 11
+        if (!checkUserPermission(user, "canChangeUsca")) {
+            el.hide();
         }
-        el = $("<td>").html(formattaData(e.dataEsecuzione,false));
         tr.append(el);
-        el = $("<td>").html(e.dataEsecuzione).hide();
+        el = $("<td>").html(formattaData(e.dataEsecuzione, false));
         tr.append(el);
-        el = $("<td>").html(formattaData(e.dataConsigliata,false));
+        el = $("<td>").html(e.dataEsecuzione).hide(); // 12
         tr.append(el);
-        el = $("<td>").html(e.dataConsigliata).hide();
+        el = $("<td>").html(formattaData(e.dataConsigliata, false));
         tr.append(el);
-        el = $("<td>").html(e.status);
+        el = $("<td>").html(e.dataConsigliata).hide(); // 13
         tr.append(el);
-        el = $("<td>").html(e.idStatus).hide();
+        el = $("<td>").html(e.status); // 14
         tr.append(el);
-        el = $("<td>").html('<span class="material-icons-outlined" style="color: green">edit</span>');
+        el = $("<td>").html(e.idStatus).hide(); // 15
         tr.append(el);
-        el = $("<td>").html('<span class="material-icons-outlined" style="color: green">add</span>');
+        el = $("<td>").html('<span class="material-icons-outlined" style="color: green" data-toggle="tooltip" title="Modifica stato">edit</span>');
         tr.append(el);
-        el = $("<td>").html('<span class="material-icons-outlined">notes</span>');
+        el = $("<td>").html('<span class="material-icons-outlined" style="color: green" data-toggle="tooltip" title="Aggiungi attività">add</span>');
+        tr.append(el);
+        el = $("<td>").html((e.noteAssistito != null && e.noteAssistito.trim() != "") ? '<span class="material-icons-outlined" data-toggle="tooltip" title="Note assistito">notes</span>' : '');
         tr.append(el);
         tableBody.append(tr)
     })
-    $("#mainSwabs").append(tableBody);
 
-    // $(document).ready( function () {
+
+
+
+    if (!$.fn.DataTable.isDataTable('#mainSwabs')) {
         $('#mainSwabs').DataTable();
+        $('#mainSwabs tbody').on('click', 'td', function () {
+            var table = $('#mainSwabs').DataTable();
+            try {
+                var cell = $(table.cell(this).data()).html();
+                if (cell == 'edit' || cell == 'add' || cell == 'notes') {
+                    var element = elementFromRow(table.row(this).data());
+                    switch (cell) {
+                        case 'edit':
+                            changeSwabStatus(element);
+                            break;
+                        case 'add':
+                            newRequest (element);
+                            break;
+                        case 'notes':
+                            break;
+                    }
+                }
+            } catch {
+
+            }
+
+        });
+    }
     // } );
 
     // var table = new Tabulator("#mainSwabs", {
@@ -279,9 +331,30 @@ function readSwabs(toBeCompleted) {
     xhr.send("lastRead=" + sessionStorage.getItem("lastRead") + "&activeUsca=" + activeUsca);
 }
 
-var changeSwabStatus = function (e, row) {
+function elementFromRow(row) {
+    var element = {};
+    element.id = row[0];
+    element.idTampone = row[0];
+    element.idAssistito = row[1];
+    element.cognome = row[2];
+    element.nome = row[3];
+    element.nascita = row[5];
+    element.codiceFiscale = row[6];
+    element.telefono1 = row[7];
+    element.telefono2 = row[8];
+    element.telefono3 = row[9];
+    element.email = row[10];
+    element.indirizzo = row[12];
+    element.idUsca = row[13];
+    element.dataEsecuzione = row[15];
+    element.dataConsigliata = row[17];
+    element.idStatus = row[19];
+    alert(JSON.stringify(element));
+    return element;
+}
+
+function changeSwabStatus(element) {
     buildUpdateTamponiForm();
-    var element = row.getData();
     $("#idTamponeEdit").val(element.idTampone);
     $("#statusTamponeEdit").val(element.idStatus);
     $("#tamponeEdit").modal("show");
@@ -562,10 +635,12 @@ function updateTableDataTamponi() {
         setTimeout(updateTableDataTamponi, 200);
     } else {
         if (toBeCompleted.swabs) {
-            // waitingForDataTamponi = false;
-            // sessionStorage.setItem("waitingForDataTamponi", JSON.stringify(waitingForDataTamponi));
+            waitingForDataTamponi = false;
+            sessionStorage.setItem("waitingForDataTamponi", JSON.stringify(waitingForDataTamponi));
             // var table = Tabulator.findTable("#mainSwabs")[0];
-            // var swabs = JSON.parse(sessionStorage.getItem("swabs"));
+            var swabs = JSON.parse(sessionStorage.getItem("swabs"));
+            var user = JSON.parse(sessionStorage.getItem("ricdomloggeduser"));
+            showSwabs(swabs, user);
             // if (swabs.length != 0) {
             //     var rows = table.getRows();
             //     var newIds = [];

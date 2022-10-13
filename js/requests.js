@@ -530,8 +530,8 @@ function checkDatiObbligatori(richiesta) {
     return out;
 }
 
-var newRequest = function (e, row) {
-    var element = row.getData();
+function newRequest (element) {
+    // var element = row.getData();
     $("#idAssistito").val((element.hasOwnProperty("idAssistito")) ? element.idAssistito : element.id);
     $("#nome").val(element.nome);
     $("#cognome").val(element.cognome);
