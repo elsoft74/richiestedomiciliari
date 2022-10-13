@@ -34,9 +34,11 @@ echo('<script type="text/javascript" src="js/swabs.js"></script>');
 echo('<script type="text/javascript" src="js/sweetalert2.all.min.js"></script>');
 echo('<script type="text/javascript" src="js/usca.js"></script>');
 
-echo('<link rel="stylesheet" href="https://cdn.datatables.net/1.12.1/css/jquery.dataTables.min.css">');
-echo('<script type="text/javascript" src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>');
-
+// echo('<link rel="stylesheet" href="css/jquery.dataTables.min.css">');
+echo('<link rel="stylesheet" href="css/dataTables.bootstrap5.min.css">');
+// echo('<script type="text/javascript" src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>');
+echo('<script type="text/javascript" src="js/jquery.dataTables.min.js"></script>');
+echo('<script type="text/javascript" src="js/dataTables.bootstrap5.min.js"></script>');
 // echo('<!-- <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.4.29/dist/sweetalert2.all.min.js"></script> -->');
 echo('</head>');
 

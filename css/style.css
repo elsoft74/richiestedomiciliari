@@ -124,7 +124,6 @@ button span {
   }
 }
 
-.verticalScrollableList {
-  /* height: 170px; */
-  /* overflow-y: scroll; */
+tbody tr td span {
+  cursor: pointer;
 }
