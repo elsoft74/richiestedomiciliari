@@ -17,13 +17,43 @@ function showSwabs(swabs, user) {
         }
     });
     if ($.fn.DataTable.isDataTable('#mainSwabs')) {
+        var datatable = $('#mainSwabs').DataTable();
         // $('#mainSwabs').dataTable().fnClearTable();
+        datatable.clear();
+        swabs.forEach(element=>{
+            var row=[];
+            row.push(element.id);
+            row.push(element.idAssistito);
+            row.push(element.cognome);
+            row.push(element.nome);
+            row.push(formattaData(element.nascita, false));
+            row.push(element.nascita);
+            row.push(element.codiceFiscale);
+            row.push(element.telefono1);
+            row.push(element.telefono2);
+            row.push(element.telefono3);
+            row.push(element.email);
+            row.push(formattaContatti(element.contatti));
+            row.push(element.indirizzo);
+            row.push(element.usca);
+            row.push(formattaData(element.dataEsecuzione, false));
+            row.push(element.dataEsecuzione);
+            row.push(formattaData(element.dataConsigliata, false));
+            row.push(element.dataConsigliata);
+            row.push(element.status);
+            row.push(element.idStatus);
+            row.push('<span class="material-icons-outlined" style="color: green" data-toggle="tooltip" title="Modifica stato">edit</span>');
+            row.push('<span class="material-icons-outlined" style="color: green" data-toggle="tooltip" title="Aggiungi attività">add</span>');
+            row.push((element.noteAssistito != null && element.noteAssistito.trim() != "") ? '<span class="material-icons-outlined" data-toggle="tooltip" title="Note assistito">notes</span>' : '');
+            datatable.row.add(row);
+        })
+        datatable.draw();
     } else {
         var tableHead = $("<thead>");
         var tr = $("<tr>");
         var el = $("<th>").html("id");
         tr.append(el);
-        el = $("<th>").hide();
+        el = $("<th>");
         tr.append(el);
         el = $("<th>").html("Cognome");
         tr.append(el);
@@ -31,38 +61,35 @@ function showSwabs(swabs, user) {
         tr.append(el);
         el = $("<th>").html("Nascita");
         tr.append(el);
-        el = $("<th>").hide();
+        el = $("<th>");
         tr.append(el);
         el = $("<th>").html("Codice Fiscale");
         tr.append(el);
-        el = $("<th>").hide();
+        el = $("<th>");
         tr.append(el);
-        el = $("<th>").hide();
+        el = $("<th>");
         tr.append(el);
-        el = $("<th>").hide();
+        el = $("<th>");
         tr.append(el);
-        el = $("<th>").hide();
+        el = $("<th>");
         tr.append(el);
         el = $("<th>").html("Contatti");
         tr.append(el);
         el = $("<th>").html("Indirizzo");
         tr.append(el);
         el = $("<th>").html("Team");
-        if (!checkUserPermission(user, "canChangeUsca")) {
-            el.hide();
-        }
         tr.append(el);
         el = $("<th>").html("Data Positività");
         tr.append(el);
-        el = $("<th>").hide();
+        el = $("<th>");
         tr.append(el);
         el = $("<th>").html("Data Consigliata");
         tr.append(el);
-        el = $("<th>").html("").hide();
+        el = $("<th>").html("");
         tr.append(el);
         el = $("<th>").html("Stato");
         tr.append(el);
-        el = $("<th>").html("").hide();
+        el = $("<th>").html("");
         tr.append(el);
         el = $("<th>");
         tr.append(el);
@@ -74,66 +101,63 @@ function showSwabs(swabs, user) {
         $("#mainSwabs").append(tableHead);
         tableBody = $("<tbody>");
         $("#mainSwabs").append(tableBody);
+
+        // $("#mainSwabs").html("");
+        var tableBody = tableBody = $("#mainSwabs").find("tbody");
+        // tableBody.html("");
+
+        swabs.forEach(e => {
+            tr = $("<tr>");
+            el = $("<td>").html(e.id);
+            tr.append(el);
+            el = $("<td>").html(e.idAssistito);
+            tr.append(el);
+            el = $("<td>").html(e.cognome);
+            tr.append(el);
+            el = $("<td>").html(e.nome);
+            tr.append(el);
+            el = $("<td>").html(formattaData(e.nascita, false));
+            tr.append(el);
+            el = $("<td>").html(e.nascita);
+            tr.append(el);
+            el = $("<td>").html(e.codiceFiscale);
+            tr.append(el);
+            el = $("<td>").html(e.telefono1);
+            tr.append(el);
+            el = $("<td>").html(e.telefono2);
+            tr.append(el);
+            el = $("<td>").html(e.telefono3);
+            tr.append(el);
+            el = $("<td>").html(e.email);
+            tr.append(el);
+            el = $("<td>").html(formattaContatti(e.contatti));
+            tr.append(el);
+            el = $("<td>").html(e.indirizzo);
+            tr.append(el);
+            el = $("<td>").html(e.usca);
+            tr.append(el);
+            el = $("<td>").html(formattaData(e.dataEsecuzione, false));
+            tr.append(el);
+            el = $("<td>").html(e.dataEsecuzione);
+            tr.append(el);
+            el = $("<td>").html(formattaData(e.dataConsigliata, false));
+            tr.append(el);
+            el = $("<td>").html(e.dataConsigliata);
+            tr.append(el);
+            el = $("<td>").html(e.status);
+            tr.append(el);
+            el = $("<td>").html(e.idStatus);
+            tr.append(el);
+            el = $("<td>").html('<span class="material-icons-outlined" style="color: green" data-toggle="tooltip" title="Modifica stato">edit</span>');
+            tr.append(el);
+            el = $("<td>").html('<span class="material-icons-outlined" style="color: green" data-toggle="tooltip" title="Aggiungi attività">add</span>');
+            tr.append(el);
+            el = $("<td>").html((e.noteAssistito != null && e.noteAssistito.trim() != "") ? '<span class="material-icons-outlined" data-toggle="tooltip" title="Note assistito">notes</span>' : '');
+            tr.append(el);
+            tableBody.append(tr)
+        })
+
     }
-    // $("#mainSwabs").html("");
-    var tableBody = tableBody = $("#mainSwabs").find("tbody");
-    tableBody.html("");
-
-    swabs.forEach(e => {
-        tr = $("<tr>");
-        el = $("<td>").html(e.id); // 0
-        tr.append(el);
-        el = $("<td>").html(e.idAssistito).hide(); // 1
-        tr.append(el);
-        el = $("<td>").html(e.cognome); // 2
-        tr.append(el);
-        el = $("<td>").html(e.nome); // 3
-        tr.append(el);
-        el = $("<td>").html(formattaData(e.nascita, false));
-        tr.append(el);
-        el = $("<td>").html(e.nascita).hide(); // 4
-        tr.append(el);
-        el = $("<td>").html(e.codiceFiscale); // 5
-        tr.append(el);
-        el = $("<td>").html(e.telefono1).hide(); // 6
-        tr.append(el);
-        el = $("<td>").html(e.telefono2).hide(); // 7
-        tr.append(el);
-        el = $("<td>").html(e.telefono3).hide(); // 8
-        tr.append(el);
-        el = $("<td>").html(e.email).hide(); // 9
-        tr.append(el);
-        el = $("<td>").html(formattaContatti(e.contatti));
-        tr.append(el);
-        el = $("<td>").html(e.indirizzo); // 10
-        tr.append(el);
-        el = $("<td>").html(e.usca); // 11
-        if (!checkUserPermission(user, "canChangeUsca")) {
-            el.hide();
-        }
-        tr.append(el);
-        el = $("<td>").html(formattaData(e.dataEsecuzione, false));
-        tr.append(el);
-        el = $("<td>").html(e.dataEsecuzione).hide(); // 12
-        tr.append(el);
-        el = $("<td>").html(formattaData(e.dataConsigliata, false));
-        tr.append(el);
-        el = $("<td>").html(e.dataConsigliata).hide(); // 13
-        tr.append(el);
-        el = $("<td>").html(e.status); // 14
-        tr.append(el);
-        el = $("<td>").html(e.idStatus).hide(); // 15
-        tr.append(el);
-        el = $("<td>").html('<span class="material-icons-outlined" style="color: green" data-toggle="tooltip" title="Modifica stato">edit</span>');
-        tr.append(el);
-        el = $("<td>").html('<span class="material-icons-outlined" style="color: green" data-toggle="tooltip" title="Aggiungi attività">add</span>');
-        tr.append(el);
-        el = $("<td>").html((e.noteAssistito != null && e.noteAssistito.trim() != "") ? '<span class="material-icons-outlined" data-toggle="tooltip" title="Note assistito">notes</span>' : '');
-        tr.append(el);
-        tableBody.append(tr)
-    })
-
-
 
 
     if (!$.fn.DataTable.isDataTable('#mainSwabs')) {
@@ -149,7 +173,7 @@ function showSwabs(swabs, user) {
                             changeSwabStatus(element);
                             break;
                         case 'add':
-                            newRequest (element);
+                            newRequest(element);
                             break;
                         case 'notes':
                             break;
@@ -161,7 +185,14 @@ function showSwabs(swabs, user) {
 
         });
     }
-    // } );
+
+    var datatable = $('#mainSwabs').DataTable();
+
+    if (!checkUserPermission(user, "canChangeUsca")) {
+        datatable.columns(13).visible(false);
+    }
+    
+    datatable.columns([1,5,7,8,9,10,15,17,19]).visible(false);
 
     // var table = new Tabulator("#mainSwabs", {
     //     height: 800,
@@ -282,18 +313,6 @@ function showSwabs(swabs, user) {
     // }
     // $("#mainSwabs").hide();
     // setTimeout(checkNewData, 2000);
-}
-
-function formattaContatti(val) {
-    var out = "<div><ul>";
-    var contatti = JSON.parse(val);
-    contatti.forEach(el => {
-        if (el != "") {
-            out += "<li>" + el;
-        }
-    });
-    out += "</ul></div>";
-    return out;
 }
 
 function readSwabs(toBeCompleted) {
@@ -643,7 +662,7 @@ function updateTableDataTamponi() {
             // if (swabs.length != 0) {
             //     var rows = table.getRows();
             //     var newIds = [];
-            //     swabs.forEach(el=>{
+            //http://192.168.1.163/richiestedomiciliari/index.php     swabs.forEach(el=>{
             //         newIds.push(parseInt(el.id));
             //     });
             //     rows.forEach(el=>{

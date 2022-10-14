@@ -30,11 +30,9 @@
             showMenu(lu);
             $(".lds-grid").hide();
             changeActivity("swabs");
-            // $('#mainSwabs').DataTable();
         });
         window.addEventListener('dataUpdated', updateTableDataTamponi); 
         window.onload = function() {    
-            // spostaFirma();
             $(".lds-grid").hide();
             lu = JSON.parse(sessionStorage.getItem("ricdomloggeduser"));
             if (lu == null) {

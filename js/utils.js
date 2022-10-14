@@ -91,6 +91,18 @@ function formattaData(data, lung) { // lung se impostato a true fa ottenere una 
     return out;
 }
 
+function formattaContatti(val) {
+    var out = "<div><ul>";
+    var contatti = JSON.parse(val);
+    contatti.forEach(el => {
+        if (el != "") {
+            out += "<li>" + el;
+        }
+    });
+    out += "</ul></div>";
+    return out;
+}
+
 function hideAll() {
     $(".sections").hide();
 }
