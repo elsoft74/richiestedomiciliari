@@ -1,4 +1,5 @@
 <?php
+    include_once("log.php");
     class User {    
         public $id;
         public $username;
@@ -108,6 +109,7 @@
                             if(!$res["is_active"]){
                                 $out->error="USER-IS-NOT-ACTIVE";
                             } else {
+                                session_start();
                                 $this->id=$res["id"];
                                 $this->nome=$res["nome"];
                                 $this->cognome=$res["cognome"];
@@ -118,6 +120,8 @@
                                 $this->id_usca=$res["id_usca"];
                                 $out->status="OK";
                                 $out->data=$this;
+                                $_SESSION["loggeduser"] = json_encode($this);
+                                Log::insert("LOGIN",null,null,null,null);
                             }
                             
                         }                    
@@ -132,6 +136,31 @@
                 $conn=null;
             }
             //file_put_contents("../log/dbtest.log",(new DateTime("now"))->format("Y-m-d H:i").$msg."\n",FILE_APPEND);
+            return $out;
+        }
+
+        public function logout(){
+            $out = new stdClass();
+            $out->status="KO";
+            try {
+                $conn=DB::conn();
+                if ($conn!=null){
+                    try {
+                        session_start();
+                        $user = json_decode($_SESSION["loggeduser"]);
+                        Log::insert("LOGOUT",null,null,null,null);
+                        session_unset();
+                        session_destroy();                    
+                    } catch(Exception $ex){
+                            $out->error=$ex->getMessage();
+                        }
+                }
+                else {
+                    $out->error="DB-CONNECTION-ERROR";
+                }
+            } catch(Exception $e){
+                $conn=null;
+            }
             return $out;
         }
 

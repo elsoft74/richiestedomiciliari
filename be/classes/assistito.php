@@ -280,6 +280,7 @@
                                 $stmt->execute();
                                 $this->setId($conn->lastInsertId());
                                     if ($this->getId()!=0){
+                                        Log::insert("INSERT.ASSISTITO",$this->id,null,null,null);
                                         $query="UPDATE `updates` SET last_update_ts=LOCALTIMESTAMP() WHERE table_name='assistiti'";
                                         $stmt = $conn->prepare($query);
                                         $stmt->execute();
@@ -363,6 +364,7 @@
                                     $stmt = $conn->prepare($query);
                                     $stmt->execute();
                                     if ($stmt->rowCount()==1){
+                                        Log::insert("UPDATE.ASSISTITO",$this->id,null,null,null);
                                         $out->status="OK";
                                     }
                                 } else {

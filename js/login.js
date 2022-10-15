@@ -47,8 +47,21 @@ function logout() {
     }
     if (richieste != null) {
         richieste.clearData();
+    }let xhr = new XMLHttpRequest();
+    let url = "be/logout.php";
+    xhr.open("POST", url, true);
+    xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState === 4 && xhr.status === 200) {
+            result = JSON.parse(xhr.responseText);
+            if (result.status == "OK") {
+                alert("disconnesso");
+                location.reload();
+            }
+        }
     }
-    location.reload();
+    xhr.send();
+    
 }
 
 function showLogin() {

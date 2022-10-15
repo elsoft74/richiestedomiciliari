@@ -352,6 +352,8 @@ class Tampone
             $conn = DB::conn();
             if ($conn != null) {
                 try {
+                    // session_start();
+                    // $user = json_decode($_SESSION["loggeduser"]);
                     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
                     $query="SELECT is_active, role_id FROM `users` AS u WHERE u.username=:username";
                     $stmt = $conn->prepare($query);
@@ -384,9 +386,10 @@ class Tampone
     
                                 $stmt->execute();
                                 $this->setId($conn->lastInsertId());
-                                    if ($this->getId()!=0){
+                                if ($this->getId()!=0){
                                     $out->data=$this->getId();
                                     $out->status="OK";
+                                    Log::insert("INSERT.TAMPONE",$this->idAssistito,$this->idStatus,null,$this->id);
                                 } else {
                                     throw new Exception("ERRORE-DI-INSERIMENTO");    
                                 }
@@ -456,7 +459,7 @@ class Tampone
                         if ($out->num != 1) {
                             throw new Exception("UPDATE-ERROR");
                         }
-
+                        Log::insert("UPDATE.TAMPONE",$this->idAssistito,$this->status,null,$this->id);
                         $query="UPDATE `updates` SET last_update_ts=LOCALTIMESTAMP() WHERE table_name='tamponi'";
                         $stmt = $conn->prepare($query);
                         $stmt->execute();
