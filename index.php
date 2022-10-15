@@ -12,7 +12,7 @@
     <div class="lds-grid position-absolute top-50 start-50 translate-middle"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
     <div id="main" class="sections requests-form"></div>
     <div id="swabs" class="sections swabs-form">
-        <table id="mainSwabs" class="stripe" style="width:100%"></table>
+        <table id="mainSwabs" class="table table-striped" style="width:100%"></table>
     </div>
     <div id="insert"></div>
     <div id="insertUser"></div>
