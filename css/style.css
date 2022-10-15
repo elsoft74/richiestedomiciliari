@@ -127,3 +127,7 @@ button span {
 tbody tr td span {
   cursor: pointer;
 }
+
+.sections {
+    padding:5px;
+}
