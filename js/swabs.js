@@ -367,17 +367,17 @@ function elementFromRow(row) {
     element.idAssistito = row[1];
     element.cognome = row[2];
     element.nome = row[3];
-    element.nascita = row[5];
-    element.codiceFiscale = row[6];
-    element.telefono1 = row[7];
-    element.telefono2 = row[8];
-    element.telefono3 = row[9];
-    element.email = row[10];
-    element.indirizzo = row[12];
-    element.idUsca = row[13];
-    element.dataEsecuzione = row[15];
-    element.dataConsigliata = row[17];
-    element.idStatus = row[19];
+    element.nascita = row[7];
+    element.codiceFiscale = row[8];
+    element.telefono1 = row[9];
+    element.telefono2 = row[10];
+    element.telefono3 = row[11];
+    element.email = row[12];
+    element.indirizzo = row[14];
+    element.idUsca = row[15];
+    element.dataEsecuzione = row[17];
+    element.dataConsigliata = row[19];
+    element.idStatus = row[21];
     return element;
 }
 
