@@ -21,8 +21,10 @@
                         $stmt->bindParam(':id_tampone',$idTampone,PDO::PARAM_INT);
                         $stmt->execute();
                         $res=$stmt->fetchAll(PDO::FETCH_ASSOC);
-                        $out->data=$res;                    
-                        $out->status="OK";
+                        $out->data=$conn->lastInsertId();                    
+                        if($out->data > 0){
+                            $out->status="OK";
+                        }
                     } catch(Exception $ex){
                             $out->error=$ex->getMessage();
                         }

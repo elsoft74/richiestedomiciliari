@@ -56,6 +56,8 @@ function checkNewData() {
                 } else {
                     setTimeout(checkNewData, 2000);
                 }
+            } else {
+                alert(result.data);
             }
         }
     }

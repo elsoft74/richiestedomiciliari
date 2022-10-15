@@ -47,6 +47,7 @@ function showSwabs(swabs, user) {
             row.push('<span class="material-icons-outlined" style="color: green" data-toggle="tooltip" title="Modifica stato">edit</span>');
             row.push('<span class="material-icons-outlined" style="color: green" data-toggle="tooltip" title="Aggiungi attività">add</span>');
             row.push((element.noteAssistito != null && element.noteAssistito.trim() != "") ? '<span class="material-icons-outlined" data-toggle="tooltip" title="Note assistito">notes</span>' : '');
+            row.push(element.idUsca);
             datatable.row.add(row);
         })
         datatable.draw();
@@ -96,6 +97,8 @@ function showSwabs(swabs, user) {
         el = $("<th>").html("Stato");
         tr.append(el);
         el = $("<th>").html("");
+        tr.append(el);
+        el = $("<th>");
         tr.append(el);
         el = $("<th>");
         tr.append(el);
@@ -164,6 +167,8 @@ function showSwabs(swabs, user) {
             tr.append(el);
             el = $("<td>").html((e.noteAssistito != null && e.noteAssistito.trim() != "") ? '<span class="material-icons-outlined" data-toggle="tooltip" title="Note assistito">notes</span>' : '');
             tr.append(el);
+            el = $("<td>").html(e.idUsca);
+            tr.append(el);
             tableBody.append(tr)
         })
 
@@ -198,11 +203,11 @@ function showSwabs(swabs, user) {
 
     var datatable = $('#mainSwabs').DataTable();
 
-    if (!checkUserPermission(user, "canChangeUsca")) {
+    if (checkUserPermission(user, "canChangeUsca")) {
         datatable.columns(15).visible(false);
     }
     
-    datatable.columns([1,7,9,10,11,12,17,19,21]).visible(false);
+    datatable.columns([1,7,9,10,11,12,17,19,21,25]).visible(false);
 
     // var table = new Tabulator("#mainSwabs", {
     //     height: 800,
@@ -378,6 +383,7 @@ function elementFromRow(row) {
     element.dataEsecuzione = row[17];
     element.dataConsigliata = row[19];
     element.idStatus = row[21];
+    element.idUsca = row[25];
     return element;
 }
 
