@@ -139,6 +139,14 @@ class Tampone
         return $this->status;
     }
 
+    public function setEta($val){
+        $this->eta=$val;
+    }
+
+    public function getEta(){
+        return $this->eta;
+    }
+
 
     // public function getDetails()
     // {
@@ -202,6 +210,7 @@ class Tampone
                     a.telefono2 AS telefono2,
                     a.telefono3 AS telefono3,
                     a.nascita AS nascita,
+                    TIMESTAMPDIFF(YEAR,nascita,now()) as eta,
                     a.id_usca AS id_usca,
                     t.id as id_tampone,
                     t.data_esecuzione AS data_esecuzione,
@@ -266,6 +275,7 @@ class Tampone
                         $tmp->createdByNomeCognome=$r['created_by'];
                         $tmp->last_update=$r['last_update'];
                         $tmp->lastUpdateByNomeCognome=$r['last_update_by'];
+                        $tmp->eta=$r['eta'];
                         $contatti = [];
                         if ($r['telefono1']!=""){
                             array_push($contatti,$r['telefono1']);

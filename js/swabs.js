@@ -27,6 +27,8 @@ function showSwabs(swabs, user) {
             row.push(element.cognome);
             row.push(element.nome);
             row.push(formattaData(element.nascita, false));
+            row.push(element.eta);
+            row.push(formattaEtaPerFascia(element.eta));
             row.push(element.nascita);
             row.push(element.codiceFiscale);
             row.push(element.telefono1);
@@ -60,6 +62,10 @@ function showSwabs(swabs, user) {
         el = $("<th>").html("Nome");
         tr.append(el);
         el = $("<th>").html("Nascita");
+        tr.append(el);
+        el = $("<th>").html("Età");
+        tr.append(el);
+        el = $("<th>").html("Fascia");
         tr.append(el);
         el = $("<th>");
         tr.append(el);
@@ -117,6 +123,10 @@ function showSwabs(swabs, user) {
             el = $("<td>").html(e.nome);
             tr.append(el);
             el = $("<td>").html(formattaData(e.nascita, false));
+            tr.append(el);
+            el = $("<td>").html(e.eta);
+            tr.append(el);
+            el = $("<td>").html(formattaEtaPerFascia(e.eta));
             tr.append(el);
             el = $("<td>").html(e.nascita);
             tr.append(el);
@@ -189,10 +199,10 @@ function showSwabs(swabs, user) {
     var datatable = $('#mainSwabs').DataTable();
 
     if (!checkUserPermission(user, "canChangeUsca")) {
-        datatable.columns(13).visible(false);
+        datatable.columns(15).visible(false);
     }
     
-    datatable.columns([1,5,7,8,9,10,15,17,19]).visible(false);
+    datatable.columns([1,7,9,10,11,12,17,19,21]).visible(false);
 
     // var table = new Tabulator("#mainSwabs", {
     //     height: 800,

@@ -29,6 +29,18 @@ function checkIfUpdated() {
     }
 }
 
+function formattaEtaPerFascia(val) {
+    let out = "";
+    if (val < 50) {
+        out = "Fascia 1 (< 50)";
+    } else if (val >= 50 && val < 66) {
+        out = "Fascia 2 (50-65)";
+    } else {
+        out = "Fascia 3 (> 65)";
+    }
+    return out;
+}
+
 function checkNewData() {
     var xhr = new XMLHttpRequest();
     var url = "be/checkNewData.php";
