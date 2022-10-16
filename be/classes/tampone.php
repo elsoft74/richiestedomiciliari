@@ -358,6 +358,7 @@ class Tampone
         $out = new stdClass();
         $out->status = "KO";
         $out->data = null;
+        checkAndExtendSession();
         try {
             $conn = DB::conn();
             if ($conn != null) {
@@ -437,6 +438,7 @@ class Tampone
     {
         $out = new stdClass();
         $out->status = "KO";
+        checkAndExtendSession();
         try {
             if ($this->getId() != null) {
                 

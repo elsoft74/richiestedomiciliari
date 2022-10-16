@@ -57,7 +57,9 @@ function checkNewData() {
                     setTimeout(checkNewData, 2000);
                 }
             } else {
-                alert(result.data);
+                if(result.data=="NOTLOGGED"){
+                    window.dispatchEvent(new CustomEvent("sessionExpired"));
+                }
             }
         }
     }
@@ -149,6 +151,7 @@ function getData(toBeCompleted) {
                 if (result.hasOwnProperty("lastRead")) {
                     sessionStorage.setItem("lastRead", result.lastRead);
                 }
+                setTimeout(checkNewData,2000);
             } else {
                 Swal.fire({
                     text: "Impossibile recuperare l'elenco delle richieste.",
@@ -206,4 +209,18 @@ function spostaFirma(){
     var newbottom = t + h - dh + 55;
     var newright = l + w - dw + 20;
     $('#firma').css('bottom', newbottom + 'px').css('right', newright + 'px');
+}
+
+function sessionExpired(){
+    Swal.fire({
+        html: "<p>Sessione scaduta per inattività</p><p>Eseguire nuovamente il login</p>",
+        icon: 'warning',
+        showCancelButton: false,
+        confirmButtonColor: '#3085d6',
+        confirmButtonText: 'Ok'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            logout();
+        }
+    })
 }

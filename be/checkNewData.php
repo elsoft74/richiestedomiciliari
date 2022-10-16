@@ -4,5 +4,5 @@
     error_reporting(-1);
     include_once("config/config.php");
     include_once("classes/db.php");
-    $lastRead=$_POST["lastRead"];
+    $lastRead=isset($_POST["lastRead"])?$_POST["lastRead"]:null;
     print(json_encode(DB::checkNewData($lastRead)));

@@ -55,7 +55,7 @@ function logout() {
         if (xhr.readyState === 4 && xhr.status === 200) {
             result = JSON.parse(xhr.responseText);
             if (result.status == "OK") {
-                alert("disconnesso");
+                // alert("disconnesso");
                 location.reload();
             }
         }

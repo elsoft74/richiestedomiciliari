@@ -31,7 +31,8 @@
             $(".lds-grid").hide();
             changeActivity("swabs");
         });
-        window.addEventListener('dataUpdated', updateTableDataTamponi); 
+        window.addEventListener('dataUpdated', updateTableDataTamponi);
+        window.addEventListener('sessionExpired', sessionExpired); 
         window.onload = function() {    
             $(".lds-grid").hide();
             lu = JSON.parse(sessionStorage.getItem("ricdomloggeduser"));

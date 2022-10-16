@@ -1,6 +1,7 @@
 <?php
     include_once("user.php");
     include_once("db.php");
+    include_once("utils.php");
     class Assistito {    
         public $id;
         public $idUsca;
@@ -247,6 +248,7 @@
             $out = new stdClass();
             $out->status="KO";
             $out->data=[];
+            checkAndExtendSession();
             try {
                 $conn=DB::conn();
                 if ($conn!=null){
@@ -314,6 +316,7 @@
             $out = new stdClass();
             $out->status="KO";
             $out->data=[];
+            checkAndExtendSession();
             try {
                 $conn=DB::conn();
                 if ($conn!=null){
@@ -394,6 +397,7 @@
             $out = new stdClass();
             $out->status="KO";
             $out->data=null;
+            checkAndExtendSession();
             try {
                 $conn=DB::conn();
                 if ($conn!=null){

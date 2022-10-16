@@ -1,5 +1,6 @@
 <?php
     include_once("log.php");
+    include_once("utils.php");
     class User {    
         public $id;
         public $username;
@@ -109,7 +110,7 @@
                             if(!$res["is_active"]){
                                 $out->error="USER-IS-NOT-ACTIVE";
                             } else {
-                                session_start();
+                                createSession();
                                 $this->id=$res["id"];
                                 $this->nome=$res["nome"];
                                 $this->cognome=$res["cognome"];
@@ -225,6 +226,7 @@
             $out = new stdClass();
             $out->status="KO";
             $out->data=[];
+            checkAndExtendSession();
             try {
                 $conn=DB::conn();
                 if ($conn!=null){
@@ -283,6 +285,7 @@
             $out = new stdClass();
             $out->status="KO";
             $out->data=[];
+            checkAndExtendSession();
             try {
                 $conn=DB::conn();
                 if ($conn!=null){
