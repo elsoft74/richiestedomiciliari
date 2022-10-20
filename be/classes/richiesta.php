@@ -250,6 +250,7 @@ class Richiesta
                     a.telefono2 AS telefono2,
                     a.telefono3 AS telefono3,
                     a.nascita AS nascita,
+                    TIMESTAMPDIFF(YEAR,nascita,now()) as eta,
                     a.id_usca AS id_usca,
                     r.id as id_richiesta,
                     r.id_tipologia AS id_tipologia,
@@ -302,6 +303,7 @@ class Richiesta
                         $tmp->codiceFiscale=$r['codicefiscale'];
                         $tmp->noteAssistito=$r['note_assistito'];
                         $tmp->nascita=$r['nascita'];
+                        $tmp->eta=$r['eta'];
                         $tmp->assistitoIsActive=$r['assistito_is_active'];
                         $tmp->idRichiesta=$r['id_richiesta'];
                         $tmp->idTipologia=$r['id_tipologia'];

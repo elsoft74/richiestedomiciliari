@@ -28,8 +28,8 @@ function showMenu(user) {
         if (mostraStorico==null) {
             mostraStorico = false;
         }
-        button = $("<button>").addClass('btn btn-primary btn-block home-form requests-form swabs-form users-form menu-button').attr({"onClick":'window.open("assistiti.php","_self")','id':'showRequestsButton'}).text("Elenco Pazienti").hide();
-        div1.append(button);
+        // button = $("<button>").addClass('btn btn-primary btn-block home-form requests-form swabs-form users-form menu-button').attr({"onClick":'window.open("assistiti.php","_self")','id':'showRequestsButton'}).text("Elenco Pazienti").hide();
+        // div1.append(button);
         button = $("<button>").addClass('btn btn-primary btn-block home-form assistiti-form swabs-form users-form menu-button').attr({"onClick":'window.open("richieste.php","_self")','id':'showRequestsButton'}).text("Elenco Attività").hide();
         div1.append(button);
         button = $("<button>").addClass('btn btn-primary btn-block home-form assistiti-form users-form requests-form menu-button').attr({"onClick":'window.open("index.php","_self")','id':'mostraTamponiButton'}).text("Pazienti Positivi").hide();

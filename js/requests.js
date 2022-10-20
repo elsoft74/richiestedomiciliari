@@ -1,172 +1,437 @@
 function showRequests(richieste, user) {
-    $("#main").html("");
     var mostraStorico = JSON.parse(sessionStorage.getItem("mostraStorico"));
     if (mostraStorico == null) {
         mostraStorico = false;
     }
-    
-    var table = new Tabulator("#main", {
-        height: 800,
-        data: richieste,           //load row data from array
-        layout: "fitColumns",      //fit columns to width of table
-        responsiveLayout: "collapse",  //hide columns that dont fit on the table
-        //tooltips: true,            //show tool tips on cells
-        addRowPos: "top",          //when adding a new row, add it to the top of the table
-        history: true,             //allow undo and redo actions on the table
-        pagination: "local",       //paginate the data
-        paginationSize: 12,         //allow 7 rows per page of data
-        paginationCounter: "rows", //display count of paginated rows in footer
-        movableColumns: true,      //allow column order to be changed
-        // initialSort: [             //set the initial sort order of the data
-        //     { column: "dataRic", dir: "asc" },
-        // ],
-        downloadConfig: {
-            columnHeaders: true, //do not include column headers in downloaded table
-            columnGroups: false, //do not include column groups in column headers for downloaded table
-            rowGroups: false, //do not include row groups in downloaded table
-            columnCalcs: false, //do not include column calcs in downloaded table
-            dataTree: false, //do not include data tree in downloaded table
+
+    $.extend(true, $.fn.dataTable.defaults, {
+        "stateSave": true,
+        "stateDuration": -1,
+        language: {
+            lengthMenu: 'Mostra _MENU_ elementi per pagina',
+            zeroRecords: 'Nessun risultato',
+            info: 'Pagina _PAGE_ di _PAGES_',
+            infoEmpty: 'Dati non disponibili',
+            infoFiltered: '(filtrati da un totale di _MAX_ elementi)',
+            "paginate": {
+                "first": "<<",
+                "last": ">>",
+                "next": ">",
+                "previous": "<"
+            },
         },
-        columns: [                 //define the table columns
-
-
+        buttons: [
             {
-                title: "Programmata", width: 150, field: "data", editor: false, hozAlign: "center", vertAlign: "middle", formatter: "datetime", formatterParams: {
-                    //inputFormat:"YYY-MM-DD HH:mm:ss",
-                    outputFormat: "dd-MM-yyyy",
-                    invalidPlaceholder: "(data non valida)",
-                    timezone: "Europe/Rome",
-                }, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like"
-            },
-            {
-                title: "Tipo", width: 120, field: "tipologia", editor: false, hozAlign: "center", vertAlign: "middle", headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like"
-            },
-            {
-                title: "Priorità", width: 120, field: "priorita", editor: false, hozAlign: "center", vertAlign: "middle", headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like"
-            },
-            (mostraStorico) ? {
-                title: "Arch.", width: 120, field: "archived", editor: false, formatter: "textarea", hozAlign: "center", vertAlign: "middle", headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like"
-            } : { visible: false },
-
-            { title: "#", field: "idAssistito", width: 5, editor: false, hozAlign: "center", vertAlign: "middle", visible: checkUserPermission(user, "canViewId") },
-
-            {
-                title: "", width: 8, field: "noteAssistito", vertAlign: "middle", editor: false, cellClick: cellPopupFormatterNoteAssistito, formatter: function (cell, formatterParams, onRendered) {
-                    return (cell.getValue() == null) ? '' : '<span class="material-icons-outlined">notes</span>';
-                }, headerSort: false, tooltip: function (e, cell, onRendered) {
-                    var el1 = document.createElement("div");
-                    el1.style.backgroundColor = "#0d6efd";
-                    var el2 = document.createElement("span");
-                    el2.style.color = "#ffffff";
-                    el2.innerText = "Note assistito";
-                    el1.append(el2);
-                    return el1;
-                }
-            },
-
-            { title: "Cognome", width: 150, field: "cognome", vertAlign: "middle", editor: false, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
-            { title: "Nome", width: 150, field: "nome", vertAlign: "middle", editor: false, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
-            {
-                title: "Nascita", width: 100, field: "nascita", vertAlign: "middle", editor: false, formatter: "datetime", formatterParams: {
-                    outputFormat: "dd-MM-yyyy",
-                    invalidPlaceholder: "",
-                    timezone: "Europe/Rome",
-                }
-            },
-            { title: "Codice Fiscale", width: 150, field: "codiceFiscale", editor: false, hozAlign: "center", vertAlign: "middle", headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
-            { title: "Cont.1", field: "telefono1", visible: false },
-            { title: "Cont.2", field: "telefono2", visible: false },
-            { title: "Cont.3", field: "telefono3", visible: false },
-            { title: "e-mail", field: "email", visible: false },
-            {
-                title: "Contatti", width: 150, field: "contatti", editor: false, hozAlign: "left", vertAlign: "middle", formatter: function (cell, formatterParams, onRendered) {
-                    var out = "<div><ul>";
-                    var val = cell.getValue();
-                    contatti = JSON.parse(val);
-                    contatti.forEach(el => {
-                        if (el != "") {
-                            out += "<li>" + el;
-                        }
-                    });
-                    out += "</ul></div>";
-                    return out;
-                }
-            },
-            { title: "Indirizzo", field: "indirizzo", formatter: "textarea", vertAlign: "middle", editor: false, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
-            {
-                title: "Team", width: 120, field: "usca", vertAlign: "middle", editor: false, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like", visible: !user.permissions.canChangeUsca
-            },
-            {
-                title: "", width: 8, hozAlign: "center", vertAlign: "middle", editor: false, visible: checkUserPermission(user, "canCreateRequest"), cellClick: checkUserPermission(user, "canCreateRequest") ? newRequest : null, formatter: function (cell, formatterParams, onRendered) {
-
-                    return '<span class="material-icons-outlined" style="color: green">add</span>';
-                }, headerSort: false, tooltip: function (e, cell, onRendered) {
-                    var el1 = document.createElement("div");
-                    el1.style.backgroundColor = "#0d6efd";
-                    var el2 = document.createElement("span");
-                    el2.style.color = "#ffffff";
-                    el2.innerText = "Aggiungi attività";
-                    el1.append(el2);
-                    return el1;
-                }
-            },
-            {
-                title: "", width: 8, field: "idRichiesta", width: 10, hozAlign: "center", vertAlign: "middle", editor: false, visible: checkUserPermission(user, "canEditRequest"), cellClick: checkUserPermission(user, "canEditRequest") ? showElementUpdate : null, formatter: function (cell, formatterParams, onRendered) {
-                    return (cell.getValue() == null) ? '' : '<span class="material-icons-outlined" style="color: green">edit</span>';
-                }, headerSort: false, tooltip: function (e, cell, onRendered) {
-                    var el1 = document.createElement("div");
-                    el1.style.backgroundColor = "#0d6efd";
-                    var el2 = document.createElement("span");
-                    el2.style.color = "#ffffff";
-                    el2.innerText = "Modifica attività";
-                    el1.append(el2);
-                    return el1;
-                }
-            },
-            {
-                title: "", width: 8, field: "idRichiesta", width: 10, hozAlign: "center", vertAlign: "middle", editor: false, visible: checkUserPermission(user, "canDeleteRequest"), cellClick: checkUserPermission(user, "canEditRequest") ? deleteElement : null, formatter: function (cell, formatterParams, onRendered) {
-                    return (cell.getValue() == null) ? '' : '<span class="material-icons-outlined" style="color: red">delete</span>';
-                }, headerSort: false, tooltip: function (e, cell, onRendered) {
-                    var el1 = document.createElement("div");
-                    el1.style.backgroundColor = "red";
-                    var el2 = document.createElement("span");
-                    el2.style.color = "#ffffff";
-                    el2.innerText = "Cancella attività";
-                    el1.append(el2);
-                    return el1;
-                }
-            },
-            {
-                columns: [
-                    { title: "#", field: "idRichiesta", editor: false, hozAlign: "center", vertAlign: "middle", visible: checkUserPermission(user, "canViewId") },
-                    {
-                        title: "", field: "idTipologia", editor: false, visible: false
-                    },
-                    {
-                        title: "", field: "idPriorita", editor: false, visible: false
-                    },
-                    {
-                        title: "", field: "idUsca", visible: false
-                    },
-                    {
-                        title: "", field: "statiAttuali", visible: false
-                    },
-                ]
-            },
-
+                extend: 'collection',
+                text: 'Export',
+                buttons: [ 'csv', 'excel', 'pdf' ]
+            }
         ]
+    
     });
+    if ($.fn.DataTable.isDataTable('#mainRequests')) {
+        var datatable = $('#mainRequests').DataTable();
+        datatable.clear();
+        richieste.forEach(element=>{
+            var row=[];
+            row.push(element.idRichiesta);
+            row.push(formattaData(e.data,false));
+            row.push(e.tipologia);
+            row.push(e.priorita);
+            row.push(e.archived);
+            row.push(e.note);
+            row.push(e.cognome);
+            row.push(e.nome);
+            row.push(formattaData(e.nascita,false));
+            row.push(e.eta);
+            row.push(e.dataormattaEtaPerFascia(e.eta));
+            row.push(e.codiceFiscale);
+            row.push(formattaContatti(e.contatti));
+            row.push(e.indirizzo);
+            row.push(e.usca);
+            row.push('<span class="material-icons-outlined" style="color: green" data-toggle="tooltip" title="Modifica stato">edit</span>');
+            row.push('<span class="material-icons-outlined" style="color: green" data-toggle="tooltip" title="Aggiungi attività">add</span>');
+            row.push('<span class="material-icons-outlined" style="color: red" data-toggle="tooltip" title="Cancella attività">delete</span>');
+            row.push(e.telefono1);
+            row.push(e.telefono2);
+            row.push(e.telefono3);
+            row.push(e.email);
+            row.push(e.idAssistito);
+            row.push(e.idRichiesta);
+            row.push(e.idTipologia);
+            row.push(e.idPriorita);
+            row.push(e.idUsca);
+            row.push(e.statiAttuali);
+            datatable.row.add(row);
+        })
+        datatable.draw();
+    } else {
+        var tableHead = $("<thead>");
+        var tr = $("<tr>");
+        var el = $("<th>").html("id");
+        tr.append(el);
+        el = $("<th>").html("Programmata");
+        tr.append(el);
+        el = $("<th>").html("Tipologia");
+        tr.append(el);
+        el = $("<th>").html("Priorità");
+        tr.append(el);
+        el = $("<th>").html("Arch.");
+        tr.append(el);
+        el = $("<th>").html("Note");
+        tr.append(el);
+        el = $("<th>").html("Cognome");
+        tr.append(el);
+        el = $("<th>").html("Nome");
+        tr.append(el);
+        el = $("<th>").html("Nascita");
+        tr.append(el);
+        el = $("<th>").html("Età");
+        tr.append(el);
+        el = $("<th>").html("Fascia");
+        tr.append(el);
+        el = $("<th>").html("Codice Fiscale");
+        tr.append(el);
+        el = $("<th>").html("Contatti");
+        tr.append(el);
+        el = $("<th>").html("Indirizzo");
+        tr.append(el);
+        el = $("<th>").html("Team");
+        tr.append(el);
+        el = $("<th>");
+        tr.append(el);
+        el = $("<th>");
+        tr.append(el);
+        el = $("<th>");
+        tr.append(el);
+        el = $("<th>").html("Cont.1");
+        tr.append(el);
+        el = $("<th>").html("Cont.2");
+        tr.append(el);
+        el = $("<th>").html("Cont.3");
+        tr.append(el);
+        el = $("<th>").html("e-mail");
+        tr.append(el);
+        el = $("<th>").html("idAssistito");
+        tr.append(el);
+        el = $("<th>").html("idRichiesta");
+        tr.append(el);
+        el = $("<th>").html("idTipologia");
+        tr.append(el);
+        el = $("<th>").html("idPriorita");
+        tr.append(el);
+        el = $("<th>").html("idUsca");
+        tr.append(el);
+        el = $("<th>").html("statiAttuali");
+        tr.append(el);
+        el = $("<th>").html("noteRichiesta");
+        tr.append(el);
+        tableHead.append(tr);
+        $("#mainRequests").append(tableHead);
+        tableBody = $("<tbody>");
+        $("#mainRequests").append(tableBody);
 
-    if (checkUserPermission(user, "canExport")) {
-        let button = $("<button>").addClass("btn btn-primary btn-block requests-form").attr({ "id": "dataDownLoadButton" }).html("Scarica elenco attività").hide();
-        $("#menubuttons").append(button);
-        document.getElementById("dataDownLoadButton").addEventListener("click", function () {
-            table.download("xlsx", "richieste.xlsx", { sheetName: "Export" });
+        // $("#main").html("");
+        var tableBody = tableBody = $("#mainRequests").find("tbody");
+        // tableBody.html("");
+
+        richieste.forEach(e => {
+            tr = $("<tr>");
+            el = $("<td>").html(e.idRichiesta);
+            tr.append(el);
+            
+            el = $("<td>").html(formattaData(e.data,false));
+            tr.append(el);
+            el = $("<td>").html(e.tipologia);
+            tr.append(el);
+            el = $("<td>").html(e.priorita);
+            tr.append(el);
+            el = $("<td>").html(e.archived);
+            tr.append(el);
+            el = $("<td>").html(e.note);
+            tr.append(el);
+            el = $("<td>").html(e.cognome);
+            tr.append(el);
+            el = $("<td>").html(e.nome);
+            tr.append(el);
+            el = $("<td>").html(formattaData(e.nascita,false));
+            tr.append(el);
+            el = $("<td>").html(e.eta);
+            tr.append(el);
+            el = $("<td>").html(formattaEtaPerFascia(e.eta));
+            tr.append(el);
+            el = $("<td>").html(e.codiceFiscale);
+            tr.append(el);
+            el = $("<td>").html(formattaContatti(e.contatti));
+            tr.append(el);
+            el = $("<td>").html(e.indirizzo);
+            tr.append(el);
+            el = $("<td>").html(e.usca);
+            tr.append(el);
+            el = $("<td>").html('<span class="material-icons-outlined" style="color: green" data-toggle="tooltip" title="Modifica stato">edit</span>');
+            tr.append(el);
+            el = $("<td>").html('<span class="material-icons-outlined" style="color: green" data-toggle="tooltip" title="Aggiungi attività">add</span>');
+            tr.append(el);
+            el = $("<td>").html('<span class="material-icons-outlined" style="color: red" data-toggle="tooltip" title="Cancella attività">delete</span>');
+            tr.append(el);
+            el = $("<td>").html(e.telefono1);
+            tr.append(el);
+            el = $("<td>").html(e.telefono2);
+            tr.append(el);
+            el = $("<td>").html(e.telefono3);
+            tr.append(el);
+            el = $("<td>").html(e.email);
+            tr.append(el);
+            el = $("<td>").html(e.idAssistito);
+            tr.append(el);
+            el = $("<td>").html(e.idRichiesta);
+            tr.append(el);
+            el = $("<td>").html(e.idTipologia);
+            tr.append(el);
+            el = $("<td>").html(e.idPriorita);
+            tr.append(el);
+            el = $("<td>").html(e.idUsca);
+            tr.append(el);
+            el = $("<td>").html(e.statiAttuali);
+            tr.append(el);
+            el = $("<td>").html(e.noteRichiesta);
+            tr.append(el);
+            tableBody.append(tr)
+        })
+
+    }
+
+
+    if (!$.fn.DataTable.isDataTable('#mainRequests')) {
+        $('#mainRequests').DataTable();
+        $('#mainRequests tbody').on('click', 'td', function () {
+            var table = $('#mainRequests').DataTable();
+            try {
+                var cell = $(table.cell(this).data()).html();
+                if (cell == 'edit' || cell == 'add' || cell == 'notes' || cell == 'delete') {
+                    var element = requestElementFromRow(table.row(this).data());
+                    switch (cell) {
+                        case 'edit':
+                            showRequestUpdate(element);
+                            break;
+                        case 'add':
+                            newRequest(element);
+                            break;
+                        case 'notes':
+                            break;
+                        case 'delete':
+                            deleteElement(element);
+                            break;
+                    }
+                }
+            } catch {
+
+            }
+
         });
     }
-    $("#main").hide();
-    setTimeout(checkNewData, 2000);
 
+    var datatable = $('#mainRequests').DataTable();
+
+    if (checkUserPermission(user, "canChangeUsca")) {
+        datatable.columns(14).visible(false);
+    }
+
+    if (!mostraStorico) {
+        datatable.columns(4).visible(false);
+    }
+
+    if (checkUserPermission(user, "canDeleteRequest")) {
+        datatable.columns(17).visible(false);
+    }
+    
+    datatable.columns([18,19,20,21,22,23,24,25,26,27,28]).visible(false);
+    
+    // var table = new Tabulator("#main", {
+    //     height: 800,
+    //     data: richieste,           //load row data from array
+    //     layout: "fitColumns",      //fit columns to width of table
+    //     responsiveLayout: "collapse",  //hide columns that dont fit on the table
+    //     //tooltips: true,            //show tool tips on cells
+    //     addRowPos: "top",          //when adding a new row, add it to the top of the table
+    //     history: true,             //allow undo and redo actions on the table
+    //     pagination: "local",       //paginate the data
+    //     paginationSize: 12,         //allow 7 rows per page of data
+    //     paginationCounter: "rows", //display count of paginated rows in footer
+    //     movableColumns: true,      //allow column order to be changed
+    //     // initialSort: [             //set the initial sort order of the data
+    //     //     { column: "dataRic", dir: "asc" },
+    //     // ],
+    //     downloadConfig: {
+    //         columnHeaders: true, //do not include column headers in downloaded table
+    //         columnGroups: false, //do not include column groups in column headers for downloaded table
+    //         rowGroups: false, //do not include row groups in downloaded table
+    //         columnCalcs: false, //do not include column calcs in downloaded table
+    //         dataTree: false, //do not include data tree in downloaded table
+    //     },
+    //     columns: [                 //define the table columns
+
+
+    //         {
+    //             title: "Programmata", width: 150, field: "data", editor: false, hozAlign: "center", vertAlign: "middle", formatter: "datetime", formatterParams: {
+    //                 //inputFormat:"YYY-MM-DD HH:mm:ss",
+    //                 outputFormat: "dd-MM-yyyy",
+    //                 invalidPlaceholder: "(data non valida)",
+    //                 timezone: "Europe/Rome",
+    //             }, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like"
+    //         },
+    //         {
+    //             title: "Tipo", width: 120, field: "tipologia", editor: false, hozAlign: "center", vertAlign: "middle", headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like"
+    //         },
+    //         {
+    //             title: "Priorità", width: 120, field: "priorita", editor: false, hozAlign: "center", vertAlign: "middle", headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like"
+    //         },
+    //         (mostraStorico) ? {
+    //             title: "Arch.", width: 120, field: "archived", editor: false, formatter: "textarea", hozAlign: "center", vertAlign: "middle", headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like"
+    //         } : { visible: false },
+
+    //         { title: "#", field: "idAssistito", width: 5, editor: false, hozAlign: "center", vertAlign: "middle", visible: checkUserPermission(user, "canViewId") },
+
+    //         {
+    //             title: "", width: 8, field: "noteAssistito", vertAlign: "middle", editor: false, cellClick: cellPopupFormatterNoteAssistito, formatter: function (cell, formatterParams, onRendered) {
+    //                 return (cell.getValue() == null) ? '' : '<span class="material-icons-outlined">notes</span>';
+    //             }, headerSort: false, tooltip: function (e, cell, onRendered) {
+    //                 var el1 = document.createElement("div");
+    //                 el1.style.backgroundColor = "#0d6efd";
+    //                 var el2 = document.createElement("span");
+    //                 el2.style.color = "#ffffff";
+    //                 el2.innerText = "Note assistito";
+    //                 el1.append(el2);
+    //                 return el1;
+    //             }
+    //         },
+
+    //         { title: "Cognome", width: 150, field: "cognome", vertAlign: "middle", editor: false, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
+    //         { title: "Nome", width: 150, field: "nome", vertAlign: "middle", editor: false, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
+    //         {
+    //             title: "Nascita", width: 100, field: "nascita", vertAlign: "middle", editor: false, formatter: "datetime", formatterParams: {
+    //                 outputFormat: "dd-MM-yyyy",
+    //                 invalidPlaceholder: "",
+    //                 timezone: "Europe/Rome",
+    //             }
+    //         },
+    //         { title: "Codice Fiscale", width: 150, field: "codiceFiscale", editor: false, hozAlign: "center", vertAlign: "middle", headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
+    //         { title: "Cont.1", field: "telefono1", visible: false },
+    //         { title: "Cont.2", field: "telefono2", visible: false },
+    //         { title: "Cont.3", field: "telefono3", visible: false },
+    //         { title: "e-mail", field: "email", visible: false },
+    //         {
+    //             title: "Contatti", width: 150, field: "contatti", editor: false, hozAlign: "left", vertAlign: "middle", formatter: function (cell, formatterParams, onRendered) {
+    //                 var out = "<div><ul>";
+    //                 var val = cell.getValue();
+    //                 contatti = JSON.parse(val);
+    //                 contatti.forEach(el => {
+    //                     if (el != "") {
+    //                         out += "<li>" + el;
+    //                     }
+    //                 });
+    //                 out += "</ul></div>";
+    //                 return out;
+    //             }
+    //         },
+    //         { title: "Indirizzo", field: "indirizzo", formatter: "textarea", vertAlign: "middle", editor: false, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
+    //         {
+    //             title: "Team", width: 120, field: "usca", vertAlign: "middle", editor: false, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like", visible: !user.permissions.canChangeUsca
+    //         },
+    //         {
+    //             title: "", width: 8, hozAlign: "center", vertAlign: "middle", editor: false, visible: checkUserPermission(user, "canCreateRequest"), cellClick: checkUserPermission(user, "canCreateRequest") ? newRequest : null, formatter: function (cell, formatterParams, onRendered) {
+
+    //                 return '<span class="material-icons-outlined" style="color: green">add</span>';
+    //             }, headerSort: false, tooltip: function (e, cell, onRendered) {
+    //                 var el1 = document.createElement("div");
+    //                 el1.style.backgroundColor = "#0d6efd";
+    //                 var el2 = document.createElement("span");
+    //                 el2.style.color = "#ffffff";
+    //                 el2.innerText = "Aggiungi attività";
+    //                 el1.append(el2);
+    //                 return el1;
+    //             }
+    //         },
+    //         {
+    //             title: "", width: 8, field: "idRichiesta", width: 10, hozAlign: "center", vertAlign: "middle", editor: false, visible: checkUserPermission(user, "canEditRequest"), cellClick: checkUserPermission(user, "canEditRequest") ? showElementUpdate : null, formatter: function (cell, formatterParams, onRendered) {
+    //                 return (cell.getValue() == null) ? '' : '<span class="material-icons-outlined" style="color: green">edit</span>';
+    //             }, headerSort: false, tooltip: function (e, cell, onRendered) {
+    //                 var el1 = document.createElement("div");
+    //                 el1.style.backgroundColor = "#0d6efd";
+    //                 var el2 = document.createElement("span");
+    //                 el2.style.color = "#ffffff";
+    //                 el2.innerText = "Modifica attività";
+    //                 el1.append(el2);
+    //                 return el1;
+    //             }
+    //         },
+    //         {
+    //             title: "", width: 8, field: "idRichiesta", width: 10, hozAlign: "center", vertAlign: "middle", editor: false, visible: checkUserPermission(user, "canDeleteRequest"), cellClick: checkUserPermission(user, "canEditRequest") ? deleteElement : null, formatter: function (cell, formatterParams, onRendered) {
+    //                 return (cell.getValue() == null) ? '' : '<span class="material-icons-outlined" style="color: red">delete</span>';
+    //             }, headerSort: false, tooltip: function (e, cell, onRendered) {
+    //                 var el1 = document.createElement("div");
+    //                 el1.style.backgroundColor = "red";
+    //                 var el2 = document.createElement("span");
+    //                 el2.style.color = "#ffffff";
+    //                 el2.innerText = "Cancella attività";
+    //                 el1.append(el2);
+    //                 return el1;
+    //             }
+    //         },
+    //         {
+    //             columns: [
+    //                 { title: "#", field: "idRichiesta", editor: false, hozAlign: "center", vertAlign: "middle", visible: checkUserPermission(user, "canViewId") },
+    //                 {
+    //                     title: "", field: "idTipologia", editor: false, visible: false
+    //                 },
+    //                 {
+    //                     title: "", field: "idPriorita", editor: false, visible: false
+    //                 },
+    //                 {
+    //                     title: "", field: "idUsca", visible: false
+    //                 },
+    //                 {
+    //                     title: "", field: "statiAttuali", visible: false
+    //                 },
+    //             ]
+    //         },
+
+    //     ]
+    // });
+
+    // if (checkUserPermission(user, "canExport")) {
+    //     let button = $("<button>").addClass("btn btn-primary btn-block requests-form").attr({ "id": "dataDownLoadButton" }).html("Scarica elenco attività").hide();
+    //     $("#menubuttons").append(button);
+    //     document.getElementById("dataDownLoadButton").addEventListener("click", function () {
+    //         table.download("xlsx", "richieste.xlsx", { sheetName: "Export" });
+    //     });
+    // }
+    // $("#main").hide();
+    // setTimeout(checkNewData, 2000);
+
+}
+
+function requestElementFromRow(row) {
+    var element = {};
+    element.idRichiesta = row[0];
+    element.data = row[1];
+    element.noteAssistito = row[5];
+    element.cognome = row[6];
+    element.nome = row[7];
+    element.nascita = row[8];
+    element.codiceFiscale = row[11];
+    element.indirizzo = row[13];
+    element.telefono1 = row[18];
+    element.telefono2 = row[19];
+    element.telefono3 = row[20];
+    element.email = row[21];
+    element.idAssistito = row[22];
+    element.idTipologia = row[24];
+    element.idPriorita = row[25];
+    element.idUsca = row[26];
+    element.statiAttuali = (row[27]!="")?row[27]:"[]";
+    element.noteRichiesta = (row[28]!="")?row[28]:"[]";
+    return element;
 }
 
 function inserisci() {
@@ -273,8 +538,7 @@ function inserisci() {
     }
 }
 
-var showElementUpdate = function (e, row) {
-    var element = row.getData();
+function showRequestUpdate(element) {
     $("#idRichiesta").val(element.idRichiesta);
     $("#idAssistito").val(element.idAssistito);
     $("#nome").val(element.nome);
