@@ -62,6 +62,8 @@ function showRequests(richieste, user) {
             row.push(e.idPriorita);
             row.push(e.idUsca);
             row.push(e.statiAttuali);
+            row.push(e.nascita);
+            row.push(e.data);
             datatable.row.add(row);
         })
         datatable.draw();
@@ -125,6 +127,10 @@ function showRequests(richieste, user) {
         el = $("<th>").html("statiAttuali");
         tr.append(el);
         el = $("<th>").html("noteRichiesta");
+        tr.append(el);
+        el = $("<th>").html("nascita");
+        tr.append(el);
+        el = $("<th>").html("data");
         tr.append(el);
         tableHead.append(tr);
         $("#mainRequests").append(tableHead);
@@ -196,6 +202,10 @@ function showRequests(richieste, user) {
             tr.append(el);
             el = $("<td>").html(e.noteRichiesta);
             tr.append(el);
+            el = $("<td>").html(e.nascita);
+            tr.append(el);
+            el = $("<td>").html(e.data);
+            tr.append(el);
             tableBody.append(tr)
         })
 
@@ -245,180 +255,18 @@ function showRequests(richieste, user) {
         datatable.columns(17).visible(false);
     }
     
-    datatable.columns([18,19,20,21,22,23,24,25,26,27,28]).visible(false);
-    
-    // var table = new Tabulator("#main", {
-    //     height: 800,
-    //     data: richieste,           //load row data from array
-    //     layout: "fitColumns",      //fit columns to width of table
-    //     responsiveLayout: "collapse",  //hide columns that dont fit on the table
-    //     //tooltips: true,            //show tool tips on cells
-    //     addRowPos: "top",          //when adding a new row, add it to the top of the table
-    //     history: true,             //allow undo and redo actions on the table
-    //     pagination: "local",       //paginate the data
-    //     paginationSize: 12,         //allow 7 rows per page of data
-    //     paginationCounter: "rows", //display count of paginated rows in footer
-    //     movableColumns: true,      //allow column order to be changed
-    //     // initialSort: [             //set the initial sort order of the data
-    //     //     { column: "dataRic", dir: "asc" },
-    //     // ],
-    //     downloadConfig: {
-    //         columnHeaders: true, //do not include column headers in downloaded table
-    //         columnGroups: false, //do not include column groups in column headers for downloaded table
-    //         rowGroups: false, //do not include row groups in downloaded table
-    //         columnCalcs: false, //do not include column calcs in downloaded table
-    //         dataTree: false, //do not include data tree in downloaded table
-    //     },
-    //     columns: [                 //define the table columns
-
-
-    //         {
-    //             title: "Programmata", width: 150, field: "data", editor: false, hozAlign: "center", vertAlign: "middle", formatter: "datetime", formatterParams: {
-    //                 //inputFormat:"YYY-MM-DD HH:mm:ss",
-    //                 outputFormat: "dd-MM-yyyy",
-    //                 invalidPlaceholder: "(data non valida)",
-    //                 timezone: "Europe/Rome",
-    //             }, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like"
-    //         },
-    //         {
-    //             title: "Tipo", width: 120, field: "tipologia", editor: false, hozAlign: "center", vertAlign: "middle", headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like"
-    //         },
-    //         {
-    //             title: "Priorità", width: 120, field: "priorita", editor: false, hozAlign: "center", vertAlign: "middle", headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like"
-    //         },
-    //         (mostraStorico) ? {
-    //             title: "Arch.", width: 120, field: "archived", editor: false, formatter: "textarea", hozAlign: "center", vertAlign: "middle", headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like"
-    //         } : { visible: false },
-
-    //         { title: "#", field: "idAssistito", width: 5, editor: false, hozAlign: "center", vertAlign: "middle", visible: checkUserPermission(user, "canViewId") },
-
-    //         {
-    //             title: "", width: 8, field: "noteAssistito", vertAlign: "middle", editor: false, cellClick: cellPopupFormatterNoteAssistito, formatter: function (cell, formatterParams, onRendered) {
-    //                 return (cell.getValue() == null) ? '' : '<span class="material-icons-outlined">notes</span>';
-    //             }, headerSort: false, tooltip: function (e, cell, onRendered) {
-    //                 var el1 = document.createElement("div");
-    //                 el1.style.backgroundColor = "#0d6efd";
-    //                 var el2 = document.createElement("span");
-    //                 el2.style.color = "#ffffff";
-    //                 el2.innerText = "Note assistito";
-    //                 el1.append(el2);
-    //                 return el1;
-    //             }
-    //         },
-
-    //         { title: "Cognome", width: 150, field: "cognome", vertAlign: "middle", editor: false, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
-    //         { title: "Nome", width: 150, field: "nome", vertAlign: "middle", editor: false, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
-    //         {
-    //             title: "Nascita", width: 100, field: "nascita", vertAlign: "middle", editor: false, formatter: "datetime", formatterParams: {
-    //                 outputFormat: "dd-MM-yyyy",
-    //                 invalidPlaceholder: "",
-    //                 timezone: "Europe/Rome",
-    //             }
-    //         },
-    //         { title: "Codice Fiscale", width: 150, field: "codiceFiscale", editor: false, hozAlign: "center", vertAlign: "middle", headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
-    //         { title: "Cont.1", field: "telefono1", visible: false },
-    //         { title: "Cont.2", field: "telefono2", visible: false },
-    //         { title: "Cont.3", field: "telefono3", visible: false },
-    //         { title: "e-mail", field: "email", visible: false },
-    //         {
-    //             title: "Contatti", width: 150, field: "contatti", editor: false, hozAlign: "left", vertAlign: "middle", formatter: function (cell, formatterParams, onRendered) {
-    //                 var out = "<div><ul>";
-    //                 var val = cell.getValue();
-    //                 contatti = JSON.parse(val);
-    //                 contatti.forEach(el => {
-    //                     if (el != "") {
-    //                         out += "<li>" + el;
-    //                     }
-    //                 });
-    //                 out += "</ul></div>";
-    //                 return out;
-    //             }
-    //         },
-    //         { title: "Indirizzo", field: "indirizzo", formatter: "textarea", vertAlign: "middle", editor: false, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
-    //         {
-    //             title: "Team", width: 120, field: "usca", vertAlign: "middle", editor: false, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like", visible: !user.permissions.canChangeUsca
-    //         },
-    //         {
-    //             title: "", width: 8, hozAlign: "center", vertAlign: "middle", editor: false, visible: checkUserPermission(user, "canCreateRequest"), cellClick: checkUserPermission(user, "canCreateRequest") ? newRequest : null, formatter: function (cell, formatterParams, onRendered) {
-
-    //                 return '<span class="material-icons-outlined" style="color: green">add</span>';
-    //             }, headerSort: false, tooltip: function (e, cell, onRendered) {
-    //                 var el1 = document.createElement("div");
-    //                 el1.style.backgroundColor = "#0d6efd";
-    //                 var el2 = document.createElement("span");
-    //                 el2.style.color = "#ffffff";
-    //                 el2.innerText = "Aggiungi attività";
-    //                 el1.append(el2);
-    //                 return el1;
-    //             }
-    //         },
-    //         {
-    //             title: "", width: 8, field: "idRichiesta", width: 10, hozAlign: "center", vertAlign: "middle", editor: false, visible: checkUserPermission(user, "canEditRequest"), cellClick: checkUserPermission(user, "canEditRequest") ? showElementUpdate : null, formatter: function (cell, formatterParams, onRendered) {
-    //                 return (cell.getValue() == null) ? '' : '<span class="material-icons-outlined" style="color: green">edit</span>';
-    //             }, headerSort: false, tooltip: function (e, cell, onRendered) {
-    //                 var el1 = document.createElement("div");
-    //                 el1.style.backgroundColor = "#0d6efd";
-    //                 var el2 = document.createElement("span");
-    //                 el2.style.color = "#ffffff";
-    //                 el2.innerText = "Modifica attività";
-    //                 el1.append(el2);
-    //                 return el1;
-    //             }
-    //         },
-    //         {
-    //             title: "", width: 8, field: "idRichiesta", width: 10, hozAlign: "center", vertAlign: "middle", editor: false, visible: checkUserPermission(user, "canDeleteRequest"), cellClick: checkUserPermission(user, "canEditRequest") ? deleteElement : null, formatter: function (cell, formatterParams, onRendered) {
-    //                 return (cell.getValue() == null) ? '' : '<span class="material-icons-outlined" style="color: red">delete</span>';
-    //             }, headerSort: false, tooltip: function (e, cell, onRendered) {
-    //                 var el1 = document.createElement("div");
-    //                 el1.style.backgroundColor = "red";
-    //                 var el2 = document.createElement("span");
-    //                 el2.style.color = "#ffffff";
-    //                 el2.innerText = "Cancella attività";
-    //                 el1.append(el2);
-    //                 return el1;
-    //             }
-    //         },
-    //         {
-    //             columns: [
-    //                 { title: "#", field: "idRichiesta", editor: false, hozAlign: "center", vertAlign: "middle", visible: checkUserPermission(user, "canViewId") },
-    //                 {
-    //                     title: "", field: "idTipologia", editor: false, visible: false
-    //                 },
-    //                 {
-    //                     title: "", field: "idPriorita", editor: false, visible: false
-    //                 },
-    //                 {
-    //                     title: "", field: "idUsca", visible: false
-    //                 },
-    //                 {
-    //                     title: "", field: "statiAttuali", visible: false
-    //                 },
-    //             ]
-    //         },
-
-    //     ]
-    // });
-
-    // if (checkUserPermission(user, "canExport")) {
-    //     let button = $("<button>").addClass("btn btn-primary btn-block requests-form").attr({ "id": "dataDownLoadButton" }).html("Scarica elenco attività").hide();
-    //     $("#menubuttons").append(button);
-    //     document.getElementById("dataDownLoadButton").addEventListener("click", function () {
-    //         table.download("xlsx", "richieste.xlsx", { sheetName: "Export" });
-    //     });
-    // }
-    // $("#main").hide();
-    // setTimeout(checkNewData, 2000);
-
+    datatable.columns([18,19,20,21,22,23,24,25,26,27,28,29,30]).visible(false);
 }
 
 function requestElementFromRow(row) {
     var element = {};
     element.idRichiesta = row[0];
-    element.data = row[1];
+    element.data = row[30];
+    element.isArchived = row[4];
     element.noteAssistito = row[5];
     element.cognome = row[6];
     element.nome = row[7];
-    element.nascita = row[8];
+    element.nascita = row[29];
     element.codiceFiscale = row[11];
     element.indirizzo = row[13];
     element.telefono1 = row[18];
@@ -558,7 +406,8 @@ function showRequestUpdate(element) {
     $("#actionType").val("update");
     $("#insertFormButton1").attr({"onClick":"inserisci()"});
     $("#insertFormButton2").attr({"onClick":"cleanInsert()"});
-    $("#nascita").val(((new luxon.DateTime.fromSQL(element.nascita)).toFormat("yyyy-MM-dd"))); 
+    $("#nascita").val(((new luxon.DateTime.fromSQL(element.nascita)).toFormat("yyyy-MM-dd")));
+    $("#isArchived").val(element.isArchived=="S"); 
     if (JSON.parse(element.noteRichiesta).length > 0) {
         var table = new Tabulator("#noteRichiesta", {
             height: 170,
@@ -630,6 +479,7 @@ function showRequestUpdate(element) {
                 },
             ]
         });
+        $("#statiAttuali").parent().show();
     } else {
         $("#statiAttuali").parent().hide();
     }
@@ -810,7 +660,7 @@ function newRequest (element) {
     $("#idTipologia").val("")
     $("#idUsca").val(element.idUsca);
     $("#statiAttuali").parent().hide();
-    $("#noteRichiesta").parent().hide();
+    $("#noteRichiesta").hide();
     $("#data").val((new luxon.DateTime.fromJSDate(new Date())).toFormat("yyyy-MM-dd"));
     $("#nascita").val(((new luxon.DateTime.fromSQL(element.nascita)).toFormat("yyyy-MM-dd")));
     $("#mostraNoteButton").hide();

@@ -2,6 +2,7 @@
 include_once("user.php");
 include_once("assistito.php");
 include_once("db.php");
+include_once("utils.php");
 class Tampone
 {
     public $id;
@@ -148,42 +149,7 @@ class Tampone
     }
 
 
-    // public function getDetails()
-    // {
-    //     if ($this->id != null) {
-    //         try {
-    //             $conn = DB::conn();
-    //             if ($conn != null) {
-
-    //                 $query = 'SELECT *
-    //                         FROM `tamponi` AS t
-    //                         WHERE t.id=:id';
-
-    //                 $stmt = $conn->prepare($query);
-    //                 $stmt->bindParam(':id', $this->id, PDO::PARAM_INT);
-    //                 $stmt->execute();
-
-    //                 $res = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-    //                 if (!$res) {
-    //                     throw new Exception("ERRORE-NELLA-RICERCA-PER-LA-RICHIESTA-" . $this->id);
-    //                 } else {
-    //                     //var_dump($res);
-    //                     $res = $res[0]; // Ci sarà un solo risultato utile
-    //                     $this->setIdTipologia($res['id_tipologia']);
-    //                     $this->setIdPriorita($res['id_priorita']);
-    //                 }
-    //             } else {
-    //                 throw new Exception("DB-CONNECTION-ERROR");
-    //             }
-    //         } catch (Exception $e) {
-    //             $conn = null;
-    //         }
-    //     } else {
-    //         throw new Exception("EMPTY-REQUEST-ERROR");
-    //     }
-    // }
-
+    
     public static function getSwabs($activeUsca)
     {
         //$val null o "A" restituisce tutte le richieste Attive
@@ -193,119 +159,134 @@ class Tampone
         $out = new stdClass();
         $out->status = "KO";
         $out->data = [];
-        try {
-            $conn = DB::conn();
-            if ($conn != null) {
+        checkSession();
+            if(isset($_SESSION["loggeduser"])){
                 try {
-                    /*
-                    $query = "SELECT a.id AS id_assistito,
-                    a.nome AS nome,
-                    a.cognome AS cognome,
-                    a.email AS email,
-                    a.indirizzo AS indirizzo,
-                    a.codicefiscale AS codicefiscale,
-                    a.note AS note_assistito,
-                    a.is_active AS assistito_is_active,
-                    a.telefono1 AS telefono1,
-                    a.telefono2 AS telefono2,
-                    a.telefono3 AS telefono3,
-                    a.nascita AS nascita,
-                    TIMESTAMPDIFF(YEAR,nascita,now()) as eta,
-                    a.id_usca AS id_usca,
-                    t.id as id_tampone,
-                    t.data_esecuzione AS data_esecuzione,
-                    t.data_consigliata AS data_consigliata,
-                    t.is_active AS tampone_is_active,
-                    t.status AS id_status,
-                    s.descrizione AS status,
-                    t.created AS created,
-                    t.created_by AS created_by,
-                    t.last_update AS last_update,
-                    t.last_update_by AS last_update_by,
-                    u.descrizione AS usca,
-                    s.to_show AS to_show
-                    FROM `assistiti` AS a JOIN `tamponi` AS t ON a.id=t.id_assistito
-                    LEFT JOIN `stati_tamponi` AS s ON t.status=s.id
-                    LEFT JOIN `usca` AS u ON a.id_usca=u.id
-                    WHERE a.is_active=1"
-                    */
+                    $user=json_decode($_SESSION["loggeduser"]);
+                    $user=recast("User",$user);
+                    $conn = DB::conn();
+                    if ($conn != null) {
+                        try {
+                            /*
+                            $query = "SELECT a.id AS id_assistito,
+                            a.nome AS nome,
+                            a.cognome AS cognome,
+                            a.email AS email,
+                            a.indirizzo AS indirizzo,
+                            a.codicefiscale AS codicefiscale,
+                            a.note AS note_assistito,
+                            a.is_active AS assistito_is_active,
+                            a.telefono1 AS telefono1,
+                            a.telefono2 AS telefono2,
+                            a.telefono3 AS telefono3,
+                            a.nascita AS nascita,
+                            TIMESTAMPDIFF(YEAR,nascita,now()) as eta,
+                            a.id_usca AS id_usca,
+                            t.id as id_tampone,
+                            t.data_esecuzione AS data_esecuzione,
+                            t.data_consigliata AS data_consigliata,
+                            t.is_active AS tampone_is_active,
+                            t.status AS id_status,
+                            s.descrizione AS status,
+                            t.created AS created,
+                            t.created_by AS created_by,
+                            t.last_update AS last_update,
+                            t.last_update_by AS last_update_by,
+                            u.descrizione AS usca,
+                            s.to_show AS to_show,
+                            s.to_show_2 AS to_show_2
+                            FROM `assistiti` AS a JOIN `tamponi` AS t ON a.id=t.id_assistito
+                            LEFT JOIN `stati_tamponi` AS s ON t.status=s.id
+                            LEFT JOIN `usca` AS u ON a.id_usca=u.id
+                            WHERE a.is_active=1"
+                            */
+        
+                            $query = "SELECT * FROM `vista_tamponi` WHERE tampone_is_active=1 AND DATEDIFF(CURDATE(), data_esecuzione) < 8 ";
+                            
+                            if($activeUsca!="ALL"){
+                                $query.=" AND id_usca=:id_usca";
+                            }
 
-                    $query = "SELECT * FROM `vista_tamponi` WHERE tampone_is_active=1 AND to_show=1 AND DATEDIFF(CURDATE(), data_esecuzione) < 8 ";
-                    
-                    if($activeUsca!="ALL"){
-                        $query.=" AND id_usca=:id_usca";
+                            if(!$user->checkPermissions("canView1")){ // se impostato a true, il flag è indifferente per l'utente
+                                $query.=" AND to_show=1";
+                            }
+
+                            if(!$user->checkPermissions("canView2")){ // se impostato a true, il flag è indifferente per l'utente
+                                $query.=" AND to_show_2=1";
+                            }
+        
+                            $query.=" ORDER BY data_esecuzione";
+        
+                            $stmt = $conn->prepare($query);
+                            if($activeUsca!="ALL"){
+                                $stmt->bindParam(':id_usca',$activeUsca,PDO::PARAM_INT);
+                            }
+        
+                            $stmt->execute();
+        
+                            $res = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                            foreach ($res as $r) {
+                                $tmp = new StdClass();
+                                $tmp->id = $r['id_tampone'];
+                                $tmp->idAssistito=$r['id_assistito'];
+                                $tmp->nome=$r['nome'];
+                                $tmp->cognome=$r['cognome'];
+                                $tmp->email=$r['email'];
+                                $tmp->telefono1=$r['telefono1'];
+                                $tmp->telefono2=$r['telefono2'];
+                                $tmp->telefono3=$r['telefono3'];
+                                $tmp->indirizzo=$r['indirizzo'];
+                                $tmp->codiceFiscale=$r['codicefiscale'];
+                                $tmp->noteAssistito=$r['note_assistito'];
+                                $tmp->nascita=$r['nascita'];
+                                $tmp->assistitoIsActive=$r['assistito_is_active'];
+                                $tmp->tamponeIsActive=$r['tampone_is_active'];
+                                $tmp->idStatus=$r['id_status'];
+                                $tmp->status=$r['status'];
+                                $tmp->idTampone=$r['id_tampone'];
+                                $tmp->dataEsecuzione=$r['data_esecuzione'];
+                                $tmp->dataConsigliata=$r['data_consigliata'];
+                                $tmp->idUsca=$r['id_usca'];
+                                $tmp->usca=$r['usca'];
+                                $tmp->created=$r['created'];
+                                $tmp->createdByNomeCognome=$r['created_by'];
+                                $tmp->last_update=$r['last_update'];
+                                $tmp->lastUpdateByNomeCognome=$r['last_update_by'];
+                                $tmp->eta=$r['eta'];
+                                $contatti = [];
+                                if ($r['telefono1']!=""){
+                                    array_push($contatti,$r['telefono1']);
+                                }
+                                if ($r['telefono2']!=""){
+                                    array_push($contatti,$r['telefono2']);
+                                }
+                                if ($r['telefono3']!=""){
+                                    array_push($contatti,$r['telefono3']);
+                                }
+                                if ($r['email']!=""){
+                                    array_push($contatti,$r['email']);
+                                }
+                                $tmp->contatti=json_encode($contatti);
+        
+                                array_push($out->data, $tmp);
+                            }
+                            $out->lastRead = (new DateTime())->format('Y-m-d H:i:s');
+        
+                            $out->status = "OK";
+                            $out->lastRead = (new DateTime())->format('Y-m-d H:i:s');
+                        } catch (Exception $ex) {
+                            $out->error = $ex->getMessage();
+                        }
+                    } else {
+                        $out->error = "DB-CONNECTION-ERROR";
                     }
-
-                    $query.=" ORDER BY data_esecuzione";
-
-                    // echo($query);
-                    
-                    $stmt = $conn->prepare($query);
-                    if($activeUsca!="ALL"){
-                        $stmt->bindParam(':id_usca',$activeUsca,PDO::PARAM_INT);
-                    }
-
-                    $stmt->execute();
-
-                    $res = $stmt->fetchAll(PDO::FETCH_ASSOC);
-                    foreach ($res as $r) {
-                        $tmp = new StdClass();
-                        $tmp->id = $r['id_tampone'];
-                        $tmp->idAssistito=$r['id_assistito'];
-                        $tmp->nome=$r['nome'];
-                        $tmp->cognome=$r['cognome'];
-                        $tmp->email=$r['email'];
-                        $tmp->telefono1=$r['telefono1'];
-                        $tmp->telefono2=$r['telefono2'];
-                        $tmp->telefono3=$r['telefono3'];
-                        $tmp->indirizzo=$r['indirizzo'];
-                        $tmp->codiceFiscale=$r['codicefiscale'];
-                        $tmp->noteAssistito=$r['note_assistito'];
-                        $tmp->nascita=$r['nascita'];
-                        $tmp->assistitoIsActive=$r['assistito_is_active'];
-                        $tmp->tamponeIsActive=$r['tampone_is_active'];
-                        $tmp->idStatus=$r['id_status'];
-                        $tmp->status=$r['status'];
-                        $tmp->idTampone=$r['id_tampone'];
-                        $tmp->dataEsecuzione=$r['data_esecuzione'];
-                        $tmp->dataConsigliata=$r['data_consigliata'];
-                        $tmp->idUsca=$r['id_usca'];
-                        $tmp->usca=$r['usca'];
-                        $tmp->created=$r['created'];
-                        $tmp->createdByNomeCognome=$r['created_by'];
-                        $tmp->last_update=$r['last_update'];
-                        $tmp->lastUpdateByNomeCognome=$r['last_update_by'];
-                        $tmp->eta=$r['eta'];
-                        $contatti = [];
-                        if ($r['telefono1']!=""){
-                            array_push($contatti,$r['telefono1']);
-                        }
-                        if ($r['telefono2']!=""){
-                            array_push($contatti,$r['telefono2']);
-                        }
-                        if ($r['telefono3']!=""){
-                            array_push($contatti,$r['telefono3']);
-                        }
-                        if ($r['email']!=""){
-                            array_push($contatti,$r['email']);
-                        }
-                        $tmp->contatti=json_encode($contatti);
-
-                        array_push($out->data, $tmp);
-                    }
-                    $out->lastRead = (new DateTime())->format('Y-m-d H:i:s');
-
-                    $out->status = "OK";
-                    $out->lastRead = (new DateTime())->format('Y-m-d H:i:s');
-                } catch (Exception $ex) {
-                    $out->error = $ex->getMessage();
-                }
+                } catch (Exception $e) {
+                    $conn = null;
+                }    
             } else {
-                $out->error = "DB-CONNECTION-ERROR";
+                $out->data="NOTLOGGED";
             }
-        } catch (Exception $e) {
-            $conn = null;
-        }
+        
         return $out;
     }
 

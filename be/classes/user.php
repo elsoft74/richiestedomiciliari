@@ -384,4 +384,12 @@
         public static function checkToken($token){
             return ($token=="123456"); // va implementata una generazione token con controllo di scadenza e restituito un oggetto con anche i dati quali lo username
         }
+
+        public function checkPermissions($check){
+            $out = false;
+            if (isset($this->permissions) && isset($this->permissions->$check)){
+                $out=$this->permissions->$check;
+            }
+            return $out;
+        }
     }

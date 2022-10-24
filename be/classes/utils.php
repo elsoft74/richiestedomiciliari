@@ -37,4 +37,28 @@
             $_SESSION['CREATED'] = $t;
         }
     }
+
+    /**
+     * recast stdClass object to an object with type
+     *
+     * @param string $className
+     * @param stdClass $object
+     * @throws InvalidArgumentException
+     * @return mixed new, typed object
+     */
+    function recast($className, stdClass &$object) {
+        if (!class_exists($className))
+            throw new InvalidArgumentException(sprintf('Inexistant class %s.', $className));
+
+        $new = new $className();
+
+        foreach($object as $property => &$value)
+        {
+            $new->$property = &$value;
+            unset($object->$property);
+        }
+        unset($value);
+        $object = (unset) $object;
+        return $new;
+    }
 ?>

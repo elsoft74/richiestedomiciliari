@@ -275,12 +275,14 @@ class Richiesta
 
                     $query = "SELECT * FROM `vista_richieste` WHERE (richiesta_is_active=1 OR richiesta_is_active IS null)";
                     if (!$arc){
-                        //$query.=" AND (data >= CURRENT_DATE() OR data is null)";
+                        $query.=" AND (data >= CURRENT_DATE()-5 OR data is null)";
                         $query.=" AND (is_archived = 0 OR is_archived is null)";
                     }
                     if($activeUsca!="ALL"){
                         $query.=" AND id_usca=:id_usca";
                     }
+
+                    $query.=" ORDER BY data ASC";
                     
                     $stmt = $conn->prepare($query);
                     if($activeUsca!="ALL"){
