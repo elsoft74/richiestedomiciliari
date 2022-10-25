@@ -207,13 +207,12 @@ class Tampone
                                 $query.=" AND id_usca=:id_usca";
                             }
 
-                            if(!$user->checkPermissions("canView1")){ // se impostato a true, il flag è indifferente per l'utente
-                                $query.=" AND to_show=1";
+                            $query.=" AND id_status IN (";
+                            foreach($user->reading_states AS $state){
+                                $query.="$state,";
                             }
-
-                            if(!$user->checkPermissions("canView2")){ // se impostato a true, il flag è indifferente per l'utente
-                                $query.=" AND to_show_2=1";
-                            }
+                            $query=substr($query,0,strlen($query)-1);
+                            $query.=")";
         
                             $query.=" ORDER BY data_esecuzione";
         
@@ -484,26 +483,38 @@ class Tampone
     public static function getStatiTamponi(){
         $out = new stdClass();
         $out->status="KO";
-        try {
-            $conn=DB::conn();
-            if ($conn!=null){
-                try {
-                    $query="SELECT id,descrizione FROM `stati_tamponi` WHERE `is_active`=1";
-                    
-                    $stmt = $conn->prepare($query);
-                    $stmt->execute();
-                    $res=$stmt->fetchAll(PDO::FETCH_ASSOC);
-                    $out->data=$res;                    
-                    $out->status="OK";
-                } catch(Exception $ex){
-                        $out->error=$ex->getMessage();
-                    }
-            }
-            else {
-                $out->error="DB-CONNECTION-ERROR";
-            }
-        } catch(Exception $e){
-            $conn=null;
+        checkSession();
+        if(isset($_SESSION["loggeduser"])){
+            $user=json_decode($_SESSION["loggeduser"]);
+            $user=recast("User",$user); 
+            try {
+                $conn=DB::conn();
+                if ($conn!=null){
+                    try {
+                        $query="SELECT id,descrizione FROM `stati_tamponi` WHERE `is_active`=1 AND id IN (";
+                        foreach($user->writing_states AS $state){
+                            $query.="$state,";
+                        }
+                        $query=substr($query,0,strlen($query)-1);
+                        $query.=")";
+                        
+                        $stmt = $conn->prepare($query);
+                        $stmt->execute();
+                        $res=$stmt->fetchAll(PDO::FETCH_ASSOC);
+                        $out->data=$res;                    
+                        $out->status="OK";
+                    } catch(Exception $ex){
+                            $out->error=$ex->getMessage();
+                        }
+                }
+                else {
+                    $out->error="DB-CONNECTION-ERROR";
+                }
+                } catch(Exception $e){
+                    $conn=null;
+                }
+            } else {
+            $out->data="NOTLOGGED";
         }
         //file_put_contents("../log/dbtest.log",(new DateTime("now"))->format("Y-m-d H:i").$msg."\n",FILE_APPEND);
         return $out;
