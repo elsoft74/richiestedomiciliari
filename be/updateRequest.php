@@ -19,6 +19,7 @@
             $ric->setId($tmp->id);
             $assistito = new Assistito();
             $assistito->setId($tmp->assistito->id);
+            $assistito->getData();
             $assistito->setNome($tmp->assistito->nome);
             $assistito->setCognome($tmp->assistito->cognome);
             $assistito->setNascita($tmp->assistito->nascita);
@@ -29,6 +30,7 @@
             $assistito->setCodiceFiscale($tmp->assistito->codiceFiscale);
             $assistito->setNote($tmp->assistito->note);
             $assistito->setIdUsca($tmp->assistito->idUsca);
+            $assistito->setIndirizzo($tmp->assistito->indirizzo);
             $assistito->update($username,$token);
             $ric->setIdAssistito($tmp->idAssistito);
             $ric->setIdTipologia(($tmp->idTipologia!="")?$tmp->idTipologia:null);
@@ -45,7 +47,6 @@
             }
             $ric->setLastUpdate((new DateTime())->format('Y-m-d H:i:s'));
             $ric->setLastUpdateBy($tmp->lastUpdateBy);
-
             $out=$ric->update($username,$token);
             $out->debug=print_r($ric,true);
         }

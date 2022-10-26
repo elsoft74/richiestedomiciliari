@@ -1,6 +1,7 @@
 <?php
 include_once("user.php");
 include_once("db.php");
+include_once("utils.php");
 class Richiesta
 {
     public $id;
@@ -535,7 +536,8 @@ class Richiesta
                             id_priorita=:id_priorita,
                             data=:data,
                             last_update=:last_update,
-                            last_update_by=:last_update_by
+                            last_update_by=:last_update_by,
+                            note=:note
                             WHERE `id`=:id";
 
                         $stmt = $conn->prepare($query);
@@ -543,7 +545,7 @@ class Richiesta
                         $stmt->bindParam(':id_tipologia', $this->idTipologia, PDO::PARAM_INT);
                         $stmt->bindParam(':id_priorita', $this->idPriorita, PDO::PARAM_INT);
                         $stmt->bindParam(':data', $this->data, PDO::PARAM_STR);
-                        // $stmt->bindParam(':note', $this->note, PDO::PARAM_STR);
+                        $stmt->bindParam(':note', $this->note, PDO::PARAM_STR);
                         $stmt->bindParam(':last_update', $this->lastUpdate, PDO::PARAM_STR);
                         $stmt->bindParam(':last_update_by', $this->lastUpdateBy, PDO::PARAM_INT);
                         $stmt->bindParam(':id', $this->id, PDO::PARAM_INT);
@@ -555,11 +557,35 @@ class Richiesta
                             throw new Exception("UPDATE-ERROR");
                         }
 
-                        $query="UPDATE `updates` SET last_update_ts=LOCALTIMESTAMP() WHERE table_name='richieste'";
-                        $stmt = $conn->prepare($query);
-                        $stmt->execute();
-                        if ($stmt->rowCount()==1){
-                            $out->status="OK";
+                        $insStati = true;
+                            
+                        foreach ($this->getNewStates() as $stato){
+                            $query = "INSERT INTO `attivita_svolte` (
+                                `id_attivita`,
+                                `id_stato`,
+                                `created_by`
+                            ) VALUES (:id_attivita,
+                                :id_stato,
+                                :created_by)";
+
+                            $stmt = $conn->prepare($query);
+                            $stmt->bindParam(':id_attivita', $this->id, PDO::PARAM_INT);
+                            $stmt->bindParam(':id_stato', $stato, PDO::PARAM_INT);
+                            $stmt->bindParam(':created_by', $this->lastUpdateBy, PDO::PARAM_INT);
+                            $stmt->execute();
+
+                            if ($conn->lastInsertId() == 0){
+                                $insStati = $insStati && false;
+                            }
+                        }
+
+                        if($insStati){
+                            $query="UPDATE `updates` SET last_update_ts=LOCALTIMESTAMP() WHERE table_name='richieste'";
+                            $stmt = $conn->prepare($query);
+                            $stmt->execute();
+                            if ($stmt->rowCount()==1){
+                                $out->status="OK";
+                            }
                         }
                         } else {
                             throw new Exception("OPERAZIONE-NON-PERMESSA");

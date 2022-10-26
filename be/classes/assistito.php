@@ -311,6 +311,61 @@
             //file_put_contents("../log/dbtest.log",(new DateTime("now"))->format("Y-m-d H:i").$msg."\n",FILE_APPEND);
             return $out;
         }
+
+        public function getData(){
+            $out = new stdClass();
+            $out->status="KO";
+            $out->data=[];
+            checkAndExtendSession();
+            try {
+                $user=json_decode($_SESSION["loggeduser"]);
+                $user=recast("User",$user);
+                $conn=DB::conn();
+                if ($conn!=null){
+                    try {
+                        if($this->id==null){
+                            throw new Exception("EMPTY-PATIENT");
+                        }
+                        $query="SELECT is_active, role_id FROM `users` AS u WHERE u.username=:username";
+                        $stmt = $conn->prepare($query);
+                        $stmt->bindParam(':username',$user->username,PDO::PARAM_STR);
+                        $stmt->execute();
+                        $res=$stmt->fetch(PDO::FETCH_ASSOC);
+                        if ($res && $res['is_active']==1){
+                            $query="SELECT * FROM `assistiti` WHERE id=:id";
+                            $stmt = $conn->prepare($query);
+                            $stmt->bindParam(':id',$this->id,PDO::PARAM_STR);
+                            $stmt->execute();
+                            $results=$stmt->fetch(PDO::FETCH_ASSOC);
+                            if($results){
+                                $this->nome=$results['nome'];
+                                $this->cognome=$results['cognome'];
+                                $this->telefono1=$results['telefono1'];
+                                $this->telefono2=$results['telefono2'];
+                                $this->telefono3=$results['telefono3'];
+                                $this->nascita=$results['nascita'];
+                                $this->email=$results['email'];
+                                $this->indirizzo=$results['indirizzo'];
+                                $this->codiceFiscale=$results['codicefiscale'];
+                                $this->note=$results['note'];
+                            }
+                        } else {
+                            throw new Exception("OPERAZIONE-NON-PERMESSA");
+                        } 
+                    } catch(Exception $ex){
+                            $out->error=$ex->getMessage();
+                        }
+                }
+                else {
+                    $out->error="DB-CONNECTION-ERROR";
+                }
+            } catch(Exception $e){
+                $out->error=$e;
+                $conn=null;
+            }
+            //file_put_contents("../log/dbtest.log",(new DateTime("now"))->format("Y-m-d H:i").$msg."\n",FILE_APPEND);
+            return $out;
+        }
     
         public function update($username,$token){
             $out = new stdClass();
