@@ -182,7 +182,7 @@ function buildInsertForm() {
         divFormGroup = $("<div>").addClass("col-md-12 verticalScrollableList");
         // el = $("<label>").attr({ "for": attrs.stati }).text(attrs.statiText);
         // divFormGroup.append(el);
-        el = $("<div>").addClass("form-richiesta").addClass("form-control").attr({ "id": attrs.stati });
+        el = $("<table>").addClass("form-richiesta").addClass("form-control").attr({ "id": attrs.stati });
 
         divFormGroup.append(el);
         form.append(divFormGroup);
@@ -244,7 +244,7 @@ function buildInsertForm() {
         if (attrs.hasOwnProperty("noteRichiesta")) {
             el = $("<label>").attr({ "for": attrs.noteRichiesta }).text(attrs.noteRichiestaText);
             divFormGroup.append(el);
-            el = $("<div>").addClass("form-richiesta").addClass("form-control").attr({ "type": "hidden", "id": attrs.noteRichiesta });
+            el = $("<table>").addClass("form-richiesta").addClass("form-control").attr({ "type": "hidden", "id": attrs.noteRichiesta });
             divFormGroup.append(el);
         }
         divNote.append(divFormGroup);

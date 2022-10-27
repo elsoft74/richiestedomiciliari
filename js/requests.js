@@ -409,76 +409,92 @@ function showRequestUpdate(element) {
     $("#nascita").val(((new luxon.DateTime.fromSQL(element.nascita)).toFormat("yyyy-MM-dd")));
     $("#isArchived").val(element.isArchived=="S"); 
     if (JSON.parse(element.noteRichiesta).length > 0) {
-        var table = new Tabulator("#noteRichiesta", {
-            height: 170,
-            data: element.noteRichiesta,           //load row data from array
-            layout: "fitColumns",      //fit columns to width of table
-            responsiveLayout: "collapse",  //hide columns that dont fit on the table
-            addRowPos: "top",          //when adding a new row, add it to the top of the table
-            history: true,             //allow undo and redo actions on the table
-            pagination: "local",       //paginate the data
-            paginationSize: 12,         //allow 7 rows per page of data
-            paginationCounter: "rows", //display count of paginated rows in footer
-            movableColumns: true,      //allow column order to be changed
-            columns: [                 //define the table columns
-                {
-                    title: "Data", width: 120, field: "date", editor: false, hozAlign: "center", vertAlign: "middle", formatter: "datetime", formatterParams: {
-                        outputFormat: "dd-MM-yyyy",
-                        invalidPlaceholder: "(data non valida)",
-                        timezone: "Europe/Rome",
-                    }, headerPopup: headerPopupFormatter,
-                },
-
-                {
-                    title: "Nota", field: "note", editor: false, hozAlign: "center", vertAlign: "middle", cellClick: mostraNotaEstesa, tooltip: function (e, cell, onRendered) {
-                        var el1 = document.createElement("div");
-                        el1.style.backgroundColor = "#0d6efd";
-                        var el2 = document.createElement("span");
-                        el2.style.color = "#ffffff";
-                        el2.innerText = "Leggi tutto";
-                        el1.append(el2);
-                        return el1;
-                    }
-                },
-            ]
-        });
+        let noteRichiesta=JSON.parse(element.noteRichiesta);
+        if ($.fn.DataTable.isDataTable('#noteRichiesta')) {
+            var datatable = $('#noteRichiesta').DataTable();
+            datatable.clear();
+            noteRichiesta.forEach(element=>{
+                var row=[];
+                row.push(formattaData(e.date,false));
+                row.push(e.note);
+                datatable.row.add(row);
+            })
+            datatable.draw();
+        } else {
+            var tableHead = $("<thead>");
+            var tr = $("<tr>");
+            var el = $("<th>").html("Data");
+            tr.append(el);
+            el = $("<th>").html("Nota");
+            tr.append(el);
+            tableHead.append(tr);
+            $("#noteRichiesta").append(tableHead);
+            tableBody = $("<tbody>");
+            $("#noteRichiesta").append(tableBody);
+    
+            var tableBody = tableBody = $("#noteRichiesta").find("tbody");
+            
+            noteRichiesta.forEach(e => {
+                tr = $("<tr>");
+                el = $("<td>").html(formattaData(e.date,false));
+                tr.append(el);
+                el = $("<td>").html(e.note);
+                tr.append(el);
+                tableBody.append(tr)
+            })
+    
+        }
+    
+    
+        if (!$.fn.DataTable.isDataTable('#noteRichiesta')) {
+            $('#noteRichiesta').DataTable();
+        }
+        
     } else {
         $("#noteRichiesta").parent().hide();
     }
     if (JSON.parse(element.statiAttuali).length > 0) {
-        var table = new Tabulator("#statiAttuali", {
-            height: 170,
-            data: element.statiAttuali,           //load row data from array
-            layout: "fitColumns",      //fit columns to width of table
-            responsiveLayout: "collapse",  //hide columns that dont fit on the table
-            addRowPos: "top",          //when adding a new row, add it to the top of the table
-            history: true,             //allow undo and redo actions on the table
-            pagination: "local",       //paginate the data
-            paginationSize: 12,         //allow 7 rows per page of data
-            paginationCounter: "rows", //display count of paginated rows in footer
-            movableColumns: true,      //allow column order to be changed
-            columns: [                 //define the table columns
-                {
-                    title: "Data", width: 120, field: "date", editor: false, hozAlign: "center", vertAlign: "middle", formatter: "datetime", formatterParams: {
-                        outputFormat: "dd-MM-yyyy",
-                        invalidPlaceholder: "(data non valida)",
-                        timezone: "Europe/Rome",
-                    }, headerPopup: headerPopupFormatter,
-                },
-
-                {
-                    title: "Attività svolte", field: "descrizione", editor: false, hozAlign: "center", vertAlign: "middle", cellClick: mostraNotaEstesa, tooltip: function (e, cell, onRendered) {
-                        var el1 = document.createElement("div");
-                        el1.style.backgroundColor = "#0d6efd";
-                        var el2 = document.createElement("span");
-                        el2.style.color = "#ffffff";
-                        el2.innerText = "Leggi tutto";
-                        el1.append(el2);
-                        return el1;
-                    }
-                },
-            ]
-        });
+        let statiAttuali=JSON.parse(element.statiAttuali);
+        if ($.fn.DataTable.isDataTable('#statiAttuali')) {
+            var datatable = $('#statiAttuali').DataTable();
+            datatable.clear();
+            statiAttuali.forEach(element=>{
+                var row=[];
+                row.push(formattaData(e.date,false));
+                row.push(e.descrizione);
+                datatable.row.add(row);
+            })
+            datatable.draw();
+        } else {
+            var tableHead = $("<thead>");
+            var tr = $("<tr>");
+            var el = $("<th>").html("Data");
+            tr.append(el);
+            el = $("<th>").html("Attività svolta");
+            tr.append(el);
+            tableHead.append(tr);
+            $("#statiAttuali").append(tableHead);
+            tableBody = $("<tbody>");
+            $("#statiAttuali").append(tableBody);
+    
+            var tableBody = tableBody = $("#statiAttuali").find("tbody");
+            
+            statiAttuali.forEach(e => {
+                tr = $("<tr>");
+                el = $("<td>").html(formattaData(e.date,false));
+                tr.append(el);
+                el = $("<td>").html(e.descrizione);
+                tr.append(el);
+                tableBody.append(tr)
+            })
+    
+        }
+    
+    
+        if (!$.fn.DataTable.isDataTable('#statiAttuali')) {
+            $('#statiAttuali').DataTable();
+        }
+        
         $("#statiAttuali").parent().show();
     } else {
         $("#statiAttuali").parent().hide();

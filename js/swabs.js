@@ -19,16 +19,16 @@ function showSwabs(swabs, user) {
             {
                 extend: 'collection',
                 text: 'Export',
-                buttons: [ 'csv', 'excel', 'pdf' ]
+                buttons: ['csv', 'excel', 'pdf']
             }
         ]
-    
+
     });
     if ($.fn.DataTable.isDataTable('#mainSwabs')) {
         var datatable = $('#mainSwabs').DataTable();
         datatable.clear();
-        swabs.forEach(element=>{
-            var row=[];
+        swabs.forEach(element => {
+            var row = [];
             row.push(element.id);
             row.push(element.idAssistito);
             row.push(element.cognome);
@@ -213,8 +213,8 @@ function showSwabs(swabs, user) {
     if (checkUserPermission(user, "canChangeUsca")) {
         datatable.columns(15).visible(false);
     }
-    
-    datatable.columns([1,7,9,10,11,12,17,19,21,25]).visible(false);
+
+    datatable.columns([1, 7, 9, 10, 11, 12, 17, 19, 21, 25]).visible(false);
 }
 
 function readSwabs(toBeCompleted) {
@@ -297,38 +297,49 @@ function aggiornaTampone() {
         tampone.status = $("#statusTamponeEdit").val();
         tampone.lastUpdateBy = "" + loggedUser.id;
 
+        if (tampone.status != null) {
 
-        var xhr = new XMLHttpRequest();
-        var url = "be/updateSwab.php";
-        xhr.open("POST", url, true);
-        xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-        xhr.onreadystatechange = function () {
-            if (xhr.readyState === 4 && xhr.status === 200) {
-                var result = JSON.parse(xhr.responseText);
-                if (result.status == "OK") {
-                    Swal.fire({
-                        text: "Operazione completata.",
-                        icon: 'info',
-                        showCancelButton: false,
-                        confirmButtonColor: '#3085d6',
-                        confirmButtonText: 'Ok'
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            cleanTamponeEdit();
-                        }
-                    })
-                } else {
-                    Swal.fire({
-                        text: "Impossibile completare l'operazione",
-                        icon: 'error',
-                        showCancelButton: false,
-                        confirmButtonColor: '#3085d6',
-                        confirmButtonText: 'Ok'
-                    })
+
+            var xhr = new XMLHttpRequest();
+            var url = "be/updateSwab.php";
+            xhr.open("POST", url, true);
+            xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    var result = JSON.parse(xhr.responseText);
+                    if (result.status == "OK") {
+                        Swal.fire({
+                            text: "Operazione completata.",
+                            icon: 'info',
+                            showCancelButton: false,
+                            confirmButtonColor: '#3085d6',
+                            confirmButtonText: 'Ok'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                cleanTamponeEdit();
+                            }
+                        })
+                    } else {
+                        Swal.fire({
+                            text: "Impossibile completare l'operazione",
+                            icon: 'error',
+                            showCancelButton: false,
+                            confirmButtonColor: '#3085d6',
+                            confirmButtonText: 'Ok'
+                        })
+                    }
                 }
             }
+            xhr.send("username=" + username + "&token=" + token + "&tampone=" + JSON.stringify(tampone));
+        } else {
+            Swal.fire({
+                text: "Non hai selezionato il nuovo stato.",
+                icon: 'warning',
+                showCancelButton: false,
+                confirmButtonColor: '#3085d6',
+                confirmButtonText: 'Ok'
+            });
         }
-        xhr.send("username=" + username + "&token=" + token + "&tampone=" + JSON.stringify(tampone));
     }
 }
 
