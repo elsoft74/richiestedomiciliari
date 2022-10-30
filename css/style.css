@@ -131,3 +131,8 @@ tbody tr td span {
 .sections {
     padding:5px;
 }
+
+.activityNoteColumn{
+  width: auto;
+  padding-right: 10px;
+}

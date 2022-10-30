@@ -569,28 +569,9 @@ function updateTableDataTamponi() {
         if (toBeCompleted.swabs) {
             waitingForDataTamponi = false;
             sessionStorage.setItem("waitingForDataTamponi", JSON.stringify(waitingForDataTamponi));
-            // var table = Tabulator.findTable("#mainSwabs")[0];
             var swabs = JSON.parse(sessionStorage.getItem("swabs"));
             var user = JSON.parse(sessionStorage.getItem("ricdomloggeduser"));
             showSwabs(swabs, user);
-            // if (swabs.length != 0) {
-            //     var rows = table.getRows();
-            //     var newIds = [];
-            //http://192.168.1.163/richiestedomiciliari/index.php     swabs.forEach(el=>{
-            //         newIds.push(parseInt(el.id));
-            //     });
-            //     rows.forEach(el=>{
-            //         if (!newIds.includes(parseInt(el.getIndex()))){
-            //             table.deleteRow(parseInt(el.getIndex()));
-            //         }
-            //     })
-            //     table.updateOrAddData(swabs).then(function () {
-            //         setTimeout(checkNewData, 2000);
-            //     })
-            // } else {
-            //     table.clearData();
-            //     setTimeout(checkNewData, 2000);
-            // }
         } else {
             setTimeout(updateTableDataTamponi, 200);
         }

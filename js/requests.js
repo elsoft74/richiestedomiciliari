@@ -24,27 +24,27 @@ function showRequests(richieste, user) {
             {
                 extend: 'collection',
                 text: 'Export',
-                buttons: [ 'csv', 'excel', 'pdf' ]
+                buttons: ['csv', 'excel', 'pdf']
             }
         ]
-    
+
     });
     if ($.fn.DataTable.isDataTable('#mainRequests')) {
         var datatable = $('#mainRequests').DataTable();
         datatable.clear();
-        richieste.forEach(element=>{
-            var row=[];
-            row.push(element.idRichiesta);
-            row.push(formattaData(e.data,false));
+        richieste.forEach(e => {
+            var row = [];
+            row.push(e.idRichiesta);
+            row.push(formattaData(e.data, false));
             row.push(e.tipologia);
             row.push(e.priorita);
             row.push(e.archived);
-            row.push(e.note);
+            row.push(e.noteAssistito);
             row.push(e.cognome);
             row.push(e.nome);
-            row.push(formattaData(e.nascita,false));
+            row.push(formattaData(e.nascita, false));
             row.push(e.eta);
-            row.push(e.dataormattaEtaPerFascia(e.eta));
+            row.push(formattaEtaPerFascia(e.eta));
             row.push(e.codiceFiscale);
             row.push(formattaContatti(e.contatti));
             row.push(e.indirizzo);
@@ -62,6 +62,7 @@ function showRequests(richieste, user) {
             row.push(e.idPriorita);
             row.push(e.idUsca);
             row.push(e.statiAttuali);
+            row.push(e.noteRichiesta);
             row.push(e.nascita);
             row.push(e.data);
             datatable.row.add(row);
@@ -145,8 +146,8 @@ function showRequests(richieste, user) {
             tr = $("<tr>");
             el = $("<td>").html(e.idRichiesta);
             tr.append(el);
-            
-            el = $("<td>").html(formattaData(e.data,false));
+
+            el = $("<td>").html(formattaData(e.data, false));
             tr.append(el);
             el = $("<td>").html(e.tipologia);
             tr.append(el);
@@ -154,13 +155,13 @@ function showRequests(richieste, user) {
             tr.append(el);
             el = $("<td>").html(e.archived);
             tr.append(el);
-            el = $("<td>").html(e.note);
+            el = $("<td>").html(e.noteAssistito);
             tr.append(el);
             el = $("<td>").html(e.cognome);
             tr.append(el);
             el = $("<td>").html(e.nome);
             tr.append(el);
-            el = $("<td>").html(formattaData(e.nascita,false));
+            el = $("<td>").html(formattaData(e.nascita, false));
             tr.append(el);
             el = $("<td>").html(e.eta);
             tr.append(el);
@@ -254,8 +255,8 @@ function showRequests(richieste, user) {
     if (checkUserPermission(user, "canDeleteRequest")) {
         datatable.columns(17).visible(false);
     }
-    
-    datatable.columns([18,19,20,21,22,23,24,25,26,27,28,29,30]).visible(false);
+
+    datatable.columns([18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30]).visible(false);
 }
 
 function requestElementFromRow(row) {
@@ -277,8 +278,8 @@ function requestElementFromRow(row) {
     element.idTipologia = row[24];
     element.idPriorita = row[25];
     element.idUsca = row[26];
-    element.statiAttuali = (row[27]!="")?row[27]:"[]";
-    element.noteRichiesta = (row[28]!="")?row[28]:"[]";
+    element.statiAttuali = (row[27] != "") ? row[27] : "[]";
+    element.noteRichiesta = (row[28] != "") ? row[28] : "[]";
     return element;
 }
 
@@ -308,10 +309,10 @@ function inserisci() {
         richiesta.idUsca = $("#idUsca").val();
         assistito.note = $("#noteAssistito").val().trim();
         assistito.indirizzo = $("#indirizzo").val().trim();
-        richiesta.assistito=assistito;
+        richiesta.assistito = assistito;
         richiesta.isArchived = false;
         var actualNotes = [];
-        if ($("#noteRichiestaAttuali").val()!=""){
+        if ($("#noteRichiestaAttuali").val() != "") {
             actualNotes = JSON.parse($("#noteRichiestaAttuali").val());
         }
         var newNoteText = $("#nuovaNotaRichiesta").val().trim();
@@ -319,24 +320,24 @@ function inserisci() {
             var newNoteDate = (new luxon.DateTime.fromJSDate(new Date())).toFormat("yyyy-MM-dd HH:mm:ss");
             var newNoteObject = {};
             newNoteObject.date = newNoteDate,
-            newNoteObject.note = newNoteText;
+                newNoteObject.note = newNoteText;
             newNoteObject.createdBy = loggedUser.id;
             actualNotes.push(newNoteObject);
         }
         richiesta.note = JSON.stringify(actualNotes);
-        if ($("#actionType").val()=="insert"){
+        if ($("#actionType").val() == "insert") {
             richiesta.createdBy = "" + loggedUser.id;
         } else {
             richiesta.lastUpdateBy = "" + loggedUser.id;
         }
-        if ($("#isArchived").val()!=undefined && JSON.parse($("#isArchived").val())){
+        if ($("#isArchived").val() != undefined && JSON.parse($("#isArchived").val())) {
             richiesta.isArchived = true;
             richiesta.archivedBy = "" + loggedUser.id;
         }
-        richiesta.nuoviStati=[];
+        richiesta.nuoviStati = [];
         var nuoviStati = $("input[name='nuoviStati']:checked");
-        for (var i=0; i<nuoviStati.length;i++){
-            let tmp=$(nuoviStati[i]);
+        for (var i = 0; i < nuoviStati.length; i++) {
+            let tmp = $(nuoviStati[i]);
             richiesta.nuoviStati.push(tmp.val());
         }
 
@@ -352,7 +353,7 @@ function inserisci() {
             })
         } else {
             var xhr = new XMLHttpRequest();
-            var url = ($("#actionType").val()=="insert")?"be/insertRequest.php":"be/updateRequest.php";
+            var url = ($("#actionType").val() == "insert") ? "be/insertRequest.php" : "be/updateRequest.php";
             xhr.open("POST", url, true);
             xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
             xhr.onreadystatechange = function () {
@@ -404,20 +405,22 @@ function showRequestUpdate(element) {
     $("#noteRichiestaAttuali").val(element.noteRichiesta);
     $("#data").val(((new luxon.DateTime.fromSQL(element.data)).toFormat("yyyy-MM-dd")));
     $("#actionType").val("update");
-    $("#insertFormButton1").attr({"onClick":"inserisci()"});
-    $("#insertFormButton2").attr({"onClick":"cleanInsert()"});
+    $("#insertFormButton1").attr({ "onClick": "inserisci()" });
+    $("#insertFormButton2").attr({ "onClick": "cleanInsert()" });
     $("#nascita").val(((new luxon.DateTime.fromSQL(element.nascita)).toFormat("yyyy-MM-dd")));
-    $("#isArchived").val(element.isArchived=="S"); 
+    $("#isArchived").val(element.isArchived == "S");
     if (JSON.parse(element.noteRichiesta).length > 0) {
-        let noteRichiesta=JSON.parse(element.noteRichiesta);
+        let noteRichiesta = JSON.parse(element.noteRichiesta);
         if ($.fn.DataTable.isDataTable('#noteRichiesta')) {
             var datatable = $('#noteRichiesta').DataTable();
             datatable.clear();
-            noteRichiesta.forEach(element=>{
-                var row=[];
-                row.push(formattaData(e.date,false));
-                row.push(e.note);
-                datatable.row.add(row);
+            noteRichiesta.forEach(e => {
+                if (e.date != null && e.note != null) {
+                    var row = [];
+                    row.push(formattaData(e.date, false));
+                    row.push(e.note);
+                    datatable.row.add(row);
+                }
             })
             datatable.draw();
         } else {
@@ -431,38 +434,46 @@ function showRequestUpdate(element) {
             $("#noteRichiesta").append(tableHead);
             tableBody = $("<tbody>");
             $("#noteRichiesta").append(tableBody);
-    
+
             var tableBody = tableBody = $("#noteRichiesta").find("tbody");
-            
+
             noteRichiesta.forEach(e => {
-                tr = $("<tr>");
-                el = $("<td>").html(formattaData(e.date,false));
-                tr.append(el);
-                el = $("<td>").html(e.note);
-                tr.append(el);
-                tableBody.append(tr)
+                if (e.date != null && e.note != null) {
+                    tr = $("<tr>");
+                    el = $("<td>").html(formattaData(e.date, false));
+                    tr.append(el);
+                    el = $("<td>").html(e.note);
+                    tr.append(el);
+                    tableBody.append(tr);
+                }
             })
-    
+
         }
-    
-    
+
+
         if (!$.fn.DataTable.isDataTable('#noteRichiesta')) {
-            $('#noteRichiesta').DataTable();
+            $('#noteRichiesta').DataTable({
+                searching: false,
+                paging: false,
+                info: false,
+                });
         }
-        
+
     } else {
         $("#noteRichiesta").parent().hide();
     }
     if (JSON.parse(element.statiAttuali).length > 0) {
-        let statiAttuali=JSON.parse(element.statiAttuali);
+        let statiAttuali = JSON.parse(element.statiAttuali);
         if ($.fn.DataTable.isDataTable('#statiAttuali')) {
             var datatable = $('#statiAttuali').DataTable();
             datatable.clear();
-            statiAttuali.forEach(element=>{
-                var row=[];
-                row.push(formattaData(e.date,false));
-                row.push(e.descrizione);
-                datatable.row.add(row);
+            statiAttuali.forEach(e => {
+                if (e.date != null && e.descrizione != null) {
+                    var row = [];
+                    row.push(formattaData(e.date, false));
+                    row.push(e.descrizione);
+                    datatable.row.add(row);
+                }
             })
             datatable.draw();
         } else {
@@ -476,25 +487,31 @@ function showRequestUpdate(element) {
             $("#statiAttuali").append(tableHead);
             tableBody = $("<tbody>");
             $("#statiAttuali").append(tableBody);
-    
+
             var tableBody = tableBody = $("#statiAttuali").find("tbody");
-            
+
             statiAttuali.forEach(e => {
-                tr = $("<tr>");
-                el = $("<td>").html(formattaData(e.date,false));
-                tr.append(el);
-                el = $("<td>").html(e.descrizione);
-                tr.append(el);
-                tableBody.append(tr)
+                if (e.date != null && e.descrizione != null) {
+                    tr = $("<tr>");
+                    el = $("<td>").addClass("activityNoteColumn").html(formattaData(e.date, false));
+                    tr.append(el);
+                    el = $("<td>").addClass("activityNoteColumn").html(e.descrizione);
+                    tr.append(el);
+                    tableBody.append(tr);
+                }
             })
-    
+
         }
-    
-    
+
+
         if (!$.fn.DataTable.isDataTable('#statiAttuali')) {
-            $('#statiAttuali').DataTable();
+            $('#statiAttuali').DataTable({
+                searching: false,
+                paging: false,
+                info: false,
+                });
         }
-        
+
         $("#statiAttuali").parent().show();
     } else {
         $("#statiAttuali").parent().hide();
@@ -595,72 +612,72 @@ function readRequests(toBeCompleted) {
     xhr.send("lastRead=" + sessionStorage.getItem("lastRead") + "&activeUsca=" + activeUsca);
 }
 
-//create header popup contents
-var headerPopupFormatter = function (e, column, onRendered) {
-    var container = document.createElement("div");
+// //create header popup contents
+// var headerPopupFormatter = function (e, column, onRendered) {
+//     var container = document.createElement("div");
 
-    var label = document.createElement("label");
-    label.innerHTML = "Filter Column:";
-    label.style.display = "block";
-    label.style.fontSize = ".7em";
+//     var label = document.createElement("label");
+//     label.innerHTML = "Filter Column:";
+//     label.style.display = "block";
+//     label.style.fontSize = ".7em";
 
-    var input = document.createElement("input");
-    input.placeholder = "Filter Column...";
-    input.value = column.getHeaderFilterValue() || "";
+//     var input = document.createElement("input");
+//     input.placeholder = "Filter Column...";
+//     input.value = column.getHeaderFilterValue() || "";
 
-    input.addEventListener("keyup", (e) => {
-        column.setHeaderFilterValue(input.value);
-    });
+//     input.addEventListener("keyup", (e) => {
+//         column.setHeaderFilterValue(input.value);
+//     });
 
-    container.appendChild(label);
-    container.appendChild(input);
+//     container.appendChild(label);
+//     container.appendChild(input);
 
-    return container;
-}
+//     return container;
+// }
 
-//create dummy header filter to allow popup to filter
-var emptyHeaderFilter = function () {
-    return document.createElement("div");;
-}
+// //create dummy header filter to allow popup to filter
+// var emptyHeaderFilter = function () {
+//     return document.createElement("div");;
+// }
 
-var cellPopupFormatterNoteAssistito = function (e, row, onRendered) {
-    var data = row.getData();
-    cellPopupFormatter(data.hasOwnProperty("noteAssistito") ? data.noteAssistito : data.note);
-};
+// var cellPopupFormatterNoteAssistito = function (e, row, onRendered) {
+//     var data = row.getData();
+//     cellPopupFormatter(data.hasOwnProperty("noteAssistito") ? data.noteAssistito : data.note);
+// };
 
 
-var cellPopupFormatter = function (title, text) {
-    Swal.fire({
-        title: title,
-        text: text,
-        icon: 'info',
-        showCancelButton: false,
-        confirmButtonColor: '#3085d6',
-        confirmButtonText: 'Ok'
-    })
-};
+// var cellPopupFormatter = function (title, text) {
+//     Swal.fire({
+//         title: title,
+//         text: text,
+//         icon: 'info',
+//         showCancelButton: false,
+//         confirmButtonColor: '#3085d6',
+//         confirmButtonText: 'Ok'
+//     })
+// };
 
 function checkDatiObbligatori(richiesta) {
     let out = '';
-    if(!richiesta.isArchived && richiesta.idTipologia==""){
-        out+="<p>Non hai selezionato la tipologia di attività da programmare</p>";
+    if (!richiesta.isArchived && richiesta.idTipologia == "") {
+        out += "<p>Non hai selezionato la tipologia di attività da programmare</p>";
     }
-    if(!richiesta.isArchived && richiesta.idPriorita==""){
-        out+="<p>Non hai selezionato la priorità dell'attività da programmare</p>";
+    if (!richiesta.isArchived && richiesta.idPriorita == "") {
+        out += "<p>Non hai selezionato la priorità dell'attività da programmare</p>";
     }
     if (richiesta.data == null || richiesta.data == "") {
         out += "<p>La data è obbligatoria</p>";
     }
-    if (!richiesta.isArchived && richiesta.assistito.idUsca == null){
+    if (!richiesta.isArchived && richiesta.assistito.idUsca == null) {
         out += "<p>Non è selezionato alcun Team</p>";
     }
-    if (richiesta.nuoviStati.length==0){
+    if (richiesta.nuoviStati.length == 0) {
         out += "<p>Non hai selezionato alcun nuovo stato per questa attività</p>";
     }
     return out;
 }
 
-function newRequest (element) {
+function newRequest(element) {
     // var element = row.getData();
     $("#idAssistito").val((element.hasOwnProperty("idAssistito")) ? element.idAssistito : element.id);
     $("#nome").val(element.nome);
@@ -680,36 +697,36 @@ function newRequest (element) {
     $("#data").val((new luxon.DateTime.fromJSDate(new Date())).toFormat("yyyy-MM-dd"));
     $("#nascita").val(((new luxon.DateTime.fromSQL(element.nascita)).toFormat("yyyy-MM-dd")));
     $("#mostraNoteButton").hide();
-    
+
     $("#actionType").val("insert");
-    $("#insertFormButton1").attr({"onClick":"inserisci()"});
-    $("#insertFormButton2").attr({"onClick":"cleanInsert()"});
-    $("#isArchived").val(false)  
+    $("#insertFormButton1").attr({ "onClick": "inserisci()" });
+    $("#insertFormButton2").attr({ "onClick": "cleanInsert()" });
+    $("#isArchived").val(false)
     $("#insert").modal("show");
 }
 
 
-var cellPopupFormatterDettagliRichiesta = function (e, row) {
-    var element = row.getData();
-    Swal.fire({
-        html: "<p>Scheda creata il: " + element.created + " da " + element.createdByNomeCognome + "</p>" + ((element.lastUpdate != null) ? "<p>Modificata il: " + element.lastUpdate + " da " + element.lastUpdateByNomeCognome + "</p>" : ""),
-        icon: 'info',
-        showCancelButton: false,
-        confirmButtonColor: '#3085d6',
-        confirmButtonText: 'Ok'
-    });
-}
+// var cellPopupFormatterDettagliRichiesta = function (e, row) {
+//     var element = row.getData();
+//     Swal.fire({
+//         html: "<p>Scheda creata il: " + element.created + " da " + element.createdByNomeCognome + "</p>" + ((element.lastUpdate != null) ? "<p>Modificata il: " + element.lastUpdate + " da " + element.lastUpdateByNomeCognome + "</p>" : ""),
+//         icon: 'info',
+//         showCancelButton: false,
+//         confirmButtonColor: '#3085d6',
+//         confirmButtonText: 'Ok'
+//     });
+// }
 
-var mostraNotaEstesa = function (e, row) {
-    var element = row.getData();
-    Swal.fire({
-        html: "<div>" + element.note + "</div>",
-        icon: 'info',
-        showCancelButton: false,
-        confirmButtonColor: '#3085d6',
-        confirmButtonText: 'Ok'
-    });
-}
+// var mostraNotaEstesa = function (e, row) {
+//     var element = row.getData();
+//     Swal.fire({
+//         html: "<div>" + element.note + "</div>",
+//         icon: 'info',
+//         showCancelButton: false,
+//         confirmButtonColor: '#3085d6',
+//         confirmButtonText: 'Ok'
+//     });
+// }
 
 
 function updateRequestData() {
@@ -726,13 +743,9 @@ function updateRequestData() {
         if (toBeCompleted.richieste) {
             waitingForData = false;
             sessionStorage.setItem("waitingForData", JSON.stringify(waitingForData));
-            var table = Tabulator.findTable("#main")[0];
-            if (table != null && table != undefined) {
-                var richieste = JSON.parse(sessionStorage.getItem("richieste"));
-                table.updateOrAddData(richieste).then(function () {
-                    setTimeout(checkNewData, 2000);
-                })
-            }
+            var richieste = JSON.parse(sessionStorage.getItem("richieste"));
+            var user = JSON.parse(sessionStorage.getItem("ricdomloggeduser"));
+            showRequests(richieste, user);
         } else {
             setTimeout(updateRequestData, 1000);
         }
@@ -740,7 +753,7 @@ function updateRequestData() {
 }
 
 function confirmAndArchive() {
-    if($("input[name='nuoviStati']:checked").length==0){
+    if ($("input[name='nuoviStati']:checked").length == 0) {
         Swal.fire({
             html: "Non hai selezionato alcun nuovo stato per questa attività",
             icon: 'warning',
