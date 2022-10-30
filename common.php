@@ -28,6 +28,9 @@ echo('<script type="text/javascript" src="js/swabs.js"></script>');
 echo('<script type="text/javascript" src="js/sweetalert2.all.min.js"></script>');
 echo('<script type="text/javascript" src="js/usca.js"></script>');
 
+echo('<link href="css/tabulator_modern.min.css" rel="stylesheet">');
+echo('<script type="text/javascript" src="js/tabulator.min.js"></script>');
+
 echo('<link rel="stylesheet" href="css/dataTables.bootstrap5.min.css">');
 echo('<script type="text/javascript" src="js/jquery.dataTables.min.js"></script>');
 echo('<script type="text/javascript" src="js/dataTables.bootstrap5.min.js"></script>');

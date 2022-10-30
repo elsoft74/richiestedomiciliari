@@ -90,7 +90,7 @@ function showUsersTable(users) {
 }
 
 var showUserUpdate = function (e, row) {
-    $("#editUser").show();
+    $("#editUser").modal("show");
     var element = row.getData();
     $("#editIdUser").val(element.id);
     $("#editNomeUser").val(element.nome);
