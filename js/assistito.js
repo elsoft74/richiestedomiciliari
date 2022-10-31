@@ -329,168 +329,178 @@ function cleanAssistitoInsert() {
 }
 
 function showAssistiti(assistiti, user) {
-    $("#assistiti").addClass('assistiti-form').html("");
 
-
-    var table = new Tabulator("#assistiti", {
-        height: 800,
-        data: assistiti,           //load row data from array 
-        layout: "fitColumns",      //fit columns to width of table
-        responsiveLayout: "collapse",  //hide columns that dont fit on the table
-        //tooltips: true,            //show tool tips on cells
-        addRowPos: "top",          //when adding a new row, add it to the top of the table
-        history: true,             //allow undo and redo actions on the table
-        pagination: "local",       //paginate the data
-        paginationSize: 12,         //allow 7 rows per page of data
-        paginationCounter: "rows", //display count of paginated rows in footer
-        movableColumns: true,      //allow column order to be changed
-
-        // initialSort: [             //set the initial sort order of the data
-        //     { column: "dataRic", dir: "asc" },
-        // ],
-        downloadConfig: {
-            columnHeaders: true, //do not include column headers in downloaded table
-            columnGroups: false, //do not include column groups in column headers for downloaded table
-            rowGroups: false, //do not include row groups in downloaded table
-            columnCalcs: false, //do not include column calcs in downloaded table
-            dataTree: false, //do not include data tree in downloaded table
+    $.extend(true, $.fn.dataTable.defaults, {
+        "stateSave": true,
+        "stateDuration": -1,
+        language: {
+            lengthMenu: 'Mostra _MENU_ elementi per pagina',
+            zeroRecords: 'Nessun risultato',
+            info: 'Pagina _PAGE_ di _PAGES_',
+            infoEmpty: 'Dati non disponibili',
+            infoFiltered: '(filtrati da un totale di _MAX_ elementi)',
+            "paginate": {
+                "first": "<<",
+                "last": ">>",
+                "next": ">",
+                "previous": "<"
+            },
         },
-        // columnDefaults:{
-        // tooltip:function(e, cell, onRendered){
-        //     //e - mouseover event
-        //     //cell - cell component
-        //     //onRendered - onRendered callback registration function
-
-        //     var el = document.createElement("div");
-        //     el.style.backgroundColor = "red";
-        //     el.innerText = cell.getColumn().getField() + " - " + cell.getValue(); //return cells "field - value";
-
-        //     return el; 
-        // },
-        // },
-        columns: [                 //define the table columns
-
-
-            { title: "#", field: "id", width: 5, editor: false, hozAlign: "center", vertAlign: "middle", visible: checkUserPermission(user, "canViewId") },
-            { title: "Cognome", width: 150, field: "cognome", vertAlign: "middle", editor: false, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
-            { title: "Nome", width: 150, field: "nome", vertAlign: "middle", editor: false, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
+        buttons: [
             {
-                title: "Nascita", width: 100, field: "nascita", vertAlign: "middle", editor: false, formatter: "datetime", formatterParams: {
-                    //inputFormat:"YYY-MM-DD HH:mm:ss",
-                    outputFormat: "dd-MM-yyyy",
-                    invalidPlaceholder: "",
-                    timezone: "Europe/Rome",
-                }
-            },
-            { title: "Codice Fiscale", width: 150, field: "codiceFiscale", editor: false, hozAlign: "center", vertAlign: "middle", headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
-            { title: "Età", field: "eta", width: 80, editor: false, hozAlign: "center", vertAlign: "middle", headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
-            {
-                title: "Fascia", field: "eta", width: 120, editor: false, hozAlign: "left", vertAlign: "middle", headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like", formatter: function (cell, formatterParams, onRendered) {
-                    let val = cell.getValue();
-                    let out = "";
-                    if (val < 50) {
-                        out = "Fascia 1 (< 50)";
-                    } else if (val >= 50 && val < 66) {
-                        out = "Fascia 2 (50-65)";
-                    } else {
-                        out = "Fascia 3 (> 65)";
-                    }
-                    return out;
-                }
-            },
-            { title: "Cont.1", field: "telefono1", visible: false },
-            { title: "Cont.2", field: "telefono2", visible: false },
-            { title: "Cont.3", field: "telefono3", visible: false },
-            { title: "e-mail", field: "email", visible: false },
-            {
-                title: "Contatti", width: 150, field: "contatti", editor: false, hozAlign: "left", vertAlign: "middle", formatter: function (cell, formatterParams, onRendered) {
-                    let out = "<div><ul>";
-                    let val = cell.getValue();
-                    contatti = JSON.parse(val);
-                    contatti.forEach(el => {
-                        if (el != "") {
-                            out += "<li>" + el;
-                        }
-                    });
-                    out += "</ul></div>";
-                    return out;
-                }
-            },
-            { title: "Indirizzo", field: "indirizzo", formatter: "textarea", vertAlign: "middle", editor: false, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
-            {
-                title: "Team", width: 120, field: "usca", vertAlign: "middle", editor: false, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like", visible: !user.permissions.canChangeUsca
-            },
-
-            {
-                title: "", field: "idUsca", visible: false
-            },
-            {
-                title: "", width: 8, hozAlign: "center", vertAlign: "middle", editor: false, visible: checkUserPermission(user, "canCreateRequest"), cellClick: checkUserPermission(user, "canCreateRequest") ? newRequest : null, formatter: function (cell, formatterParams, onRendered) {
-
-                    return '<span class="material-icons-outlined" style="color: green">add</span>';
-                }, headerSort: false, tooltip: function (e, cell, onRendered) {
-                    let el1 = document.createElement("div");
-                    el1.style.backgroundColor = "#0d6efd";
-                    let el2 = document.createElement("span");
-                    el2.style.color = "#ffffff";
-                    el2.innerText = "Nuova attività";
-                    el1.append(el2);
-                    return el1;
-                }
-            },
-            {
-                title: "", width: 8, hozAlign: "center", vertAlign: "middle", editor: false, visible: checkUserPermission(user, "canEditAssistito"), cellClick: checkUserPermission(user, "canEditAssistito") ? showAssistitoUpdate : null, formatter: function (cell, formatterParams, onRendered) {
-
-                    return '<span class="material-icons-outlined" style="color: green">edit</span>';
-                }, headerSort: false, tooltip: function (e, cell, onRendered) {
-                    let el1 = document.createElement("div");
-                    el1.style.backgroundColor = "#0d6efd";
-                    let el2 = document.createElement("span");
-                    el2.style.color = "#ffffff";
-                    el2.innerText = "Modifica dati paziente";
-                    el1.append(el2);
-                    return el1;
-                }
-            },
-            {
-                title: "", width: 8, field: "note", vertAlign: "middle", editor: false, cellClick: cellPopupFormatterNoteAssistito, formatter: function (cell, formatterParams, onRendered) {
-                    return (cell.getValue() == null) ? '' : '<span class="material-icons-outlined">notes</span>';
-                }, headerSort: false, tooltip: function (e, cell, onRendered) {
-                    let el1 = document.createElement("div");
-                    el1.style.backgroundColor = "#0d6efd";
-                    let el2 = document.createElement("span");
-                    el2.style.color = "#ffffff";
-                    el2.innerText = "Note paziente";
-                    el1.append(el2);
-                    return (cell.getValue() == null) ? null : el1;
-                }
-            },
-
-            {
-                title: "", width: 8, hozAlign: "center", vertAlign: "middle", editor: false, visible: checkUserPermission(user, "canDeleteAssistito"), cellClick: checkUserPermission(user, "canDeleteAssistito") ? deleteElement : null, formatter: function (cell, formatterParams, onRendered) {
-
-                    return '<span class="material-icons-outlined" style="color: red">delete</span>';
-                }, headerSort: false, tooltip: function (e, cell, onRendered) {
-                    let el1 = document.createElement("div");
-                    el1.style.backgroundColor = "red";
-                    let el2 = document.createElement("span");
-                    el2.style.color = "#ffffff";
-                    el2.innerText = "Cancella paziente";
-                    el1.append(el2);
-                    return el1;
-                }
-            },
+                extend: 'collection',
+                text: 'Export',
+                buttons: ['csv', 'excel', 'pdf']
+            }
         ]
-    });
 
-    if (checkUserPermission(user, "canExport")) {
-        let button = $("<button>").addClass("btn btn-primary btn-block assistiti-form").attr({ "id": "dataDownLoadButton" }).html("Scarica assistiti").hide();
-        $("#menubuttons").append(button);
-        document.getElementById("dataDownLoadButton").addEventListener("click", function () {
-            table.download("xlsx", "assistiti.xlsx", { sheetName: "Export" });
+    });
+    if ($.fn.DataTable.isDataTable('#assistiti')) {
+        var datatable = $('#assistiti').DataTable();
+        datatable.clear();
+        assistiti.forEach(e => {
+            var row = [];
+            row.push(e.id);
+            row.push(e.cognome);
+            row.push(e.nome);
+            row.push(formattaData(e.nascita, false));
+            row.push(e.eta);
+            row.push(formattaEtaPerFascia(e.eta));
+            row.push(e.codiceFiscale);
+            row.push(formattaContatti(e.contatti));
+            row.push(e.indirizzo);
+            row.push(e.usca);
+            row.push('<span class="material-icons-outlined" style="color: green" data-toggle="tooltip" title="Modifica">edit</span>');
+            row.push((e.note!=null && e.nome.trim()!="")?'<span class="material-icons-outlined" data-toggle="tooltip" title="Visualizza note">notes</span>':'');
+            row.push(e.telefono1);
+            row.push(e.telefono2);
+            row.push(e.telefono3);
+            row.push(e.email);
+            row.push(e.idUsca);
+            row.push(e.note);
+            datatable.row.add(row);
+        })
+        datatable.draw();
+    } else {
+        var tableHead = $("<thead>");
+        var tr = $("<tr>");
+        var el = $("<th>").html("id");
+        tr.append(el);
+        el = $("<th>").html("Cognome");
+        tr.append(el);
+        el = $("<th>").html("Nome");
+        tr.append(el);
+        el = $("<th>").html("Nascita");
+        tr.append(el);
+        el = $("<th>").html("Età");
+        tr.append(el);
+        el = $("<th>").html("Fascia");
+        tr.append(el);
+        el = $("<th>").html("Codice Fiscale");
+        tr.append(el);
+        el = $("<th>").html("Contatti");
+        tr.append(el);
+        el = $("<th>").html("Indirizzo");
+        tr.append(el);
+        el = $("<th>").html("Team");
+        tr.append(el);
+        el = $("<th>");
+        tr.append(el);
+        el = $("<th>").html("Note");
+        tr.append(el);
+        el = $("<th>");
+        tr.append(el);
+        el = $("<th>");
+        tr.append(el);
+        el = $("<th>");
+        tr.append(el);
+        el = $("<th>");
+        tr.append(el);
+        el = $("<th>");
+        tr.append(el);
+        el = $("<th>");
+        tr.append(el);
+        tableHead.append(tr);
+        $("#assistiti").append(tableHead);
+        tableBody = $("<tbody>");
+        $("#assistiti").append(tableBody);
+
+        var tableBody = tableBody = $("#assistiti").find("tbody");
+        
+        assistiti.forEach(e => {
+            tr = $("<tr>");
+            el = $("<td>").html(e.id);
+            tr.append(el);
+            el = $("<td>").html(e.cognome);
+            tr.append(el);
+            el = $("<td>").html(e.nome);
+            tr.append(el);
+            el = $("<td>").html(formattaData(e.nascita, false));
+            tr.append(el);
+            el = $("<td>").html(e.eta);
+            tr.append(el);
+            el = $("<td>").html(formattaEtaPerFascia(e.eta));
+            tr.append(el);
+            el = $("<td>").html(e.codiceFiscale);
+            tr.append(el);
+            el = $("<td>").html(formattaContatti(e.contatti));
+            tr.append(el);
+            el = $("<td>").html(e.indirizzo);
+            tr.append(el);
+            el = $("<td>").html(e.usca);
+            tr.append(el);
+            el = $("<td>").html('<span class="material-icons-outlined" style="color: green" data-toggle="tooltip" title="Modifica">edit</span>');
+            tr.append(el);
+            el = $("<td>").html((e.note!=null && e.nome.trim()!="")?'<span class="material-icons-outlined" data-toggle="tooltip" title="Visualizza note">notes</span>':'');
+            tr.append(el);
+            el = $("<td>").html(e.telefono1);
+            tr.append(el);
+            el = $("<td>").html(e.telefono2);
+            tr.append(el);
+            el = $("<td>").html(e.telefono3);
+            tr.append(el);
+            el = $("<td>").html(e.email);
+            tr.append(el);
+            el = $("<td>").html(e.idUsca);
+            tr.append(el);
+            el = $("<td>").html(e.note);
+            tr.append(el);
+            tableBody.append(tr)
+        })
+
+    }
+
+
+    if (!$.fn.DataTable.isDataTable('#assistiti')) {
+        $('#assistiti').DataTable();
+        $('#assistiti tbody').on('click', 'td', function () {
+            var table = $('#assistiti').DataTable();
+            try {
+                var cell = $(table.cell(this).data()).html();
+                if (cell == 'edit' || cell == 'notes') {
+                    var element = requestElementFromRow(table.row(this).data());
+                    switch (cell) {
+                        case 'edit':
+                            // showRequestUpdate(element);
+                            break;
+                        case 'notes':
+                            break;
+                    }
+                }
+            } catch {
+
+            }
+
         });
     }
-    $("#main").hide();
+
+    var datatable = $('#assistiti').DataTable();
+
+    if (checkUserPermission(user, "assistiti")) {
+        datatable.columns(9).visible(false);
+    }
+
+    datatable.columns([12, 13, 14, 15, 16,17]).visible(false);
     setTimeout(checkNewData, 2000);
 
 }
@@ -543,10 +553,10 @@ function updateTableDataAssistiti() {
         if (toBeCompleted.assistiti) {
             waitingForDataAssistiti = false;
             sessionStorage.setItem("waitingForDataAssistiti", JSON.stringify(waitingForDataAssistiti));
-            var table = Tabulator.findTable("#assistiti")[0];
-            table.updateOrAddData(assistiti).then(function(){
-                setTimeout(checkNewData, 2000);
-            })
+            // var table = Tabulator.findTable("#assistiti")[0];
+            // table.updateOrAddData(assistiti).then(function(){
+            //     setTimeout(checkNewData, 2000);
+            // })
         } else {
             setTimeout(updateTableDataAssistiti, 1000);
         }

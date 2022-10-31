@@ -409,6 +409,9 @@ function showRequestUpdate(element) {
     $("#insertFormButton2").attr({ "onClick": "cleanInsert()" });
     $("#nascita").val(((new luxon.DateTime.fromSQL(element.nascita)).toFormat("yyyy-MM-dd")));
     $("#isArchived").val(element.isArchived == "S");
+    
+    $("#insert").modal("show");
+
     if (JSON.parse(element.noteRichiesta).length > 0) {
         let noteRichiesta = JSON.parse(element.noteRichiesta);
         if ($.fn.DataTable.isDataTable('#noteRichiesta')) {
@@ -456,6 +459,10 @@ function showRequestUpdate(element) {
                 searching: false,
                 paging: false,
                 info: false,
+                columns:[
+                    {"width":"140px"},
+                    {"width":"620px"},
+                ]
                 });
         }
 
@@ -509,6 +516,10 @@ function showRequestUpdate(element) {
                 searching: false,
                 paging: false,
                 info: false,
+                columns:[
+                    {"width":"140px"},
+                    {"width":"620px"},
+                ]
                 });
         }
 
@@ -517,7 +528,6 @@ function showRequestUpdate(element) {
         $("#statiAttuali").parent().hide();
     }
     $(".note").hide();
-    $("#insert").modal("show");
 }
 
 var deleteElement = function (e, row) {

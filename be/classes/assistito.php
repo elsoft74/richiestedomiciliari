@@ -185,6 +185,7 @@
                             if($activeUsca!="ALL"){
                                 $query.=" WHERE id_usca=:id_usca";
                             }
+                            $query.=" ORDER BY cognome,nome ASC";
                             
                             $stmt = $conn->prepare($query);
                             if($activeUsca!="ALL"){

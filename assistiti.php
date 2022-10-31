@@ -14,7 +14,9 @@ buildHead();
     <div id="insertAssistito"></div>
     <div id="login" class="sections"></div>
     <div id="editAssistito"></div>
-    <div id="assistiti"></div>
+    <!-- <div id="main" class="sections requests-form"> -->
+        <table id="assistiti" class="table table-striped" style="width:100%"></table>
+    <!-- </div> -->
     <div id="changeUsca"></div>
     <!-- <div id="firma"><a href="https://ivopugliese.it">©2022 Ivo Pugliese</a></div> -->
     <script>       
@@ -22,9 +24,9 @@ buildHead();
             buildLogin();
         }
         window.addEventListener('dataLoaded', function() {
-            buildInsertForm("insert");
-            buildAssistitoInsertForm("insertAssistito");
-            buildAssistitoEditForm("editAssistito");
+            // buildInsertForm("insert");
+            // buildAssistitoInsertForm("insertAssistito");
+            // buildAssistitoEditForm("editAssistito");
             showMenu(lu);
             $(".lds-grid").hide();
             changeActivity("assistiti");
