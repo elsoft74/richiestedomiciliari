@@ -1,4 +1,5 @@
 <?php
+    include_once("utils.php");
     class DB {       
         public static function conn(){
             $msg="ERRORE DI CONNESSIONE";
@@ -12,32 +13,37 @@
             } catch(Exception $e){
                 $conn=null;
             }
-            //file_put_contents("../log/dbtest.log",(new DateTime("now"))->format("Y-m-d H:i").$msg."\n",FILE_APPEND);
             return $conn;
         }
 
         public static function checkNewData($lastRead){
             $out=new StdClass();
             $out->status="KO";
-            try {
-                $conn=DB::conn();
-                if ($lastRead==null){
-                    throw new Exception("LASTREAD-NULL");
+            checkSession();
+            if(isset($_SESSION["loggeduser"])){
+                try {
+                    $conn=DB::conn();
+                    if ($lastRead==null){
+                        throw new Exception("LASTREAD-NULL");
+                    }
+                    $dbname=DBNAME;
+                    $query = "SELECT MAX(last_update_ts) > :lr AS updated
+                        FROM   updates
+                        WHERE  table_name IN
+                        ('richieste','assistiti','tamponi')";
+                        
+                    $stmt = $conn->prepare($query);
+                    $stmt->bindParam(':lr', $lastRead, PDO::PARAM_STR);
+                    $stmt->execute();
+                    $res=$stmt->fetch(PDO::FETCH_ASSOC); 
+                    $out->data=($res["updated"]=="1");
+                    $out->status="OK";
+                    $out->dbg=json_encode($_SESSION);
+                } catch(Exception $ex) {
+                    $out->error=$ex->getMessage();
                 }
-                $dbname=DBNAME;
-                $query = "SELECT MAX(last_update_ts) > :lr AS updated
-                    FROM   updates
-                    WHERE  table_name IN
-                    ('richieste','assistiti','tamponi')";
-                    
-                $stmt = $conn->prepare($query);
-                $stmt->bindParam(':lr', $lastRead, PDO::PARAM_STR);
-                $stmt->execute();
-                $res=$stmt->fetch(PDO::FETCH_ASSOC); 
-                $out->data=($res["updated"]=="1");
-                $out->status="OK";
-            } catch(Exception $ex) {
-                $out->error=$ex->getMessage();
+            } else {
+                $out->data="NOTLOGGED";
             }
             return $out;
         }

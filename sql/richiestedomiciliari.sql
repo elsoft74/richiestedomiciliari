@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Creato il: Set 15, 2022 alle 14:10
+-- Creato il: Set 29, 2022 alle 14:08
 -- Versione del server: 10.5.15-MariaDB-0+deb11u1
 -- Versione PHP: 7.4.30
 
@@ -20,8 +20,6 @@ SET time_zone = "+00:00";
 --
 -- Database: `richiestedomiciliari`
 --
-CREATE DATABASE IF NOT EXISTS `richiestedomiciliari` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
-USE `richiestedomiciliari`;
 
 -- --------------------------------------------------------
 
@@ -34,21 +32,32 @@ CREATE TABLE `assistiti` (
   `id_usca` int(11) DEFAULT NULL,
   `nome` varchar(60) NOT NULL,
   `cognome` varchar(60) NOT NULL,
-  `telefono1` varchar(10) NOT NULL,
-  `telefono2` varchar(10) NOT NULL,
-  `email` varchar(50) NOT NULL,
+  `telefono1` varchar(10) DEFAULT NULL,
+  `telefono2` varchar(10) DEFAULT NULL,
+  `telefono3` varchar(10) DEFAULT NULL,
+  `email` varchar(50) DEFAULT NULL,
   `indirizzo` text NOT NULL,
   `codicefiscale` varchar(16) NOT NULL,
-  `note` text NOT NULL,
+  `note` text DEFAULT NULL,
   `is_active` tinyint(1) NOT NULL DEFAULT 1,
   `nascita` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+-- --------------------------------------------------------
+
 --
--- RELAZIONI PER TABELLA `assistiti`:
---   `id_usca`
---       `usca` -> `id`
+-- Struttura della tabella `log`
 --
+
+CREATE TABLE `log` (
+  `id` int(11) NOT NULL,
+  `ts` timestamp NOT NULL DEFAULT current_timestamp(),
+  `id_user` int(11) NOT NULL,
+  `tipo` varchar(20) NOT NULL,
+  `id_assistito` int(11) DEFAULT NULL,
+  `id_stato` int(11) DEFAULT NULL,
+  `id_richiesta` int(11) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
 
@@ -62,10 +71,6 @@ CREATE TABLE `priorita` (
   `valore` int(11) NOT NULL,
   `is_active` tinyint(1) NOT NULL DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
---
--- RELAZIONI PER TABELLA `priorita`:
---
 
 --
 -- Dump dei dati per la tabella `priorita`
@@ -101,24 +106,6 @@ CREATE TABLE `richieste` (
   `archived_by` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
---
--- RELAZIONI PER TABELLA `richieste`:
---   `last_update_by`
---       `users` -> `id`
---   `archived_by`
---       `users` -> `id`
---   `id_assistito`
---       `assistiti` -> `id`
---   `created_by`
---       `users` -> `id`
---   `deleted_by`
---       `users` -> `id`
---   `id_priorita`
---       `priorita` -> `id`
---   `id_tipologia`
---       `tipologie` -> `id`
---
-
 -- --------------------------------------------------------
 
 --
@@ -133,16 +120,24 @@ CREATE TABLE `roles` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
--- RELAZIONI PER TABELLA `roles`:
---
-
---
 -- Dump dei dati per la tabella `roles`
 --
 
 INSERT INTO `roles` (`id`, `descrizione`, `is_active`, `permissions`) VALUES
 (1, 'Admin', 1, '{\"canViewDetails\":true,\"canCreateUser\":true,\"canEditUser\":true,\"canDeleteUser\":true,\"canCreateAssistito\":true,\"canEditAssistito\":true,\"canDeleteAssistito\":true,\"canCreateRequest\":true,\"canDeleteRequest\":true,\"canEditRequest\":true,\"canExport\":true,\"canViewAllRequests\":true,\"canArchiveRequest\":true,\"canUploadSwabs\":true}'),
 (2, 'Operatore', 1, '{\"canViewDetails\":false,\"canCreateUser\":false,\"canEditUser\":false,\"canDeleteUser\":false,\"canCreateAssistito\":true,\"canEditAssistito\":true,\"canDeleteAssistito\":false,\"canCreateRequest\":true,\"canDeleteRequest\":false,\"canEditRequest\":true,\"canExport\":false,\"canViewAllRequests\":false,\"canArchiveRequest\":true}');
+
+-- --------------------------------------------------------
+
+--
+-- Struttura della tabella `stati_attivita`
+--
+
+CREATE TABLE `stati_attivita` (
+  `id` int(11) NOT NULL,
+  `descrizione` varchar(30) NOT NULL,
+  `is_active` tinyint(1) NOT NULL DEFAULT 1
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
 
@@ -155,10 +150,6 @@ CREATE TABLE `stati_tamponi` (
   `descrizione` varchar(30) NOT NULL,
   `is_active` tinyint(1) NOT NULL DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
---
--- RELAZIONI PER TABELLA `stati_tamponi`:
---
 
 --
 -- Dump dei dati per la tabella `stati_tamponi`
@@ -181,21 +172,13 @@ CREATE TABLE `tamponi` (
   `data_consigliata` datetime NOT NULL,
   `is_active` tinyint(1) NOT NULL DEFAULT 1,
   `status` int(11) DEFAULT NULL,
-  `created_by` int(11) NOT NULL,
+  `created_by` int(11) DEFAULT NULL,
   `last_update_by` int(11) DEFAULT NULL,
   `deleted_by` int(11) DEFAULT NULL,
   `created` timestamp NOT NULL DEFAULT current_timestamp(),
   `last_update` timestamp NULL DEFAULT NULL,
   `deleted_date` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
---
--- RELAZIONI PER TABELLA `tamponi`:
---   `id_assistito`
---       `assistiti` -> `id`
---   `status`
---       `stati_tamponi` -> `id`
---
 
 -- --------------------------------------------------------
 
@@ -210,10 +193,6 @@ CREATE TABLE `tipologie` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
--- RELAZIONI PER TABELLA `tipologie`:
---
-
---
 -- Dump dei dati per la tabella `tipologie`
 --
 
@@ -224,26 +203,27 @@ INSERT INTO `tipologie` (`id`, `descrizione`, `is_active`) VALUES
 -- --------------------------------------------------------
 
 --
+-- Struttura della tabella `updates`
+--
+
+CREATE TABLE `updates` (
+  `id` int(11) NOT NULL,
+  `table_name` varchar(20) NOT NULL,
+  `last_update_ts` timestamp NOT NULL DEFAULT '2022-09-22 22:00:00'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
 -- Struttura della tabella `usca`
 --
 
 CREATE TABLE `usca` (
   `id` int(11) NOT NULL,
   `descrizione` varchar(35) NOT NULL,
-  `is_active` tinyint(1) NOT NULL DEFAULT 1
+  `is_active` tinyint(1) NOT NULL DEFAULT 1,
+  `only_for_users` tinyint(1) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
---
--- RELAZIONI PER TABELLA `usca`:
---
-
---
--- Dump dei dati per la tabella `usca`
---
-
-INSERT INTO `usca` (`id`, `descrizione`, `is_active`) VALUES
-(1, 'Messina Nord', 1),
-(2, 'Messina Sud', 1);
 
 -- --------------------------------------------------------
 
@@ -263,12 +243,6 @@ CREATE TABLE `users` (
   `id_usca` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
---
--- RELAZIONI PER TABELLA `users`:
---   `role_id`
---       `roles` -> `id`
---
-
 -- --------------------------------------------------------
 
 --
@@ -286,8 +260,11 @@ CREATE TABLE `vista_assistiti` (
 ,`assistito_is_active` tinyint(1)
 ,`telefono1` varchar(10)
 ,`telefono2` varchar(10)
+,`telefono3` varchar(10)
 ,`nascita` datetime
+,`eta` bigint(21)
 ,`id_usca` int(11)
+,`note` text
 ,`usca` varchar(35)
 );
 
@@ -308,6 +285,7 @@ CREATE TABLE `vista_richieste` (
 ,`assistito_is_active` tinyint(1)
 ,`telefono1` varchar(10)
 ,`telefono2` varchar(10)
+,`telefono3` varchar(10)
 ,`nascita` datetime
 ,`id_usca` int(11)
 ,`id_richiesta` int(11)
@@ -343,6 +321,7 @@ CREATE TABLE `vista_tamponi` (
 ,`assistito_is_active` tinyint(1)
 ,`telefono1` varchar(10)
 ,`telefono2` varchar(10)
+,`telefono3` varchar(10)
 ,`nascita` datetime
 ,`id_usca` int(11)
 ,`id_tampone` int(11)
@@ -365,7 +344,7 @@ CREATE TABLE `vista_tamponi` (
 --
 DROP TABLE IF EXISTS `vista_assistiti`;
 
-CREATE OR REPLACE ALGORITHM=UNDEFINED DEFINER=`miniced`@`localhost` SQL SECURITY DEFINER VIEW `vista_assistiti`  AS SELECT `a`.`id` AS `id_assistito`, `a`.`nome` AS `nome`, `a`.`cognome` AS `cognome`, `a`.`email` AS `email`, `a`.`indirizzo` AS `indirizzo`, `a`.`codicefiscale` AS `codicefiscale`, `a`.`note` AS `note_assistito`, `a`.`is_active` AS `assistito_is_active`, `a`.`telefono1` AS `telefono1`, `a`.`telefono2` AS `telefono2`, `a`.`nascita` AS `nascita`, `a`.`id_usca` AS `id_usca`, `u`.`descrizione` AS `usca` FROM (`assistiti` `a` left join `usca` `u` on(`a`.`id_usca` = `u`.`id`)) WHERE `a`.`is_active` = 1 ;
+CREATE ALGORITHM=UNDEFINED DEFINER=`miniced`@`localhost` SQL SECURITY DEFINER VIEW `vista_assistiti`  AS SELECT `a`.`id` AS `id_assistito`, `a`.`nome` AS `nome`, `a`.`cognome` AS `cognome`, `a`.`email` AS `email`, `a`.`indirizzo` AS `indirizzo`, `a`.`codicefiscale` AS `codicefiscale`, `a`.`note` AS `note_assistito`, `a`.`is_active` AS `assistito_is_active`, `a`.`telefono1` AS `telefono1`, `a`.`telefono2` AS `telefono2`, `a`.`telefono3` AS `telefono3`, `a`.`nascita` AS `nascita`, timestampdiff(YEAR,`a`.`nascita`,current_timestamp()) AS `eta`, `a`.`id_usca` AS `id_usca`, `a`.`note` AS `note`, `u`.`descrizione` AS `usca` FROM (`assistiti` `a` left join `usca` `u` on(`a`.`id_usca` = `u`.`id`)) WHERE `a`.`is_active` = 1 ;
 
 -- --------------------------------------------------------
 
@@ -374,7 +353,7 @@ CREATE OR REPLACE ALGORITHM=UNDEFINED DEFINER=`miniced`@`localhost` SQL SECURITY
 --
 DROP TABLE IF EXISTS `vista_richieste`;
 
-CREATE OR REPLACE ALGORITHM=UNDEFINED DEFINER=`miniced`@`localhost` SQL SECURITY DEFINER VIEW `vista_richieste`  AS SELECT `a`.`id` AS `id_assistito`, `a`.`nome` AS `nome`, `a`.`cognome` AS `cognome`, `a`.`email` AS `email`, `a`.`indirizzo` AS `indirizzo`, `a`.`codicefiscale` AS `codicefiscale`, `a`.`note` AS `note_assistito`, `a`.`is_active` AS `assistito_is_active`, `a`.`telefono1` AS `telefono1`, `a`.`telefono2` AS `telefono2`, `a`.`nascita` AS `nascita`, `a`.`id_usca` AS `id_usca`, `r`.`id` AS `id_richiesta`, `r`.`id_tipologia` AS `id_tipologia`, `r`.`id_priorita` AS `id_priorita`, `r`.`data` AS `data`, `r`.`note` AS `note_richiesta`, `r`.`is_active` AS `richiesta_is_active`, `r`.`created` AS `created`, `r`.`created_by` AS `created_by`, `r`.`last_update` AS `last_update`, `r`.`last_update_by` AS `last_update_by`, `r`.`is_archived` AS `is_archived`, `u`.`descrizione` AS `usca`, `t`.`descrizione` AS `tipologia`, `p`.`descrizione` AS `priorita` FROM ((((`assistiti` `a` join `richieste` `r` on(`a`.`id` = `r`.`id_assistito`)) left join `usca` `u` on(`a`.`id_usca` = `u`.`id`)) left join `tipologie` `t` on(`r`.`id_tipologia` = `t`.`id`)) left join `priorita` `p` on(`r`.`id_priorita` = `p`.`id`)) WHERE `a`.`is_active` = 1 ;
+CREATE ALGORITHM=UNDEFINED DEFINER=`miniced`@`localhost` SQL SECURITY DEFINER VIEW `vista_richieste`  AS SELECT `a`.`id` AS `id_assistito`, `a`.`nome` AS `nome`, `a`.`cognome` AS `cognome`, `a`.`email` AS `email`, `a`.`indirizzo` AS `indirizzo`, `a`.`codicefiscale` AS `codicefiscale`, `a`.`note` AS `note_assistito`, `a`.`is_active` AS `assistito_is_active`, `a`.`telefono1` AS `telefono1`, `a`.`telefono2` AS `telefono2`, `a`.`telefono3` AS `telefono3`, `a`.`nascita` AS `nascita`, `a`.`id_usca` AS `id_usca`, `r`.`id` AS `id_richiesta`, `r`.`id_tipologia` AS `id_tipologia`, `r`.`id_priorita` AS `id_priorita`, `r`.`data` AS `data`, `r`.`note` AS `note_richiesta`, `r`.`is_active` AS `richiesta_is_active`, `r`.`created` AS `created`, `r`.`created_by` AS `created_by`, `r`.`last_update` AS `last_update`, `r`.`last_update_by` AS `last_update_by`, `r`.`is_archived` AS `is_archived`, `u`.`descrizione` AS `usca`, `t`.`descrizione` AS `tipologia`, `p`.`descrizione` AS `priorita` FROM ((((`assistiti` `a` join `richieste` `r` on(`a`.`id` = `r`.`id_assistito`)) left join `usca` `u` on(`a`.`id_usca` = `u`.`id`)) left join `tipologie` `t` on(`r`.`id_tipologia` = `t`.`id`)) left join `priorita` `p` on(`r`.`id_priorita` = `p`.`id`)) WHERE `a`.`is_active` = 1 ;
 
 -- --------------------------------------------------------
 
@@ -383,7 +362,7 @@ CREATE OR REPLACE ALGORITHM=UNDEFINED DEFINER=`miniced`@`localhost` SQL SECURITY
 --
 DROP TABLE IF EXISTS `vista_tamponi`;
 
-CREATE OR REPLACE ALGORITHM=UNDEFINED DEFINER=`miniced`@`localhost` SQL SECURITY DEFINER VIEW `vista_tamponi`  AS SELECT `a`.`id` AS `id_assistito`, `a`.`nome` AS `nome`, `a`.`cognome` AS `cognome`, `a`.`email` AS `email`, `a`.`indirizzo` AS `indirizzo`, `a`.`codicefiscale` AS `codicefiscale`, `a`.`note` AS `note_assistito`, `a`.`is_active` AS `assistito_is_active`, `a`.`telefono1` AS `telefono1`, `a`.`telefono2` AS `telefono2`, `a`.`nascita` AS `nascita`, `a`.`id_usca` AS `id_usca`, `t`.`id` AS `id_tampone`, `t`.`data_esecuzione` AS `data_esecuzione`, `t`.`data_consigliata` AS `data_consigliata`, `t`.`is_active` AS `tampone_is_active`, `t`.`status` AS `id_status`, `s`.`descrizione` AS `status`, `t`.`created` AS `created`, `t`.`created_by` AS `created_by`, `t`.`last_update` AS `last_update`, `t`.`last_update_by` AS `last_update_by`, `u`.`descrizione` AS `usca` FROM (((`assistiti` `a` join `tamponi` `t` on(`a`.`id` = `t`.`id_assistito`)) left join `stati_tamponi` `s` on(`t`.`status` = `s`.`id`)) left join `usca` `u` on(`a`.`id_usca` = `u`.`id`)) WHERE `a`.`is_active` = 1 ;
+CREATE ALGORITHM=UNDEFINED DEFINER=`miniced`@`localhost` SQL SECURITY DEFINER VIEW `vista_tamponi`  AS SELECT `a`.`id` AS `id_assistito`, `a`.`nome` AS `nome`, `a`.`cognome` AS `cognome`, `a`.`email` AS `email`, `a`.`indirizzo` AS `indirizzo`, `a`.`codicefiscale` AS `codicefiscale`, `a`.`note` AS `note_assistito`, `a`.`is_active` AS `assistito_is_active`, `a`.`telefono1` AS `telefono1`, `a`.`telefono2` AS `telefono2`, `a`.`telefono3` AS `telefono3`, `a`.`nascita` AS `nascita`, `a`.`id_usca` AS `id_usca`, `t`.`id` AS `id_tampone`, `t`.`data_esecuzione` AS `data_esecuzione`, `t`.`data_consigliata` AS `data_consigliata`, `t`.`is_active` AS `tampone_is_active`, `t`.`status` AS `id_status`, `s`.`descrizione` AS `status`, `t`.`created` AS `created`, `t`.`created_by` AS `created_by`, `t`.`last_update` AS `last_update`, `t`.`last_update_by` AS `last_update_by`, `u`.`descrizione` AS `usca` FROM (((`assistiti` `a` join `tamponi` `t` on(`a`.`id` = `t`.`id_assistito`)) left join `stati_tamponi` `s` on(`t`.`status` = `s`.`id`)) left join `usca` `u` on(`a`.`id_usca` = `u`.`id`)) WHERE `a`.`is_active` = 1 ;
 
 --
 -- Indici per le tabelle scaricate
@@ -396,6 +375,16 @@ ALTER TABLE `assistiti`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `cf` (`codicefiscale`),
   ADD KEY `ndx_user_usca` (`id_usca`);
+
+--
+-- Indici per le tabelle `log`
+--
+ALTER TABLE `log`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `id_user` (`id_user`),
+  ADD KEY `id_assistito` (`id_assistito`),
+  ADD KEY `id_stato` (`id_stato`),
+  ADD KEY `id_richiesta` (`id_richiesta`);
 
 --
 -- Indici per le tabelle `priorita`
@@ -446,6 +435,13 @@ ALTER TABLE `tipologie`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indici per le tabelle `updates`
+--
+ALTER TABLE `updates`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `last_update_ts` (`last_update_ts`);
+
+--
 -- Indici per le tabelle `usca`
 --
 ALTER TABLE `usca`
@@ -467,6 +463,12 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT per la tabella `assistiti`
 --
 ALTER TABLE `assistiti`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT per la tabella `log`
+--
+ALTER TABLE `log`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
@@ -506,10 +508,16 @@ ALTER TABLE `tipologie`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
+-- AUTO_INCREMENT per la tabella `updates`
+--
+ALTER TABLE `updates`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT per la tabella `usca`
 --
 ALTER TABLE `usca`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT per la tabella `users`

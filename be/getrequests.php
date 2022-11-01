@@ -7,4 +7,5 @@
     include_once("classes/user.php");
     include_once("classes/richiesta.php");
     $arc=(array_key_exists("arc",$_POST) && $_POST["arc"]=="true");
-    print(json_encode(Richiesta::getRequestes($arc)));
+    $activeUsca = isset($_POST["activeUsca"])?$_POST["activeUsca"]:"ALL";
+    print(json_encode(Richiesta::getRequestes($arc,$activeUsca)));

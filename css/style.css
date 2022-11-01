@@ -24,7 +24,7 @@
 }
 
  .material-icons-outlined {
-    font-size: 18px;
+    font-size: 24px;
 }
 
 .tabulator .tabulator-header .tabulator-col .tabulator-col-content .tabulator-header-popup-button {
@@ -122,4 +122,17 @@ button span {
   50% {
     opacity: 0.5;
   }
+}
+
+tbody tr td span {
+  cursor: pointer;
+}
+
+.sections {
+    padding:5px;
+}
+
+.activityNoteColumn{
+  width: auto;
+  padding-right: 10px;
 }

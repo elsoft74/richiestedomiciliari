@@ -1,6 +1,7 @@
 <?php
 include_once("user.php");
 include_once("db.php");
+include_once("utils.php");
 class Richiesta
 {
     public $id;
@@ -16,9 +17,11 @@ class Richiesta
     public $lastUpdateBy;
     public $deletedDate;
     public $deletedBy;
+    public $isArchived;
     public $archivedDate;
     public $archivedBy;
     public $contatti;
+    public $newStates;
 
     public function setId($val){
         $this->id=$val;
@@ -124,6 +127,14 @@ class Richiesta
         return $this->deletedBy;
     }
 
+    public function setIsArchived($val){
+        $this->isArchived=$val;
+    }
+
+    public function getIsArchived(){
+        return $this->isArchived;
+    }
+
     public function setArchivedBy($val){
         $this->archivedBy=$val;
     }
@@ -146,6 +157,35 @@ class Richiesta
 
     public function getContatti(){
         return $this->contatti;
+    }
+
+    public function setNewStates($val){
+        $this->newStates=$val;
+    }
+
+    public function getNewStates(){
+        return $this->newStates;
+    }
+
+    function __construct() {
+        $this->id = null;
+        $this->idAssistito = null;
+        $this->idTipologia = null;
+        $this->idPriorita = null;
+        $this->data = null;
+        $this->note = null;
+        $this->isactive = null;
+        $this->created = null;
+        $this->createdBy = null;
+        $this->lastUpdate = null;
+        $this->lastUpdateBy = null;
+        $this->deletedDate = null;
+        $this->deletedBy = null;
+        $this->archivedDate = null;
+        $this->archivedBy = null;
+        $this->contatti = null;
+        $this->newStates = null;
+        $this->isArchived = false;
     }
 
 
@@ -185,7 +225,7 @@ class Richiesta
         }
     }
 
-    public static function getRequestes($arc)
+    public static function getRequestes($arc,$activeUsca)
     {
         //$val null o "A" restituisce tutte le richieste Attive
         //$val "T" restituisce tutte le richieste
@@ -211,6 +251,7 @@ class Richiesta
                     a.telefono2 AS telefono2,
                     a.telefono3 AS telefono3,
                     a.nascita AS nascita,
+                    TIMESTAMPDIFF(YEAR,nascita,now()) as eta,
                     a.id_usca AS id_usca,
                     r.id as id_richiesta,
                     r.id_tipologia AS id_tipologia,
@@ -235,11 +276,19 @@ class Richiesta
 
                     $query = "SELECT * FROM `vista_richieste` WHERE (richiesta_is_active=1 OR richiesta_is_active IS null)";
                     if (!$arc){
-                        //$query.=" AND (data >= CURRENT_DATE() OR data is null)";
+                        $query.=" AND (data >= CURRENT_DATE()-5 OR data is null)";
                         $query.=" AND (is_archived = 0 OR is_archived is null)";
                     }
+                    if($activeUsca!="ALL"){
+                        $query.=" AND id_usca=:id_usca";
+                    }
+
+                    $query.=" ORDER BY data ASC";
                     
                     $stmt = $conn->prepare($query);
+                    if($activeUsca!="ALL"){
+                        $stmt->bindParam(':id_usca',$activeUsca,PDO::PARAM_INT);
+                    }
                     $stmt->execute();
 
                     $res = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -257,6 +306,7 @@ class Richiesta
                         $tmp->codiceFiscale=$r['codicefiscale'];
                         $tmp->noteAssistito=$r['note_assistito'];
                         $tmp->nascita=$r['nascita'];
+                        $tmp->eta=$r['eta'];
                         $tmp->assistitoIsActive=$r['assistito_is_active'];
                         $tmp->idRichiesta=$r['id_richiesta'];
                         $tmp->idTipologia=$r['id_tipologia'];
@@ -288,6 +338,21 @@ class Richiesta
                             array_push($contatti,$r['email']);
                         }
                         $tmp->contatti=json_encode($contatti);
+                        
+                        $statiAttuali=[];
+                        $query = "SELECT a.created AS date, s.descrizione FROM `attivita_svolte` AS a JOIN `stati_attivita` AS s ON a.id_stato=s.id WHERE id_attivita = :id_attivita ORDER BY created";
+                        $stmt = $conn->prepare($query);
+                        $stmt->bindParam(':id_attivita',$tmp->id,PDO::PARAM_INT);
+                        $stmt->execute();
+                        $resStati = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+                        foreach ($resStati as $rs) {
+                            $stato = new StdClass();
+                            $stato->date = $rs['date'];
+                            $stato->descrizione = $rs['descrizione'];
+                            array_push($statiAttuali,$stato);
+                        }
+                        $tmp->statiAttuali=json_encode($statiAttuali);
 
                         array_push($out->data, $tmp);
                     }
@@ -363,17 +428,19 @@ class Richiesta
                         $stmt->execute();
                         $res=$stmt->fetch(PDO::FETCH_ASSOC);
                         if (User::checkToken($token) && $res && $res['is_active']==1 AND User::checkCanCreateRequest($res['role_id'])){
-                            $this->idUsca=$res['id_usca'];
+                            // $this->idUsca=$res['id_usca'];
                             $query = "INSERT INTO `richieste` (
                                 `id_assistito`,
                                 `id_tipologia`,
                                 `id_priorita`,
+                                `is_archived`,
                                 `data`,
                                 `note`,
                                 `created_by`
                             ) VALUES (:id_assistito,
                                 :id_tipologia,
                                 :id_priorita,
+                                :is_archived,
                                 :data,
                                 :note,
                                 :created_by)";
@@ -382,6 +449,7 @@ class Richiesta
                             $stmt->bindParam(':id_assistito', $this->idAssistito, PDO::PARAM_INT);
                             $stmt->bindParam(':id_tipologia', $this->idTipologia, PDO::PARAM_INT);
                             $stmt->bindParam(':id_priorita', $this->idPriorita, PDO::PARAM_INT);
+                            $stmt->bindParam(':is_archived', $this->isArchived, PDO::PARAM_INT);
                             $stmt->bindParam(':data', $this->data, PDO::PARAM_STR);
                             $stmt->bindParam(':note', $this->note, PDO::PARAM_STR);
                             $stmt->bindParam(':created_by', $this->createdBy, PDO::PARAM_INT);
@@ -390,7 +458,29 @@ class Richiesta
                             
                             $this->setId($conn->lastInsertId());
 
-                            if ($this->id != 0) {
+                            $insStati = true;
+                            
+                            foreach ($this->getNewStates() as $stato){
+                                $query = "INSERT INTO `attivita_svolte` (
+                                    `id_attivita`,
+                                    `id_stato`,
+                                    `created_by`
+                                ) VALUES (:id_attivita,
+                                    :id_stato,
+                                    :created_by)";
+    
+                                $stmt = $conn->prepare($query);
+                                $stmt->bindParam(':id_attivita', $this->id, PDO::PARAM_INT);
+                                $stmt->bindParam(':id_stato', $stato, PDO::PARAM_INT);
+                                $stmt->bindParam(':created_by', $this->createdBy, PDO::PARAM_INT);
+                                $stmt->execute();
+    
+                                if ($conn->lastInsertId() == 0){
+                                    $insStati = $insStati && false;
+                                }
+                            }
+
+                            if ($this->id != 0 && $insStati) {
                                 $query="UPDATE `updates` SET last_update_ts=LOCALTIMESTAMP() WHERE table_name='richieste'";
                                     $stmt = $conn->prepare($query);
                                     $stmt->execute();
@@ -400,7 +490,11 @@ class Richiesta
                             } else {
                                 $out->errorInfo=$conn->errorInfo();
                                 $out->errorCode=$conn->errorCode();
-                                throw new Exception("Errore d'inserimento");
+                                if ($this->id==0){
+                                    throw new Exception("Errore d'inserimento");
+                                } else {
+                                    throw new Exception("Errore durante l'inserimento degli stati");
+                                }
                             } 
                         } else {
                             throw new Exception("OPERAZIONE-NON-PERMESSA");
@@ -442,7 +536,8 @@ class Richiesta
                             id_priorita=:id_priorita,
                             data=:data,
                             last_update=:last_update,
-                            last_update_by=:last_update_by
+                            last_update_by=:last_update_by,
+                            note=:note
                             WHERE `id`=:id";
 
                         $stmt = $conn->prepare($query);
@@ -450,7 +545,7 @@ class Richiesta
                         $stmt->bindParam(':id_tipologia', $this->idTipologia, PDO::PARAM_INT);
                         $stmt->bindParam(':id_priorita', $this->idPriorita, PDO::PARAM_INT);
                         $stmt->bindParam(':data', $this->data, PDO::PARAM_STR);
-                        // $stmt->bindParam(':note', $this->note, PDO::PARAM_STR);
+                        $stmt->bindParam(':note', $this->note, PDO::PARAM_STR);
                         $stmt->bindParam(':last_update', $this->lastUpdate, PDO::PARAM_STR);
                         $stmt->bindParam(':last_update_by', $this->lastUpdateBy, PDO::PARAM_INT);
                         $stmt->bindParam(':id', $this->id, PDO::PARAM_INT);
@@ -462,11 +557,35 @@ class Richiesta
                             throw new Exception("UPDATE-ERROR");
                         }
 
-                        $query="UPDATE `updates` SET last_update_ts=LOCALTIMESTAMP() WHERE table_name='richieste'";
-                        $stmt = $conn->prepare($query);
-                        $stmt->execute();
-                        if ($stmt->rowCount()==1){
-                            $out->status="OK";
+                        $insStati = true;
+                            
+                        foreach ($this->getNewStates() as $stato){
+                            $query = "INSERT INTO `attivita_svolte` (
+                                `id_attivita`,
+                                `id_stato`,
+                                `created_by`
+                            ) VALUES (:id_attivita,
+                                :id_stato,
+                                :created_by)";
+
+                            $stmt = $conn->prepare($query);
+                            $stmt->bindParam(':id_attivita', $this->id, PDO::PARAM_INT);
+                            $stmt->bindParam(':id_stato', $stato, PDO::PARAM_INT);
+                            $stmt->bindParam(':created_by', $this->lastUpdateBy, PDO::PARAM_INT);
+                            $stmt->execute();
+
+                            if ($conn->lastInsertId() == 0){
+                                $insStati = $insStati && false;
+                            }
+                        }
+
+                        if($insStati){
+                            $query="UPDATE `updates` SET last_update_ts=LOCALTIMESTAMP() WHERE table_name='richieste'";
+                            $stmt = $conn->prepare($query);
+                            $stmt->execute();
+                            if ($stmt->rowCount()==1){
+                                $out->status="OK";
+                            }
                         }
                         } else {
                             throw new Exception("OPERAZIONE-NON-PERMESSA");
@@ -744,6 +863,34 @@ public function archive($username,$token)
             $out->status="KO";
             $out->error = $ex->getMessage();
         }
+        return $out;
+    }
+
+    public static function getStatiAttivita(){
+        $out = new stdClass();
+        $out->status="KO";
+        try {
+            $conn=DB::conn();
+            if ($conn!=null){
+                try {
+                    $query="SELECT id,descrizione FROM `stati_attivita` WHERE `is_active`=1 ORDER BY descrizione";
+                    
+                    $stmt = $conn->prepare($query);
+                    $stmt->execute();
+                    $res=$stmt->fetchAll(PDO::FETCH_ASSOC);
+                    $out->data=$res;                    
+                    $out->status="OK";
+                } catch(Exception $ex){
+                        $out->error=$ex->getMessage();
+                    }
+            }
+            else {
+                $out->error="DB-CONNECTION-ERROR";
+            }
+        } catch(Exception $e){
+            $conn=null;
+        }
+        //file_put_contents("../log/dbtest.log",(new DateTime("now"))->format("Y-m-d H:i").$msg."\n",FILE_APPEND);
         return $out;
     }
 }

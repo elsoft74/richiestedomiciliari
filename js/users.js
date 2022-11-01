@@ -1,24 +1,21 @@
 function showUsers() {
     changeActivity("users");
-    // $(".requests-form").hide();
-    // $(".swabs-form").hide();
-    // $(".users-form").show();
     getUsers();
 }
 
 function getUsers() {
-    let lu = localStorage.getItem("ricdomloggeduser");
+    var lu = sessionStorage.getItem("ricdomloggeduser");
     if (lu != null) {
         loggedUser = JSON.parse(lu);
-        let username = loggedUser.username;
-        let token = "123456";
-        let xhr = new XMLHttpRequest();
-        let url = "be/getusers.php";
+        var username = loggedUser.username;
+        var token = "123456";
+        var xhr = new XMLHttpRequest();
+        var url = "be/getusers.php";
         xhr.open("POST", url, true);
         xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
         xhr.onreadystatechange = function () {
             if (xhr.readyState === 4 && xhr.status === 200) {
-                result = JSON.parse(xhr.responseText);
+                var result = JSON.parse(xhr.responseText);
                 showUsersTable(result);
             }
         }
@@ -57,8 +54,9 @@ function showUsersTable(users) {
                 { title: "Nome", field: "nome", editor: false },
                 { title: "Cognome", field: "cognome", editor: false },
                 { title: "e-mail", field: "email", editor: false },
-                { title: "USCA", field: "id_usca", editor: false,formatter: function (cell, formatterParams, onRendered) {
-                    out = "";
+                { title: "Team", field: "id_usca", editor: false,formatter: function (cell, formatterParams, onRendered) {
+                    var out = "";
+                    var usca = JSON.parse(sessionStorage.getItem("usca"));
                     usca.forEach(element => {
                         if (element.id == cell.getValue()) {
                             out = element.descrizione;
@@ -67,7 +65,8 @@ function showUsersTable(users) {
                     return out;
                 } },
                 { title: "Ruolo", field: "role_id", editor: false, formatter: function (cell, formatterParams, onRendered) {
-                    out = "";
+                    var out = "";
+                    var ruoli = JSON.parse(sessionStorage.getItem("ruoli"));
                     ruoli.forEach(element => {
                         if (element.id == cell.getValue()) {
                             out = element.descrizione;
@@ -78,7 +77,7 @@ function showUsersTable(users) {
                 { title: "Attivo", field: "is_active", editor: false, formatter:"tickCross" },
             ],
         });
-        localStorage.setItem("activity","users");
+        sessionStorage.setItem("activity","users");
     } else {
         Swal.fire({
             text: result.error,
@@ -91,7 +90,7 @@ function showUsersTable(users) {
 }
 
 var showUserUpdate = function (e, row) {
-    $("#editUser").show();
+    $("#editUser").modal("show");
     var element = row.getData();
     $("#editIdUser").val(element.id);
     $("#editNomeUser").val(element.nome);
@@ -104,14 +103,14 @@ var showUserUpdate = function (e, row) {
 }
 
 function inserisciUser() {
-    let lu = localStorage.getItem("ricdomloggeduser");
+    var lu = sessionStorage.getItem("ricdomloggeduser");
     if (lu != null) {
         loggedUser = JSON.parse(lu);
-        let username = loggedUser.username;
-        let token = "123456";
-        let xhr = new XMLHttpRequest();
-        let url = "be/insertUser.php";
-        let user = {};
+        var username = loggedUser.username;
+        var token = "123456";
+        var xhr = new XMLHttpRequest();
+        var url = "be/insertUser.php";
+        var user = {};
         user.nome = $("#nomeUser").val();
         user.cognome = $("#cognomeUser").val();
         user.username = $("#usernameUser").val();
@@ -119,7 +118,7 @@ function inserisciUser() {
         user.password = $("#passwordUser").val();
         user.roleId = $("#roleIdUser").val();
         user.idUsca = $("#idUscaUser").val();
-        let err="";
+        var err="";
         err+=(user.nome=="")?"Nome vuoto\n":"";
         err+=(user.cognome=="")?"Cognome vuoto\n":"";
         err+=(user.username=="")?"Username vuoto\n":"";
@@ -132,7 +131,7 @@ function inserisciUser() {
             xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
             xhr.onreadystatechange = function () {
                 if (xhr.readyState === 4 && xhr.status === 200) {
-                    result = JSON.parse(xhr.responseText);
+                    var result = JSON.parse(xhr.responseText);
                     if(result.status=="OK"){
                         Swal.fire({
                             text: "Operazione completata",
@@ -172,14 +171,14 @@ function inserisciUser() {
 }
 
 function aggiornaUser() {
-    let lu = localStorage.getItem("ricdomloggeduser");
+    var lu = sessionStorage.getItem("ricdomloggeduser");
     if (lu != null) {
         loggedUser = JSON.parse(lu);
-        let username = loggedUser.username;
-        let token = "123456";
-        let xhr = new XMLHttpRequest();
-        let url = "be/editUser.php";
-        let user = {};
+        var username = loggedUser.username;
+        var token = "123456";
+        var xhr = new XMLHttpRequest();
+        var url = "be/editUser.php";
+        var user = {};
         user.id = $("#editIdUser").val();
         user.nome = $("#editNomeUser").val();
         user.cognome = $("#editCognomeUser").val();
@@ -189,7 +188,7 @@ function aggiornaUser() {
         user.roleId = $("#editRoleIdUser").val();
         user.isActive = ($("#editIsActiveUser").prop("checked"))?1:0;
         user.idUsca = $("#editIdUscaUser").val();
-        let err="";
+        var err="";
         err+=(user.nome=="")?"Nome vuoto\n":"";
         err+=(user.cognome=="")?"Cognome vuoto\n":"";
         err+=(user.username=="")?"Username vuoto\n":"";
@@ -201,7 +200,7 @@ function aggiornaUser() {
             xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
             xhr.onreadystatechange = function () {
                 if (xhr.readyState === 4 && xhr.status === 200) {
-                    result = JSON.parse(xhr.responseText);
+                    var result = JSON.parse(xhr.responseText);
                     if(result.status=="OK"){
                         Swal.fire({
                             text: "Operazione completata",
@@ -242,7 +241,11 @@ function aggiornaUser() {
 
 function buildUserInsertForm(target) {
 
-    let canBuild=false;
+    var canBuild=false;
+    var tar = null;
+    var fun1 = null;
+    var fun2 = null;
+    var attrs = {};
     switch(target){
         case "insertUser":
             tar="#insertUser";
@@ -284,19 +287,19 @@ function buildUserInsertForm(target) {
     }
 
     if (canBuild) {
-        let modal = $(tar).addClass("modal")/*.addClass("fade")*/.attr({"id":target,"tabindex":"-1", "role":"dialog", "aria-labelledby":attrs.titleId, "aria-hidden":"true"});
-        let modalDialog = $("<div>").addClass("modal-dialog").attr({"role":"document"});
-        let modalContent = $("<div>").addClass("modal-content");
-        let modalHeader = $("<div>").addClass("modal-header");
-        let modalBody = $("<div>").addClass("modal-body");
-        let modalFooter = $("<div>").addClass("modal-footer");
+        var modal = $(tar).addClass("modal")/*.addClass("fade")*/.attr({"id":target,"tabindex":"-1", "role":"dialog", "aria-labelledby":attrs.titleId, "aria-hidden":"true"});
+        var modalDialog = $("<div>").addClass("modal-dialog").attr({"role":"document"});
+        var modalContent = $("<div>").addClass("modal-content");
+        var modalHeader = $("<div>").addClass("modal-header");
+        var modalBody = $("<div>").addClass("modal-body");
+        var modalFooter = $("<div>").addClass("modal-footer");
         
-        let el = $("<h5>").addClass("modal-title").attr({"id":attrs.titleId}).html(attrs.titleText);
+        var el = $("<h5>").addClass("modal-title").attr({"id":attrs.titleId}).html(attrs.titvarext);
         modalHeader.append(el);
         modalContent.append(modalHeader);
 
-        let form = $("<form>");
-        let divFormGroup = $("<div>").addClass("form-group");
+        var form = $("<form>");
+        var divFormGroup = $("<div>").addClass("form-group");
         el = $("<input>").attr({ "type": "hidden", "id":attrs.id });
         divFormGroup.append(el);
         el = $("<label>").attr({ "for": attrs.nome }).text("Nome");
@@ -330,6 +333,7 @@ function buildUserInsertForm(target) {
         el = $("<label>").attr({ "for": attrs.roleId }).text("Ruolo");
         divFormGroup.append(el);
         el = $("<select>").addClass('user-input-form').addClass("form-control").attr({ "id": attrs.roleId });
+        var ruoli = JSON.parse(sessionStorage.getItem("ruoli"));
         if(ruoli!=null){
             ruoli.forEach(element => {
                 let option = $("<option>").attr({ "value": element.id}).text(element.descrizione);
@@ -343,6 +347,7 @@ function buildUserInsertForm(target) {
         el = $("<label>").attr({ "for": attrs.idUsca }).text("USCA di appartenenza");
         divFormGroup.append(el);
         el = $("<select>").addClass('user-input-form').addClass("form-control").attr({ "id": attrs.idUsca });
+        var uscaFull = JSON.parse(sessionStorage.getItem("uscaFull"));
         if(uscaFull!=null){
             uscaFull.forEach(element => {
                 let option = $("<option>").attr({ "value": element.id}).text(element.descrizione);
@@ -352,14 +357,14 @@ function buildUserInsertForm(target) {
         divFormGroup.append(el);
         form.append(divFormGroup);
     
-        let div4 = $("<div>").addClass("col");
+        var div4 = $("<div>").addClass("col");
         if(attrs.hasOwnProperty('isActive')){
             el = $("<label>").addClass('form-check-label').attr({ "for": attrs.isActive }).text("Attivo");
             div4.append(el);
             el = $("<input>").addClass('form-check-input').attr({ "type": "checkbox", "id": attrs.isActive });
             div4.append(el);
         }
-        let div5 = $("<div>").addClass("input-group-addon");
+        var div5 = $("<div>").addClass("input-group-addon");
         el = $("<span>").addClass("glyphicon glyphicon-th");
         div5.append(el);
         div4.append(div5);
@@ -384,5 +389,5 @@ function buildUserInsertForm(target) {
 
 function cleanUserInsert() {
     $(".user-input-form").val('');
-    $("#insertUser").hide();
+    $("#insertUser").modal("hide");
 }

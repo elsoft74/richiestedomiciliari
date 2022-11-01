@@ -1,32 +1,3 @@
-function setCookie(cname, cvalue) {
-    const d = new Date();
-    d.setTime(d.getTime() + (5 * 3600000)); // validità 5h
-    let expires = "expires=" + d.toUTCString();
-    document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
-}
-
-function getCookie(cname) {
-    let name = cname + "=";
-    let ca = document.cookie.split(';');
-    for (let i = 0; i < ca.length; i++) {
-        let c = ca[i];
-        while (c.charAt(0) == ' ') {
-            c = c.substring(1);
-        }
-        if (c.indexOf(name) == 0) {
-            return c.substring(name.length, c.length);
-        }
-    }
-    return "";
-}
-
-function deleteCookie(cname) {
-    if (getCookie(cname)) {
-        document.cookie = cname + "=;expires=Thu, 01 Jan 1970 00:00:01 GMT";
-    }
-}
-
-
 function calcolaGiorni(data) {
     let tmpDate = new Date(data);
     let d1 = new Date(tmpDate.getFullYear() + "-" + (1 + tmpDate.getMonth()) + "-" + tmpDate.getDate() + " 00:00:00");
@@ -37,55 +8,67 @@ function calcolaGiorni(data) {
 
 function checkIfComplete() {
     let out = true;
+    var toBeCompleted = JSON.parse(sessionStorage.getItem("toBeCompleted"));
     Object.keys(toBeCompleted).forEach(p => { out = out && toBeCompleted[p] });
     if (out) {
-        setTimeout(checkIfUpdated, 1000);
+        setTimeout(checkIfUpdated, 2000);
         window.dispatchEvent(new CustomEvent("dataLoaded"));
     } else {
-        setTimeout(checkIfComplete, 1000);
+        setTimeout(checkIfComplete, 2000);
     }
 }
 
 function checkIfUpdated() {
     let out = true;
+    var toBeCompleted = JSON.parse(sessionStorage.getItem("toBeCompleted"));
     Object.keys(toBeCompleted).forEach(p => { out = out && toBeCompleted[p] });
     if (out) {
-        // console.log("Aggiorno");
         window.dispatchEvent(new CustomEvent("dataUpdated"));
     } else {
-        // console.log("Aggiornamenti non ancora pronti");
-        setTimeout(checkIfUpdated, 200);
+        setTimeout(checkIfUpdated, 2000);
     }
 }
 
+function formattaEtaPerFascia(val) {
+    let out = "";
+    if (val < 50) {
+        out = "Fascia 1 (< 50)";
+    } else if (val >= 50 && val < 66) {
+        out = "Fascia 2 (50-65)";
+    } else {
+        out = "Fascia 3 (> 65)";
+    }
+    return out;
+}
+
 function checkNewData() {
-    let activity = localStorage.getItem("activity");
-    let xhr = new XMLHttpRequest();
-    let url = "be/checkNewData.php";
-    let lastRead = localStorage.getItem("lastRead");
+    var xhr = new XMLHttpRequest();
+    var url = "be/checkNewData.php";
+    var lastRead = sessionStorage.getItem("lastRead");
     xhr.open("POST", url, true);
     xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-    var time=Date();
     xhr.onreadystatechange = function () {
         if (xhr.readyState === 4 && xhr.status === 200) {
-            // console.log("RECEIVED->"+time+" "+xhr.responseText);
-            result = JSON.parse(xhr.responseText);
+            var result = JSON.parse(xhr.responseText);
             if (result.status == "OK") {
                 if (result.data) {
                     window.dispatchEvent(new CustomEvent("dataUpdated"));
                 } else {
-                    setTimeout(checkNewData, 1000);
+                    setTimeout(checkNewData, 2000);
+                }
+            } else {
+                if(result.data=="NOTLOGGED"){
+                    window.dispatchEvent(new CustomEvent("sessionExpired"));
                 }
             }
         }
     }
-    // console.log("SENT->"+time+" lastRead=" + lastRead );
     xhr.send("lastRead=" + lastRead);
 }
 
 function loadData() {
     $(".lds-grid").show();
-    toBeCompleted = {
+    var toBeCompleted = {
         priorita: false,
         tipologie: false,
         richieste: false,
@@ -94,13 +77,10 @@ function loadData() {
         usca: false,
         uscaFull: false,
         statiTamponi: false,
-        assistiti: false
+        assistiti: false,
+        statiAttivita: false
     };
-    priorita = null;
-    tipologie = null;
-    usca = null;
-    ruoli = null;
-    richieste = [];
+    sessionStorage.setItem("toBeCompleted",JSON.stringify(toBeCompleted));
     getPriorita(toBeCompleted);
     getRuoli(toBeCompleted);
     getTipologie(toBeCompleted);
@@ -108,8 +88,7 @@ function loadData() {
     getUscaFull(toBeCompleted);
     getStatiTamponi(toBeCompleted);
     getAssistiti(toBeCompleted);
-    //readRequests(toBeCompleted);
-    //readSwabs(toBeCompleted);
+    getStatiAttivita(toBeCompleted);
     getData(toBeCompleted);
     setTimeout(checkIfComplete, 200);
 }
@@ -128,6 +107,18 @@ function formattaData(data, lung) { // lung se impostato a true fa ottenere una 
     return out;
 }
 
+function formattaContatti(val) {
+    var out = "<div><ul>";
+    var contatti = JSON.parse(val);
+    contatti.forEach(el => {
+        if (el != "") {
+            out += "<li>" + el;
+        }
+    });
+    out += "</ul></div>";
+    return out;
+}
+
 function hideAll() {
     $(".sections").hide();
 }
@@ -137,32 +128,30 @@ function checkUserPermission(user, permissionToCheck) {
 }
 
 function getData(toBeCompleted) {
-    var table = Tabulator.findTable("#main")[0];
-    var arc = localStorage.getItem("mostraStorico");
-    var rowCount = 0;
-    if (table != null && table != undefined) {
-        rowCount = table.getDataCount();
+    var arc = sessionStorage.getItem("mostraStorico");
+    var xhr = new XMLHttpRequest();
+    var url = "be/getdata.php";
+    var activeUsca = sessionStorage.getItem("activeUsca");
+    if (activeUsca==null){
+        activeUsca="ALL";
     }
-    if (rowCount == 0) {
-        localStorage.setItem("lastRead", null);
-    }
-    let xhr = new XMLHttpRequest();
-    let url = "be/getdata.php";
     xhr.open("POST", url, true);
     xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-    let ready = false;
     xhr.onreadystatechange = function () {
         if (xhr.readyState === 4 && xhr.status === 200) {
-            result = JSON.parse(xhr.responseText);
+            var result = JSON.parse(xhr.responseText);
             if (result.status == "OK") {
-                richieste = result.requests;
+                var richieste = result.requests;
+                var swabs = result.swabs;
                 toBeCompleted.richieste = true;
-                swabs = result.swabs;
                 toBeCompleted.swabs = true;
+                sessionStorage.setItem("toBeCompleted",JSON.stringify(toBeCompleted));
+                sessionStorage.setItem("richieste",JSON.stringify(richieste));
+                sessionStorage.setItem("swabs",JSON.stringify(swabs));
                 if (result.hasOwnProperty("lastRead")) {
-                    localStorage.setItem("lastRead", result.lastRead);
+                    sessionStorage.setItem("lastRead", result.lastRead);
                 }
-                //setTimeout(checkIfAreUpdatedData, 1000);
+                setTimeout(checkNewData,2000);
             } else {
                 Swal.fire({
                     text: "Impossibile recuperare l'elenco delle richieste.",
@@ -174,8 +163,7 @@ function getData(toBeCompleted) {
             }
         }
     }
-    //xhr.send();
-    xhr.send("lastRead=" + localStorage.getItem("lastRead")+"&arc="+arc);
+    xhr.send("lastRead=" + sessionStorage.getItem("lastRead")+"&arc="+arc+"&activeUsca="+activeUsca);
 }
 
 function changeActivity(val){
@@ -183,6 +171,10 @@ function changeActivity(val){
     $(".users-form").hide();
     $(".requests-form").hide();
     $(".assistiti-form").hide();
+    var richieste = JSON.parse(sessionStorage.getItem("richieste"));
+    var swabs = JSON.parse(sessionStorage.getItem("swabs"));
+    var assistiti = JSON.parse(sessionStorage.getItem("assistiti"));
+    var lu = JSON.parse(sessionStorage.getItem("ricdomloggeduser"));
     switch(val){
         case "requests":
             $(".requests-form").show();
@@ -203,18 +195,32 @@ function changeActivity(val){
             $(".home-form").show();
             break;
     }
-    localStorage.setItem("activity",val);
+    sessionStorage.setItem("activity",val);
 }
 
 function spostaFirma(){
-        var op = $('#firma').offsetParent();
-        var t = op.offset().top;
-        var l = op.offset().right;
-        var w = op.width();
-        var h = op.height();
-        var dh = $(document).height();
-        var dw = $(document).width();
-        var newbottom = t + h - dh + 55;
-        var newright = l + w - dw + 20;
-        $('#firma').css('bottom', newbottom + 'px').css('right', newright + 'px');
+    var op = $('#firma').offsetParent();
+    var t = op.offset().top;
+    var l = op.offset().right;
+    var w = op.width();
+    var h = op.height();
+    var dh = $(document).height();
+    var dw = $(document).width();
+    var newbottom = t + h - dh + 55;
+    var newright = l + w - dw + 20;
+    $('#firma').css('bottom', newbottom + 'px').css('right', newright + 'px');
+}
+
+function sessionExpired(){
+    Swal.fire({
+        html: "<p>Sessione scaduta per inattività</p><p>Eseguire nuovamente il login</p>",
+        icon: 'warning',
+        showCancelButton: false,
+        confirmButtonColor: '#3085d6',
+        confirmButtonText: 'Ok'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            logout();
+        }
+    })
 }

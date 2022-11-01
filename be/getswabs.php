@@ -6,4 +6,5 @@
     include_once("classes/db.php");
     include_once("classes/user.php");
     include_once("classes/tampone.php");
-    print(json_encode(Tampone::getSwabs()));
+    $activeUsca = isset($_POST["activeUsca"])?$_POST["activeUsca"]:"ALL";
+    print(json_encode(Tampone::getSwabs($activeUsca)));

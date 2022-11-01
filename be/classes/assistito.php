@@ -1,6 +1,7 @@
 <?php
     include_once("user.php");
     include_once("db.php");
+    include_once("utils.php");
     class Assistito {    
         public $id;
         public $idUsca;
@@ -136,7 +137,7 @@
             return $this->contatti;
         }
 
-        public static function getAssistiti(/*$username,$token*/){
+        public static function getAssistiti($activeUsca/*$username,$token*/){
             $out = new stdClass();
             $out->status="KO";
             $out->data=[];
@@ -181,8 +182,15 @@
                              *
                              */
                             $query="SELECT * FROM `vista_assistiti`";
+                            if($activeUsca!="ALL"){
+                                $query.=" WHERE id_usca=:id_usca";
+                            }
+                            $query.=" ORDER BY cognome,nome ASC";
                             
                             $stmt = $conn->prepare($query);
+                            if($activeUsca!="ALL"){
+                                $stmt->bindParam(':id_usca',$activeUsca,PDO::PARAM_INT);
+                            }
                             $stmt->execute();
                             $results=$stmt->fetchAll(PDO::FETCH_ASSOC);
                             foreach($results as $res){
@@ -241,6 +249,7 @@
             $out = new stdClass();
             $out->status="KO";
             $out->data=[];
+            checkAndExtendSession();
             try {
                 $conn=DB::conn();
                 if ($conn!=null){
@@ -274,6 +283,7 @@
                                 $stmt->execute();
                                 $this->setId($conn->lastInsertId());
                                     if ($this->getId()!=0){
+                                        Log::insert("INSERT.ASSISTITO",$this->id,null,null,null);
                                         $query="UPDATE `updates` SET last_update_ts=LOCALTIMESTAMP() WHERE table_name='assistiti'";
                                         $stmt = $conn->prepare($query);
                                         $stmt->execute();
@@ -302,11 +312,67 @@
             //file_put_contents("../log/dbtest.log",(new DateTime("now"))->format("Y-m-d H:i").$msg."\n",FILE_APPEND);
             return $out;
         }
+
+        public function getData(){
+            $out = new stdClass();
+            $out->status="KO";
+            $out->data=[];
+            checkAndExtendSession();
+            try {
+                $user=json_decode($_SESSION["loggeduser"]);
+                $user=recast("User",$user);
+                $conn=DB::conn();
+                if ($conn!=null){
+                    try {
+                        if($this->id==null){
+                            throw new Exception("EMPTY-PATIENT");
+                        }
+                        $query="SELECT is_active, role_id FROM `users` AS u WHERE u.username=:username";
+                        $stmt = $conn->prepare($query);
+                        $stmt->bindParam(':username',$user->username,PDO::PARAM_STR);
+                        $stmt->execute();
+                        $res=$stmt->fetch(PDO::FETCH_ASSOC);
+                        if ($res && $res['is_active']==1){
+                            $query="SELECT * FROM `assistiti` WHERE id=:id";
+                            $stmt = $conn->prepare($query);
+                            $stmt->bindParam(':id',$this->id,PDO::PARAM_STR);
+                            $stmt->execute();
+                            $results=$stmt->fetch(PDO::FETCH_ASSOC);
+                            if($results){
+                                $this->nome=$results['nome'];
+                                $this->cognome=$results['cognome'];
+                                $this->telefono1=$results['telefono1'];
+                                $this->telefono2=$results['telefono2'];
+                                $this->telefono3=$results['telefono3'];
+                                $this->nascita=$results['nascita'];
+                                $this->email=$results['email'];
+                                $this->indirizzo=$results['indirizzo'];
+                                $this->codiceFiscale=$results['codicefiscale'];
+                                $this->note=$results['note'];
+                            }
+                        } else {
+                            throw new Exception("OPERAZIONE-NON-PERMESSA");
+                        } 
+                    } catch(Exception $ex){
+                            $out->error=$ex->getMessage();
+                        }
+                }
+                else {
+                    $out->error="DB-CONNECTION-ERROR";
+                }
+            } catch(Exception $e){
+                $out->error=$e;
+                $conn=null;
+            }
+            //file_put_contents("../log/dbtest.log",(new DateTime("now"))->format("Y-m-d H:i").$msg."\n",FILE_APPEND);
+            return $out;
+        }
     
         public function update($username,$token){
             $out = new stdClass();
             $out->status="KO";
             $out->data=[];
+            checkAndExtendSession();
             try {
                 $conn=DB::conn();
                 if ($conn!=null){
@@ -353,6 +419,7 @@
                                 $stmt->bindParam(':id_usca',$this->idUsca,PDO::PARAM_INT);
                                 $stmt->execute();
                                 if ($stmt->rowCount()==1){
+                                    Log::insert("UPDATE.ASSISTITO",$this->id,null,null,null);
                                     $query="UPDATE `updates` SET last_update_ts=LOCALTIMESTAMP() WHERE table_name='assistiti'";
                                     $stmt = $conn->prepare($query);
                                     $stmt->execute();
@@ -386,6 +453,7 @@
             $out = new stdClass();
             $out->status="KO";
             $out->data=null;
+            checkAndExtendSession();
             try {
                 $conn=DB::conn();
                 if ($conn!=null){
@@ -404,8 +472,10 @@
                             $results=$stmt->fetch(PDO::FETCH_ASSOC);
                             if($results){
                                 $this->id=$results['id'];
+                                $out->data="exists";
                             } else {
                                 $this->insert($username,$token);
+                                $out->data="new";
                             }
                             $out->status="OK";
                                 

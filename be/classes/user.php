@@ -1,5 +1,7 @@
 <?php
-    class User {    
+    include_once("log.php");
+    include_once("utils.php");
+    class User {
         public $id;
         public $username;
         private $password;
@@ -10,7 +12,7 @@
         public $permissions;
         public $email;
         public $id_usca;
-        
+
         public function setUserName($val){
             $this->username=$val;
         }
@@ -89,6 +91,16 @@
         }
 
         public function login(){
+            /*
+             *
+             *
+             SELECT rs.id AS id,
+             s.descrizione AS stato,
+             r.descrizione AS ruolo,
+             rs.permission AS permission
+             FROM `roles_states` AS rs JOIN `roles` AS r ON rs.role_id=r.id
+             JOIN `stati_tamponi` AS s ON rs.state_id=s.id
+             */
             $out = new stdClass();
             $out->status="KO";
             try {
@@ -96,7 +108,7 @@
                 if ($conn!=null){
                     try {
                         $query="SELECT u.id AS id, u.nome AS nome, u.cognome AS cognome, u.role_id AS role_id, u.is_active AS is_active, r.permissions AS permissions, u.email AS email, u.id_usca AS id_usca FROM `users` AS u JOIN `roles` AS r ON u.role_id=r.id WHERE `username`=:username AND `password`=:password";
-                        
+
                         $stmt = $conn->prepare($query);
                         $stmt->bindParam(':username',$this->username,PDO::PARAM_STR);
                         $stmt->bindParam(':password',$this->password,PDO::PARAM_STR);
@@ -108,6 +120,7 @@
                             if(!$res["is_active"]){
                                 $out->error="USER-IS-NOT-ACTIVE";
                             } else {
+                                createSession();
                                 $this->id=$res["id"];
                                 $this->nome=$res["nome"];
                                 $this->cognome=$res["cognome"];
@@ -116,11 +129,32 @@
                                 $this->email=$res["email"];
                                 $this->permissions=json_decode($res["permissions"]);
                                 $this->id_usca=$res["id_usca"];
+                                $this->reading_states=[];
+                                $this->writing_states=[];
+                                
+                                $query="SELECT * FROM `roles_states` WHERE role_id=:role_id AND permission IN ('R','F')";
+                                $stmt = $conn->prepare($query);
+                                $stmt->bindParam(':role_id',$this->role_id,PDO::PARAM_INT);
+                                $stmt->execute();
+                                $resS=$stmt->fetchAll(PDO::FETCH_ASSOC);
+                                foreach($resS AS $r){
+                                    array_push($this->reading_states,$r['state_id']);
+                                }
+                                $query="SELECT * FROM `roles_states` WHERE role_id=:role_id AND permission IN ('W','F')";
+                                $stmt = $conn->prepare($query);
+                                $stmt->bindParam(':role_id',$this->role_id,PDO::PARAM_INT);
+                                $stmt->execute();
+                                $resS=$stmt->fetchAll(PDO::FETCH_ASSOC);
+                                foreach($resS AS $r){
+                                    array_push($this->writing_states,$r['state_id']);
+                                }
                                 $out->status="OK";
                                 $out->data=$this;
+                                $_SESSION["loggeduser"] = json_encode($this);
+                                Log::insert("LOGIN",null,null,null,null);
                             }
-                            
-                        }                    
+
+                        }
                     } catch(Exception $ex){
                             $out->error=$ex->getMessage();
                         }
@@ -132,6 +166,31 @@
                 $conn=null;
             }
             //file_put_contents("../log/dbtest.log",(new DateTime("now"))->format("Y-m-d H:i").$msg."\n",FILE_APPEND);
+            return $out;
+        }
+
+        public function logout(){
+            $out = new stdClass();
+            $out->status="KO";
+            try {
+                $conn=DB::conn();
+                if ($conn!=null){
+                    try {
+                        session_start();
+                        $user = json_decode($_SESSION["loggeduser"]);
+                        Log::insert("LOGOUT",null,null,null,null);
+                        session_unset();
+                        session_destroy();
+                    } catch(Exception $ex){
+                            $out->error=$ex->getMessage();
+                        }
+                }
+                else {
+                    $out->error="DB-CONNECTION-ERROR";
+                }
+            } catch(Exception $e){
+                $conn=null;
+            }
             return $out;
         }
 
@@ -158,7 +217,7 @@
                             u.is_active AS is_active,
                             u.id_usca AS id_usca
                             FROM `users` AS u JOIN `roles` AS r ON u.role_id=r.id ";
-                            
+
                             $stmt = $conn->prepare($query);
                             $stmt->execute();
                             $results=$stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -177,7 +236,7 @@
                             $out->status="OK";
                         } else {
                             throw new Exception("OPERAZIONE-NON-PERMESSA");
-                        } 
+                        }
                     } catch(Exception $ex){
                             $out->error=$ex->getMessage();
                         }
@@ -196,6 +255,7 @@
             $out = new stdClass();
             $out->status="KO";
             $out->data=[];
+            checkAndExtendSession();
             try {
                 $conn=DB::conn();
                 if ($conn!=null){
@@ -227,7 +287,7 @@
                                 if ($this->getId()!=0){
                                     $out->status="OK";
                                 } else {
-                                    throw new Exception("ERRORE-DI-INSERIMENTO");    
+                                    throw new Exception("ERRORE-DI-INSERIMENTO");
                                 }
                             } else {
                                 throw new Exception("USERNAME-ESISTENTE");
@@ -235,7 +295,7 @@
                             $out->status="OK";
                         } else {
                             throw new Exception("OPERAZIONE-NON-PERMESSA");
-                        } 
+                        }
                     } catch(Exception $ex){
                             $out->error=$ex->getMessage();
                         }
@@ -254,6 +314,7 @@
             $out = new stdClass();
             $out->status="KO";
             $out->data=[];
+            checkAndExtendSession();
             try {
                 $conn=DB::conn();
                 if ($conn!=null){
@@ -298,7 +359,7 @@
                                 if ($stmt->rowCount()==1){
                                     $out->status="OK";
                                 } else {
-                                    throw new Exception("AGGIORNAMENTO-NON-ESEGUITO");    
+                                    throw new Exception("AGGIORNAMENTO-NON-ESEGUITO");
                                 }
                             } else {
                                 throw new Exception("USERNAME-IN-USO-PER-ALTRO-UTENTE");
@@ -306,7 +367,7 @@
                             $out->status="OK";
                         } else {
                             throw new Exception("OPERAZIONE-NON-PERMESSA");
-                        } 
+                        }
                     } catch(Exception $ex){
                             $out->error=$ex->getMessage();
                         }
@@ -351,5 +412,13 @@
 
         public static function checkToken($token){
             return ($token=="123456"); // va implementata una generazione token con controllo di scadenza e restituito un oggetto con anche i dati quali lo username
+        }
+
+        public function checkPermissions($check){
+            $out = false;
+            if (isset($this->permissions) && isset($this->permissions->$check)){
+                $out=$this->permissions->$check;
+            }
+            return $out;
         }
     }

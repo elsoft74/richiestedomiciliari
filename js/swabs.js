@@ -1,205 +1,243 @@
 function showSwabs(swabs, user) {
-    $("#mainSwabs").html("");
-    
-    var table = new Tabulator("#mainSwabs", {
-        height: 800,
-        data: swabs,           //load row data from array
-        layout: "fitColumns",      //fit columns to width of table
-        responsiveLayout: "collapse",  //hide columns that dont fit on the table
-        //tooltips: true,            //show tool tips on cells
-        addRowPos: "top",          //when adding a new row, add it to the top of the table
-        history: true,             //allow undo and redo actions on the table
-        pagination: "local",       //paginate the data
-        paginationSize: 12,         //allow 7 rows per page of data
-        paginationCounter: "rows", //display count of paginated rows in footer
-        movableColumns: true,      //allow column order to be changed
-        
-        // initialSort: [             //set the initial sort order of the data
-        //     { column: "dataRic", dir: "asc" },
-        // ],
-        /*
-        
-        "idAssistito":"1",
-         "nome":"IVO",
-         "cognome":"PUGLIESE",
-         "email":"elsoft74@gmail.com",
-         "telefono":"3935397897",
-         "indirizzo":"VIA DELLA LIBERTA' 15 - ROCCELLA JONICA (RC)",
-         "codiceFiscale":"PGLVIO74M20H224C",
-         "noteAssistito":"Inserimento di test",
-         "nascita":"1974-08-20 00:00:00",
-         "assistitoIsActive":"1",
-         "tamponeIsActive":"1",
-         "tamponeIsProgrammed":"0",
-         "idTampone":"1",
-         "dataEsecuzione":"2022-09-01 10:20:02",
-         "dataConsigliata":"2022-09-06 10:20:02",
-         "idUsca":"1",
-         "usca":"Messina Nord",
-         "created":"2022-09-03 10:20:20",
-         "createdByNomeCognome":"1",
-         "last_update":null,
-         "lastUpdateByNomeCognome":null
-        
-        */
-        //     columnDefaults:{
-        //     tooltip:function(e, cell, onRendered){
-        //         //e - mouseover event
-        //         //cell - cell component
-        //         //onRendered - onRendered callback registration function
-
-        //         var el = document.createElement("div");
-        //         el.style.backgroundColor = "red";
-        //         el.innerText = cell.getColumn().getField() + " - " + cell.getValue(); //return cells "field - value";
-
-        //         return el; 
-        //     },
-        // },
-        columns: [                 //define the table columns
-
-            { title: "", field: "id", width: 10, editor: false, hozAlign: "center", vertAlign: "middle", visible: false },
-
-            { title: "#", field: "idAssistito", width: 10, editor: false, hozAlign: "center", vertAlign: "middle", visible: checkUserPermission(user, "canViewId") },
-
-            // {
-            //     title: "", width: 10, hozAlign: "center", editor: false, visible: checkUserPermission(user, "canEditAssistito"), cellClick: checkUserPermission(user, "canEditAssistito") ? showAssistitoUpdate : null, formatter: function (cell, formatterParams, onRendered) {
-
-            //         return '<span class="material-icons-outlined" style="color: green">edit</span>';
-            //     },
-            // },
-            // {
-            //     title: "", width: 10, hozAlign: "center", editor: false, visible: checkUserPermission(user, "canDeleteAssistito"), cellClick: checkUserPermission(user, "canDeleteAssistito") ? deleteElement : null, formatter: function (cell, formatterParams, onRendered) {
-
-            //         return '<span class="material-icons-outlined" style="color: red">delete</span>';
-            //     },
-            // },
-            { title: "Cognome", field: "cognome", vertAlign: "middle", editor: false, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
-            { title: "Nome", field: "nome", editor: false, vertAlign: "middle",},
-            {
-                title: "Nascita", field: "nascita", editor: false, vertAlign: "middle", formatter: "datetime", formatterParams: {
-                    //inputFormat:"YYY-MM-DD HH:mm:ss",
-                    outputFormat: "dd-MM-yyyy",
-                    invalidPlaceholder: "(data non valida)",
-                    timezone: "Europe/Rome",
-                }
+   $.extend(true, $.fn.dataTable.defaults, {
+        "stateSave": true,
+        "stateDuration": -1,
+        language: {
+            lengthMenu: 'Mostra _MENU_ elementi per pagina',
+            zeroRecords: 'Nessun risultato',
+            info: 'Pagina _PAGE_ di _PAGES_',
+            infoEmpty: 'Dati non disponibili',
+            infoFiltered: '(filtrati da un totale di _MAX_ elementi)',
+            "paginate": {
+                "first": "<<",
+                "last": ">>",
+                "next": ">",
+                "previous": "<"
             },
-            { title: "Codice Fiscale", field: "codiceFiscale", editor: false, hozAlign: "center", vertAlign: "middle", headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
-            { title: "Cont.1", field: "telefono1", visible:false },
-            { title: "Cont.2", field: "telefono2", visible:false },
-            { title: "Cont.3", field: "telefono3", visible:false },
-            { title: "e-mail", field: "email", visible:false },
+        },
+        buttons: [
             {
-                title: "Contatti", width: 150, field: "contatti", editor: false, hozAlign: "left", vertAlign: "middle", formatter: function (cell, formatterParams, onRendered) {
-                    out = "<div><ul>";
-                    val = cell.getValue();
-                    contatti = JSON.parse(val);
-                    contatti.forEach(el => {
-                        if (el != "") {
-                            out += "<li>" + el;
-                        }
-                    });
-                    out += "</ul></div>";
-                    return out;
-                }
-            },
-            { title: "Indirizzo", field: "indirizzo", vertAlign: "middle", editor: false, headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like" },
-            {
-                title: "Usca", field: "usca", editor: false, hozAlign: "center", vertAlign: "middle", headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like"
-            },
-            { title: "#", field: "idTampone", editor: false, hozAlign: "center", vertAlign: "middle", visible: checkUserPermission(user, "canViewId") },
-            {
-                title: "Data Positività", field: "dataEsecuzione", editor: false, hozAlign: "center", vertAlign: "middle", headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like", formatter: "datetime", formatterParams: {
-                    //inputFormat:"YYY-MM-DD HH:mm:ss",
-                    outputFormat: "dd-MM-yyyy",
-                    invalidPlaceholder: "(data non valida)",
-                    timezone: "Europe/Rome",
-                }
-            },
-            {
-                title: "Data Consigliata", field: "dataConsigliata", editor: false, hozAlign: "center", vertAlign: "middle", formatter: "datetime", formatterParams: {
-                    //inputFormat:"YYY-MM-DD HH:mm:ss",
-                    outputFormat: "dd-MM-yyyy",
-                    invalidPlaceholder: "(data non valida)",
-                    timezone: "Europe/Rome",
-                }
-            },
-            {
-                title: "Stato", field: "status", editor: false, hozAlign: "center", vertAlign: "middle", headerPopup: headerPopupFormatter, headerPopupIcon: '<span class="material-icons-outlined">filter_alt</span>', headerFilter: emptyHeaderFilter, headerFilterFunc: "like"
-            },
-            {
-                title: "", field: "idStatus", visible: false
-            },
-            {
-                title: "", width: 10, hozAlign: "center", vertAlign: "middle", editor: false, visible: checkUserPermission(user, "canCreateRequest"), cellClick: checkUserPermission(user, "canCreateRequest") ? changeSwabStatus : null, formatter: function (cell, formatterParams, onRendered) {
-
-                    return '<span class="material-icons-outlined" style="color: green">edit</span>';
-                }, tooltip: function (e, cell, onRendered) {
-                    var el1 = document.createElement("div");
-                    el1.style.backgroundColor = "#0d6efd";
-                    el2.innerText = "Modifica stato";
-                    return el;
-                }
-            },
-            {
-                title: "", width: 8, hozAlign: "center", vertAlign: "middle", editor: false, visible: checkUserPermission(user, "canCreateRequest"), cellClick: checkUserPermission(user, "canCreateRequest") ? newRequest : null, formatter: function (cell, formatterParams, onRendered) {
-
-                    return '<span class="material-icons-outlined" style="color: green">add</span>';
-                }, headerSort: false, tooltip: function (e, cell, onRendered) {
-                    var el = document.createElement("div");
-                    el.style.backgroundColor = "#0d6efd";
-                    el.innerText = "Aggiungi richiesta";
-                    return el;
-                }
-            },
-            {
-                title: "", field: "noteAssistito", vertAlign: "middle", editor: false/*, formatter: "textarea" */, cellClick: cellPopupFormatterNoteAssistito, formatter: function (cell, formatterParams, onRendered) {
-                    return (cell.getValue() == null) ? '' : '<span class="material-icons-outlined">notes</span>';
-                }, tooltip: function (e, cell, onRendered) {
-                    var el = document.createElement("div");
-                    el.style.backgroundColor = "#0d6efd";
-                    el.innerText = "Note assistito";
-                    return el;
-                }
-            },
+                extend: 'collection',
+                text: 'Export',
+                buttons: ['csv', 'excel', 'pdf']
+            }
         ]
-    });
 
-    if (checkUserPermission(user, "canExport")) {
-        let button = $("<button>").addClass("btn btn-primary btn-block swabs-form").attr({ "id": "swabsDownLoadButton" }).html("Scarica tamponi");
-        $("#menubuttons").append(button);
-        document.getElementById("swabsDownLoadButton").addEventListener("click", function () {
-            table.download("xlsx", "tamponi.xlsx", { sheetName: "Export" });
+    });
+    if ($.fn.DataTable.isDataTable('#mainSwabs')) {
+        var datatable = $('#mainSwabs').DataTable();
+        datatable.clear();
+        swabs.forEach(element => {
+            var row = [];
+            row.push(element.id);
+            row.push(element.idAssistito);
+            row.push(element.cognome);
+            row.push(element.nome);
+            row.push(formattaData(element.nascita, false));
+            row.push(element.eta);
+            row.push(formattaEtaPerFascia(element.eta));
+            row.push(element.nascita);
+            row.push(element.codiceFiscale);
+            row.push(element.telefono1);
+            row.push(element.telefono2);
+            row.push(element.telefono3);
+            row.push(element.email);
+            row.push(formattaContatti(element.contatti));
+            row.push(element.indirizzo);
+            row.push(element.usca);
+            row.push(formattaData(element.dataEsecuzione, false));
+            row.push(element.dataEsecuzione);
+            row.push(formattaData(element.dataConsigliata, false));
+            row.push(element.dataConsigliata);
+            row.push(element.status);
+            row.push(element.idStatus);
+            row.push('<span class="material-icons-outlined" style="color: green" data-toggle="tooltip" title="Modifica stato">edit</span>');
+            row.push('<span class="material-icons-outlined" style="color: green" data-toggle="tooltip" title="Aggiungi attività">add</span>');
+            row.push((element.noteAssistito != null && element.noteAssistito.trim() != "") ? '<span class="material-icons-outlined" data-toggle="tooltip" title="Note assistito">notes</span>' : '');
+            row.push(element.idUsca);
+            datatable.row.add(row);
+        })
+        datatable.draw();
+    } else {
+        var tableHead = $("<thead>");
+        var tr = $("<tr>");
+        var el = $("<th>").html("id");
+        tr.append(el);
+        el = $("<th>");
+        tr.append(el);
+        el = $("<th>").html("Cognome");
+        tr.append(el);
+        el = $("<th>").html("Nome");
+        tr.append(el);
+        el = $("<th>").html("Nascita");
+        tr.append(el);
+        el = $("<th>").html("Età");
+        tr.append(el);
+        el = $("<th>").html("Fascia");
+        tr.append(el);
+        el = $("<th>");
+        tr.append(el);
+        el = $("<th>").html("Codice Fiscale");
+        tr.append(el);
+        el = $("<th>");
+        tr.append(el);
+        el = $("<th>");
+        tr.append(el);
+        el = $("<th>");
+        tr.append(el);
+        el = $("<th>");
+        tr.append(el);
+        el = $("<th>").html("Contatti");
+        tr.append(el);
+        el = $("<th>").html("Indirizzo");
+        tr.append(el);
+        el = $("<th>").html("Team");
+        tr.append(el);
+        el = $("<th>").html("Data Positività");
+        tr.append(el);
+        el = $("<th>");
+        tr.append(el);
+        el = $("<th>").html("Data Consigliata");
+        tr.append(el);
+        el = $("<th>").html("");
+        tr.append(el);
+        el = $("<th>").html("Stato");
+        tr.append(el);
+        el = $("<th>").html("");
+        tr.append(el);
+        el = $("<th>");
+        tr.append(el);
+        el = $("<th>");
+        tr.append(el);
+        el = $("<th>");
+        tr.append(el);
+        el = $("<th>");
+        tr.append(el);
+        tableHead.append(tr);
+        $("#mainSwabs").append(tableHead);
+        tableBody = $("<tbody>");
+        $("#mainSwabs").append(tableBody);
+
+        // $("#mainSwabs").html("");
+        var tableBody = tableBody = $("#mainSwabs").find("tbody");
+        // tableBody.html("");
+
+        swabs.forEach(e => {
+            tr = $("<tr>");
+            el = $("<td>").html(e.id);
+            tr.append(el);
+            el = $("<td>").html(e.idAssistito);
+            tr.append(el);
+            el = $("<td>").html(e.cognome);
+            tr.append(el);
+            el = $("<td>").html(e.nome);
+            tr.append(el);
+            el = $("<td>").html(formattaData(e.nascita, false));
+            tr.append(el);
+            el = $("<td>").html(e.eta);
+            tr.append(el);
+            el = $("<td>").html(formattaEtaPerFascia(e.eta));
+            tr.append(el);
+            el = $("<td>").html(e.nascita);
+            tr.append(el);
+            el = $("<td>").html(e.codiceFiscale);
+            tr.append(el);
+            el = $("<td>").html(e.telefono1);
+            tr.append(el);
+            el = $("<td>").html(e.telefono2);
+            tr.append(el);
+            el = $("<td>").html(e.telefono3);
+            tr.append(el);
+            el = $("<td>").html(e.email);
+            tr.append(el);
+            el = $("<td>").html(formattaContatti(e.contatti));
+            tr.append(el);
+            el = $("<td>").html(e.indirizzo);
+            tr.append(el);
+            el = $("<td>").html(e.usca);
+            tr.append(el);
+            el = $("<td>").html(formattaData(e.dataEsecuzione, false));
+            tr.append(el);
+            el = $("<td>").html(e.dataEsecuzione);
+            tr.append(el);
+            el = $("<td>").html(formattaData(e.dataConsigliata, false));
+            tr.append(el);
+            el = $("<td>").html(e.dataConsigliata);
+            tr.append(el);
+            el = $("<td>").html(e.status);
+            tr.append(el);
+            el = $("<td>").html(e.idStatus);
+            tr.append(el);
+            el = $("<td>").html('<span class="material-icons-outlined" style="color: green" data-toggle="tooltip" title="Modifica stato">edit</span>');
+            tr.append(el);
+            el = $("<td>").html('<span class="material-icons-outlined" style="color: green" data-toggle="tooltip" title="Aggiungi attività">add</span>');
+            tr.append(el);
+            el = $("<td>").html((e.noteAssistito != null && e.noteAssistito.trim() != "") ? '<span class="material-icons-outlined" data-toggle="tooltip" title="Note assistito">notes</span>' : '');
+            tr.append(el);
+            el = $("<td>").html(e.idUsca);
+            tr.append(el);
+            tableBody.append(tr)
+        })
+
+    }
+
+
+    if (!$.fn.DataTable.isDataTable('#mainSwabs')) {
+        $('#mainSwabs').DataTable();
+        $('#mainSwabs tbody').on('click', 'td', function () {
+            var table = $('#mainSwabs').DataTable();
+            try {
+                var cell = $(table.cell(this).data()).html();
+                if (cell == 'edit' || cell == 'add' || cell == 'notes') {
+                    var element = elementFromRow(table.row(this).data());
+                    switch (cell) {
+                        case 'edit':
+                            changeSwabStatus(element);
+                            break;
+                        case 'add':
+                            newRequest(element);
+                            break;
+                        case 'notes':
+                            break;
+                    }
+                }
+            } catch {
+
+            }
+
         });
     }
-    // localStorage.setItem("activity", "requests");
-    $("#mainSwabs").hide();
-    setTimeout(checkNewData, 1000);
+
+    var datatable = $('#mainSwabs').DataTable();
+
+    if (checkUserPermission(user, "canChangeUsca")) {
+        datatable.columns(15).visible(false);
+    }
+
+    datatable.columns([1, 7, 9, 10, 11, 12, 17, 19, 21, 25]).visible(false);
 }
 
 function readSwabs(toBeCompleted) {
-    var table = Tabulator.findTable("#main")[0];
-    var rowCount = 0;
-    if (table != null && table != undefined) {
-        rowCount = table.getDataCount();
+    var xhr = new XMLHttpRequest();
+    var url = "be/getswabs.php";
+    var activeUsca = sessionStorage.getItem("activeUsca");
+    if (activeUsca == null) {
+        activeUsca = "ALL";
     }
-    if (rowCount == 0) {
-        localStorage.setItem("lastRead", null);
-    }
-    let xhr = new XMLHttpRequest();
-    let url = "be/getswabs.php";
     xhr.open("POST", url, true);
     xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-    let ready = false;
     xhr.onreadystatechange = function () {
         if (xhr.readyState === 4 && xhr.status === 200) {
-            result = JSON.parse(xhr.responseText);
+            var result = JSON.parse(xhr.responseText);
             if (result.status == "OK") {
-                swabs = result.data;
+                var swabs = result.data;
                 toBeCompleted.swabs = true;
                 if (result.hasOwnProperty("lastRead")) {
-                    localStorage.setItem("lastRead", result.lastRead);
+                    sessionStorage.setItem("lastRead", result.lastRead);
                 }
-                setTimeout(checkNewData, 1000);
+                sessionStorage.setItem("swabs", JSON.stringify(swabs));
+                sessionStorage.setItem("toBeCompleted", JSON.stringify(toBeCompleted));
+                setTimeout(checkNewData, 2000);
             } else {
                 Swal.fire({
                     text: "Impossibile recuperare l'elenco dei tamponi.",
@@ -211,97 +249,129 @@ function readSwabs(toBeCompleted) {
             }
         }
     }
-    //xhr.send();
-    xhr.send("lastRead=" + localStorage.getItem("lastRead"));
+    xhr.send("lastRead=" + sessionStorage.getItem("lastRead") + "&activeUsca=" + activeUsca);
 }
 
-var changeSwabStatus = function (e, row) {
+function elementFromRow(row) {
+    var element = {};
+    element.id = row[0];
+    element.idTampone = row[0];
+    element.idAssistito = row[1];
+    element.cognome = row[2];
+    element.nome = row[3];
+    element.nascita = row[7];
+    element.codiceFiscale = row[8];
+    element.telefono1 = row[9];
+    element.telefono2 = row[10];
+    element.telefono3 = row[11];
+    element.email = row[12];
+    element.indirizzo = row[14];
+    element.idUsca = row[15];
+    element.dataEsecuzione = row[17];
+    element.dataConsigliata = row[19];
+    element.idStatus = row[21];
+    element.idUsca = row[25];
+    return element;
+}
+
+function changeSwabStatus(element) {
     buildUpdateTamponiForm();
-    var element = row.getData();
     $("#idTamponeEdit").val(element.idTampone);
     $("#statusTamponeEdit").val(element.idStatus);
-    $("#tamponeEdit").show();
+    $("#tamponeEdit").modal("show");
 }
 
 function uploadSwabs() {
     buildUpLoadTamponiForm();
-    $("#tamponeUpload").show();
+    $("#tamponeUpload").modal("show");
 }
 
 function aggiornaTampone() {
-    let lu = localStorage.getItem("ricdomloggeduser");
+    var lu = sessionStorage.getItem("ricdomloggeduser");
     if (lu != null) {
         loggedUser = JSON.parse(lu);
-        let username = loggedUser.username;
-        let token = "123456";
-        let tampone = {};
+        var username = loggedUser.username;
+        var token = "123456";
+        var tampone = {};
         tampone.id = $("#idTamponeEdit").val();
         tampone.status = $("#statusTamponeEdit").val();
         tampone.lastUpdateBy = "" + loggedUser.id;
 
+        if (tampone.status != null) {
 
-        let xhr = new XMLHttpRequest();
-        let url = "be/updateSwab.php";
-        xhr.open("POST", url, true);
-        xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-        xhr.onreadystatechange = function () {
-            if (xhr.readyState === 4 && xhr.status === 200) {
-                result = JSON.parse(xhr.responseText);
-                if (result.status == "OK") {
-                    Swal.fire({
-                        text: "Operazione completata.",
-                        icon: 'info',
-                        showCancelButton: false,
-                        confirmButtonColor: '#3085d6',
-                        confirmButtonText: 'Ok'
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            cleanTamponeEdit();
-                        }
-                    })
-                } else {
-                    Swal.fire({
-                        text: "Impossibile completare l'operazione",
-                        icon: 'error',
-                        showCancelButton: false,
-                        confirmButtonColor: '#3085d6',
-                        confirmButtonText: 'Ok'
-                    })
+
+            var xhr = new XMLHttpRequest();
+            var url = "be/updateSwab.php";
+            xhr.open("POST", url, true);
+            xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    var result = JSON.parse(xhr.responseText);
+                    if (result.status == "OK") {
+                        Swal.fire({
+                            text: "Operazione completata.",
+                            icon: 'info',
+                            showCancelButton: false,
+                            confirmButtonColor: '#3085d6',
+                            confirmButtonText: 'Ok'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                cleanTamponeEdit();
+                            }
+                        })
+                    } else {
+                        Swal.fire({
+                            text: "Impossibile completare l'operazione",
+                            icon: 'error',
+                            showCancelButton: false,
+                            confirmButtonColor: '#3085d6',
+                            confirmButtonText: 'Ok'
+                        })
+                    }
                 }
             }
+            xhr.send("username=" + username + "&token=" + token + "&tampone=" + JSON.stringify(tampone));
+        } else {
+            Swal.fire({
+                text: "Non hai selezionato il nuovo stato.",
+                icon: 'warning',
+                showCancelButton: false,
+                confirmButtonColor: '#3085d6',
+                confirmButtonText: 'Ok'
+            });
         }
-        xhr.send("username=" + username + "&token=" + token + "&tampone=" + JSON.stringify(tampone));
     }
 }
 
 function buildUpdateTamponiForm() {
 
-    fun1 = "aggiornaTampone()";
-    fun2 = "cleanTamponeEdit()";
-    attrs = {
+    var fun1 = "aggiornaTampone()";
+    var fun2 = "cleanTamponeEdit()";
+    var attrs = {
         idTampone: "idTamponeEdit",
         status: "statusTamponeEdit",
 
     }
     $("#tamponeEdit").html("");
-    let modal = $("#tamponeEdit").addClass("modal")/*.addClass("fade")*/.attr({ "id": "tamponeEdit", "tabindex": "-1", "role": "dialog", "aria-labelledby": attrs.titleId, "aria-hidden": "true" });
-    let modalDialog = $("<div>").addClass("modal-dialog").attr({ "role": "document" });
-    let modalContent = $("<div>").addClass("modal-content");
-    let modalHeader = $("<div>").addClass("modal-header");
-    let modalBody = $("<div>").addClass("modal-body");
-    let modalFooter = $("<div>").addClass("modal-footer");
+    var modal = $("#tamponeEdit").addClass("modal")/*.addClass("fade")*/.attr({ "id": "tamponeEdit", "tabindex": "-1", "role": "dialog", "aria-labelledby": attrs.titleId, "aria-hidden": "true" });
+    var modalDialog = $("<div>").addClass("modal-dialog").attr({ "role": "document" });
+    var modalContent = $("<div>").addClass("modal-content");
+    var modalHeader = $("<div>").addClass("modal-header");
+    var modalBody = $("<div>").addClass("modal-body");
+    var modalFooter = $("<div>").addClass("modal-footer");
 
-    let el = $("<h5>").addClass("modal-title").attr({ "id": attrs.titleId }).html(attrs.titleText);
+    var el = $("<h5>").addClass("modal-title").attr({ "id": attrs.titleId }).html(attrs.titvarext);
     modalHeader.append(el);
     modalContent.append(modalHeader);
 
-    let form = $("<form>");
-    let divFormGroup = $("<div>").addClass("form-group");
+    var form = $("<form>");
+    var divFormGroup = $("<div>").addClass("form-group");
     el = $("<input>").attr({ "type": "hidden", "id": attrs.idTampone });
     divFormGroup.append(el);
     el = $("<label>").attr({ "for": attrs.roleId }).text("Nuovo stato");
     divFormGroup.append(el);
     el = $("<select>").addClass('user-input-form').addClass("form-control").attr({ "id": attrs.status });
+    var statiTamponi = JSON.parse(sessionStorage.getItem("statiTamponi"));
     if (statiTamponi != null) {
         statiTamponi.forEach(element => {
             let option = $("<option>").attr({ "value": element.id }).text(element.descrizione);
@@ -328,26 +398,28 @@ function buildUpdateTamponiForm() {
 function cleanTamponeEdit() {
     $("#idTamponeEdit").val('');
     $("#statusTamponeEdit").val('');
-    $("#tamponeEdit").hide();
+    $("#tamponeEdit").modal("hide");
 }
 
 function cleanTamponeUpload() {
-    $("#tamponeUpload").hide();
+    $("#tamponeUpload").modal("hide");
     $("#tamponeUpload").html('');
 }
 
 function getStatiTamponi(toBeCompleted) {
-    let xhr = new XMLHttpRequest();
-    let url = "be/getStatiTamponi.php";
+    var xhr = new XMLHttpRequest();
+    var url = "be/getStatiTamponi.php";
     xhr.open("POST", url, true);
     xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 
     xhr.onreadystatechange = function () {
         if (xhr.readyState === 4 && xhr.status === 200) {
-            let result = JSON.parse(xhr.responseText);
+            var result = JSON.parse(xhr.responseText);
             if (result.status == "OK") {
                 toBeCompleted.statiTamponi = true;
-                statiTamponi = result.data;
+                var statiTamponi = result.data;
+                sessionStorage.setItem("toBeCompleted", JSON.stringify(toBeCompleted));
+                sessionStorage.setItem("statiTamponi", JSON.stringify(statiTamponi));
             } else {
                 Swal.fire({
                     text: "C'è un problema con il recupero degli stati tamponi.",
@@ -365,9 +437,9 @@ function getStatiTamponi(toBeCompleted) {
 
 function buildUpLoadTamponiForm() {
 
-    fun1 = 'uploadExcelTamponi()'
-    fun2 = '$("#tamponeUpload").hide()';
-    attrs = {
+    var fun1 = 'uploadExcelTamponi()'
+    var fun2 = '$("#tamponeUpload").hide()';
+    var attrs = {
         status: "statusTamponeUpload",
         file: "uploadTamponiFile",
         fileText: "File da caricare",
@@ -375,19 +447,19 @@ function buildUpLoadTamponiForm() {
 
     }
     $("#tamponeUpload").html("");
-    let modal = $("#tamponeUpload").addClass("modal")/*.addClass("fade")*/.attr({ "id": "tamponeUpload", "tabindex": "-1", "role": "dialog", "aria-labelledby": attrs.titleId, "aria-hidden": "true" });
-    let modalDialog = $("<div>").addClass("modal-dialog").attr({ "role": "document" });
-    let modalContent = $("<div>").addClass("modal-content");
-    let modalHeader = $("<div>").addClass("modal-header");
-    let modalBody = $("<div>").addClass("modal-body");
-    let modalFooter = $("<div>").addClass("modal-footer");
+    var modal = $("#tamponeUpload").addClass("modal")/*.addClass("fade")*/.attr({ "id": "tamponeUpload", "tabindex": "-1", "role": "dialog", "aria-labelledby": attrs.titleId, "aria-hidden": "true" });
+    var modalDialog = $("<div>").addClass("modal-dialog").attr({ "role": "document" });
+    var modalContent = $("<div>").addClass("modal-content");
+    var modalHeader = $("<div>").addClass("modal-header");
+    var modalBody = $("<div>").addClass("modal-body");
+    var modalFooter = $("<div>").addClass("modal-footer");
 
-    let el = $("<h5>").addClass("modal-title").attr({ "id": attrs.titleId }).html(attrs.titleText);
+    var el = $("<h5>").addClass("modal-title").attr({ "id": attrs.titleId }).html(attrs.titvarext);
     modalHeader.append(el);
     modalContent.append(modalHeader);
 
-    let form = $("<form>").attr({ "id": "formFiles" });
-    let divFormGroup = $("<div>").addClass("form-group");
+    var form = $("<form>").attr({ "id": "formFiles" });
+    var divFormGroup = $("<div>").addClass("form-group");
     el = $("<label>").addClass("form-label").attr({ "for": attrs.file }).text(attrs.fileText);
     divFormGroup.append(el);
     el = $("<input>").addClass("form-control").attr({ "id": attrs.file, "type": "file", "name": "files", "accept": ".xls, .xlsx, .csv" });
@@ -395,6 +467,7 @@ function buildUpLoadTamponiForm() {
     el = $("<label>").attr({ "for": attrs.status }).text(attrs.statusText);
     divFormGroup.append(el);
     el = $("<select>").addClass('user-input-form').addClass("form-control").attr({ "id": attrs.status });
+    var statiTamponi = JSON.parse(sessionStorage.getItem("statiTamponi"));
     if (statiTamponi != null) {
         statiTamponi.forEach(element => {
             let option = $("<option>").attr({ "value": element.id }).text(element.descrizione);
@@ -419,11 +492,11 @@ function buildUpLoadTamponiForm() {
 }
 
 function uploadExcelTamponi() {
-    let lu = localStorage.getItem("ricdomloggeduser");
+    var lu = sessionStorage.getItem("ricdomloggeduser");
     if (lu != null) {
         loggedUser = JSON.parse(lu);
-        let username = loggedUser.username;
-        let token = "123456";
+        var username = loggedUser.username;
+        var token = "123456";
         var f = $("#uploadTamponiFile").prop("files");
         if (f == undefined || f.length == 0) {
             Swal.fire({
@@ -440,14 +513,13 @@ function uploadExcelTamponi() {
             formData.append("file", f[0]);
             formData.append("username", username);
             formData.append("token", token);
-            let xhr = new XMLHttpRequest();
-            let url = "be/caricaExcelTamponi.php";
+            var xhr = new XMLHttpRequest();
+            var url = "be/caricaExcelTamponi.php";
             xhr.open("POST", url, true);
-            // xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 
             xhr.onreadystatechange = function () {
                 if (xhr.readyState === 4 && xhr.status === 200) {
-                    let result = JSON.parse(xhr.responseText);
+                    var result = JSON.parse(xhr.responseText);
                     if (result.status == "OK") {
                         $("#loader").hide();
                         Swal.fire({
@@ -516,63 +588,3 @@ function updateTableDataTamponi() {
         }
     }
 }
-/*
-function updateTableDataTamponi() {
-    if (typeof (waitingForDataTamponi) !== 'undefined' && !waitingForDataTamponi) {
-        waitingForDataTamponi = true;
-        toBeCompleted.swabs = false;
-        readSwabs(toBeCompleted);
-        setTimeout(updateTableDataTamponi, 200);
-    } else {
-        if (toBeCompleted.swabs) {
-            waitingForDataTamponi = false;
-            var table = Tabulator.findTable("#mainSwabs")[0];
-            // console.log("Scrivo i dati aggiornati");
-            table.updateOrAddData(swabs);
-            setTimeout(checkNewData, 1000);
-        } else {
-            setTimeout(updateTableDataTamponi, 200);
-        }
-    }
-}
-
-function updateTableDataTamponi() {
-    var waitingForDataTamponi = JSON.parse(sessionStorage.getItem("waitingForDataTamponi"));
-    var toBeCompleted = JSON.parse(sessionStorage.getItem("toBeCompleted"));
-    if (waitingForDataTamponi != null && !waitingForDataTamponi) {
-        waitingForDataTamponi = true;
-        toBeCompleted.swabs = false;
-        sessionStorage.setItem("toBeCompleted", JSON.stringify(toBeCompleted));
-        sessionStorage.setItem("waitingForDataTamponi", JSON.stringify(waitingForDataTamponi));
-        readSwabs(toBeCompleted);
-        setTimeout(updateTableDataTamponi, 200);
-    } else {
-        if (toBeCompleted.swabs) {
-            waitingForDataTamponi = false;
-            sessionStorage.setItem("waitingForDataTamponi", JSON.stringify(waitingForDataTamponi));
-            var table = Tabulator.findTable("#mainSwabs")[0];
-            //var swabs = JSON.parse(sessionStorage.getItem("swabs"));
-            if (swabs.length != 0) {
-                var rows = table.getRows();
-                var newIds = [];
-                swabs.forEach(el=>{
-                    newIds.push(parseInt(el.id));
-                });
-                rows.forEach(el=>{
-                    if (!newIds.includes(parseInt(el.getIndex()))){
-                        table.deleteRow(parseInt(el.getIndex()));
-                    }
-                })
-                table.updateOrAddData(swabs).then(function () {
-                    setTimeout(checkNewData, 2000);
-                })
-            } else {
-                table.clearData();
-                setTimeout(checkNewData, 2000);
-            }
-        } else {
-            setTimeout(updateTableDataTamponi, 200);
-        }
-    }
-}
-*/
