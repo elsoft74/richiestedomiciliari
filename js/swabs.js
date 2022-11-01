@@ -1,5 +1,5 @@
 function showSwabs(swabs, user) {
-   $.extend(true, $.fn.dataTable.defaults, {
+    $.extend(true, $.fn.dataTable.defaults, {
         "stateSave": true,
         "stateDuration": -1,
         language: {
@@ -554,35 +554,24 @@ function uploadExcelTamponi() {
 
 }
 
+
 function updateTableDataTamponi() {
-    if (typeof (waitingForDataTamponi) !== 'undefined' && !waitingForDataTamponi) {
+    var waitingForDataTamponi = JSON.parse(sessionStorage.getItem("waitingForDataTamponi"));
+    var toBeCompleted = JSON.parse(sessionStorage.getItem("toBeCompleted"));
+    if (waitingForDataTamponi != null && !waitingForDataTamponi) {
         waitingForDataTamponi = true;
         toBeCompleted.swabs = false;
+        sessionStorage.setItem("toBeCompleted", JSON.stringify(toBeCompleted));
+        sessionStorage.setItem("waitingForDataTamponi", JSON.stringify(waitingForDataTamponi));
         readSwabs(toBeCompleted);
         setTimeout(updateTableDataTamponi, 200);
     } else {
         if (toBeCompleted.swabs) {
             waitingForDataTamponi = false;
-            var table = Tabulator.findTable("#mainSwabs")[0];
-            //var swabs = JSON.parse(sessionStorage.getItem("swabs"));
-            if (swabs.length != 0) {
-                var rows = table.getRows();
-                var newIds = [];
-                swabs.forEach(el=>{
-                    newIds.push(parseInt(el.id));
-                });
-                rows.forEach(el=>{
-                    if (!newIds.includes(parseInt(el.getIndex()))){
-                        table.deleteRow(parseInt(el.getIndex()));
-                    }
-                })
-                table.updateOrAddData(swabs).then(function () {
-                    setTimeout(checkNewData, 2000);
-                })
-            } else {
-                table.clearData();
-                setTimeout(checkNewData, 2000);
-            }
+            sessionStorage.setItem("waitingForDataTamponi", JSON.stringify(waitingForDataTamponi));
+            var swabs = JSON.parse(sessionStorage.getItem("swabs"));
+            var user = JSON.parse(sessionStorage.getItem("ricdomloggeduser"));
+            showSwabs(swabs, user);
         } else {
             setTimeout(updateTableDataTamponi, 200);
         }

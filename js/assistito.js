@@ -329,6 +329,7 @@ function cleanAssistitoInsert() {
 }
 
 function showAssistiti(assistiti, user) {
+
     $.extend(true, $.fn.dataTable.defaults, {
         "stateSave": true,
         "stateDuration": -1,
