@@ -207,7 +207,6 @@ class Tampone
                                 $query.=" AND id_usca=:id_usca";
                             }
 
-
                             $query.=" AND id_status IN (";
                             foreach($user->reading_states AS $state){
                                 $query.="$state,";
