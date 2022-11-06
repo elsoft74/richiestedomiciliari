@@ -25,8 +25,8 @@ buildHead();
         }
         window.addEventListener('dataLoaded', function() {
             // buildInsertForm("insert");
-            // buildAssistitoInsertForm("insertAssistito");
-            // buildAssistitoEditForm("editAssistito");
+            buildAssistitoInsertForm("insertAssistito");
+            buildAssistitoEditForm("editAssistito");
             showMenu(lu);
             $(".lds-grid").hide();
             changeActivity("assistiti");

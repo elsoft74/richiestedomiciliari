@@ -30,7 +30,7 @@ function buildAssistitoInsertForm(target) {
             break;
         case "editAssistito":
             tar = "#editAssistito";
-            fun1 = "aggiornaAssistito()";
+            fun1 = "showAssistitoUpdate()";
             fun2 = "cleanAssistitoEdit()";
             attrs = {
                 id: "idAssistito_Edit", // necessario per evitare id duplicati con la gestione richieste
@@ -113,7 +113,7 @@ function buildAssistitoInsertForm(target) {
         el = $("<input>").addClass('assitito-input-form').addClass("form-control").attr({ "type": "text", "id": attrs.indirizzo });
         divFormGroup.append(el);
 
-        el = $("<label>").attr({ "for": attrs.idUsca }).text("USCA di competenza");
+        el = $("<label>").attr({ "for": attrs.idUsca }).text("UCA di competenza");
         divFormGroup.append(el);
         el = $("<select>").addClass("form-richiesta").addClass("form-control").attr({ "id": attrs.idUsca });
         var usca = JSON.parse(sessionStorage.getItem("usca"));
@@ -157,8 +157,6 @@ function inserisciAssistito() {
     var lu = sessionStorage.getItem("ricdomloggeduser");
     if (lu != null) {
         var loggedUser = JSON.parse(lu);
-        var username = loggedUser.username;
-        var token = "123456";
         var xhr = new XMLHttpRequest();
         var url = "be/insertAssistito.php";
         var assistito = {};
@@ -210,7 +208,7 @@ function inserisciAssistito() {
                     }
                 }
             }
-            xhr.send("username=" + username + "&token=" + token + "&assistito=" + JSON.stringify(assistito));
+            xhr.send("assistito=" + JSON.stringify(assistito));
         } else {
             Swal.fire({
                 text: err,
@@ -228,8 +226,6 @@ function aggiornaAssistito() {
     let lu = sessionStorage.getItem("ricdomloggeduser");
     if (lu != null) {
         var loggedUser = JSON.parse(lu);
-        var username = loggedUser.username;
-        var token = "123456";
         var xhr = new XMLHttpRequest();
         var url = "be/editAssistito.php";
         var assistito = {};
@@ -283,7 +279,7 @@ function aggiornaAssistito() {
                     }
                 }
             }
-            xhr.send("username=" + username + "&token=" + token + "&assistito=" + JSON.stringify(assistito));
+            xhr.send("assistito=" + JSON.stringify(assistito));
         } else {
             Swal.fire({
                 text: err,
@@ -297,9 +293,25 @@ function aggiornaAssistito() {
 
 }
 
-var showAssistitoUpdate = function (e, row) {
+function assistitoElementFromRow(row) {
+    var element = {};
+    element.idAssistito = row[0];
+    element.cognome = row[1];
+    element.nome = row[2];
+    element.nascita = row[18];
+    element.codiceFiscale = row[6];
+    element.indirizzo = row[8];
+    element.telefono1 = row[12];
+    element.telefono2 = row[13];
+    element.telefono3 = row[14];
+    element.email = row[15];
+    element.idUsca = row[16];
+    element.noteAssistito = row[17];
+    return element;
+}
+
+function showAssistitoUpdate (element) {
     $("#editAssistito").modal("show");
-    var element = row.getData();
     $("#idAssistito_Edit").val((element.hasOwnProperty("idAssistito")) ? element.idAssistito : element.id);
     $("#idUscaAssistitoEdit").val(element.idUsca);
     $("#nomeAssistitoEdit").val(element.nome);
@@ -378,6 +390,7 @@ function showAssistiti(assistiti, user) {
             row.push(e.email);
             row.push(e.idUsca);
             row.push(e.note);
+            row.push(e.nascita);
             datatable.row.add(row);
         })
         datatable.draw();
@@ -407,6 +420,8 @@ function showAssistiti(assistiti, user) {
         el = $("<th>");
         tr.append(el);
         el = $("<th>").html("Note");
+        tr.append(el);
+        el = $("<th>");
         tr.append(el);
         el = $("<th>");
         tr.append(el);
@@ -465,6 +480,8 @@ function showAssistiti(assistiti, user) {
             tr.append(el);
             el = $("<td>").html(e.note);
             tr.append(el);
+            el = $("<td>").html(e.nascita);
+            tr.append(el);
             tableBody.append(tr)
         })
 
@@ -478,10 +495,10 @@ function showAssistiti(assistiti, user) {
             try {
                 var cell = $(table.cell(this).data()).html();
                 if (cell == 'edit' || cell == 'notes') {
-                    var element = requestElementFromRow(table.row(this).data());
+                    var element = assistitoElementFromRow(table.row(this).data());
                     switch (cell) {
                         case 'edit':
-                            // showRequestUpdate(element);
+                            showAssistitoUpdate(element);
                             break;
                         case 'notes':
                             break;
@@ -500,7 +517,7 @@ function showAssistiti(assistiti, user) {
         datatable.columns(9).visible(false);
     }
 
-    datatable.columns([12, 13, 14, 15, 16,17]).visible(false);
+    datatable.columns([12, 13, 14, 15, 16, 17, 18]).visible(false);
     setTimeout(checkNewData, 2000);
 
 }

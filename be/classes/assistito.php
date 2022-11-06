@@ -226,9 +226,6 @@
                             }
                             $out->lastRead = (new DateTime())->format('Y-m-d H:i:s');
                             $out->status="OK";
-                        /*} else {
-                            throw new Exception("OPERAZIONE-NON-PERMESSA");
-                        } */
                     } catch(Exception $ex){
                             $out->error=$ex->getMessage();
                         }
@@ -264,7 +261,7 @@
                             $stmt->bindParam(':username',$user->username,PDO::PARAM_STR);
                             $stmt->execute();
                             $res=$stmt->fetch(PDO::FETCH_ASSOC);
-                            if (User::checkToken($token) && $res && $res['is_active']==1 AND User::checkCanCreateAssistito($res['role_id'])){
+                            if ($res && $res['is_active']==1){
                                 $query="SELECT COUNT(id) AS presente FROM `assistiti` AS a WHERE UPPER(a.codicefiscale)=UPPER(:codicefiscale)";
                                 $codicefiscale=$this->getCodiceFiscale();
                                 $stmt = $conn->prepare($query);
@@ -377,7 +374,6 @@
                 $out->data="NOTLOGGED";
             }
             
-            //file_put_contents("../log/dbtest.log",(new DateTime("now"))->format("Y-m-d H:i").$msg."\n",FILE_APPEND);
             return $out;
         }
     

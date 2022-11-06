@@ -9,8 +9,6 @@
     include_once("classes/assistito.php"); 
     try {
         $tmp = json_decode($_POST['assistito']);
-        $username = $_POST['username'];
-        $token = $_POST['token'];
         $out->in=print_r($tmp,true);
         if ($tmp != null/* && $user != null*/) {
             $assistito = new Assistito();
@@ -27,7 +25,7 @@
             $assistito->setNote($tmp->note);
             $assistito->setNascita($tmp->nascita);
             
-            $out=$assistito->update($username,$token);
+            $out=$assistito->update();
             //$ric->getDetails();
             $out->debug=print_r($assistito,true);
             // $out->status="OK";

@@ -1,7 +1,11 @@
 <?php
     include_once("config/config.php");
     function checkAndExtendSession(){
-        session_start();
+        $status = session_status();
+        if($status == PHP_SESSION_NONE){
+            //There is no active session
+            session_start();
+        }
         $t=time();
         if (isset($_SESSION['LAST_ACTIVITY']) && ($t - $_SESSION['LAST_ACTIVITY'] > DURATION)) {
             session_unset();     // unset $_SESSION variable for the run-time 
@@ -19,7 +23,11 @@
     }
 
     function checkSession(){
-        session_start();
+        $status = session_status();
+        if($status == PHP_SESSION_NONE){
+            //There is no active session
+            session_start();
+        }
         $t=time();
         if (isset($_SESSION['LAST_ACTIVITY']) && ($t - $_SESSION['LAST_ACTIVITY'] > DURATION)) {
             session_unset();     // unset $_SESSION variable for the run-time 
@@ -28,7 +36,11 @@
     }
 
     function createSession(){
-        session_start();
+        $status = session_status();
+        if($status == PHP_SESSION_NONE){
+            //There is no active session
+            session_start();
+        }
         $t=time();
         if (!isset($_SESSION['LAST_ACTIVITY'])) {
             $_SESSION['LAST_ACTIVITY'] = $t;
