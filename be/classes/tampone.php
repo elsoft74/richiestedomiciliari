@@ -309,15 +309,15 @@ class Tampone
 
                     $res = $stmt->fetch(PDO::FETCH_ASSOC);
                     if ($res) {
-                        $this->nome=$r['nome'];
-                        $this->tamponeIsActive=$r['is_active'];
-                        $this->status=$r['status'];
-                        $this->dataEsecuzione=$r['data_esecuzione'];
-                        $this->dataConsigliata=$r['data_consigliata'];
-                        $this->created=$r['created'];
-                        $this->createdBy=$r['created_by'];
-                        $this->last_update=$r['last_update'];
-                        $this->lastUpdateBy=$r['last_update_by'];
+                        $this->nome=$res['nome'];
+                        $this->tamponeIsActive=$res['is_active'];
+                        $this->status=$res['status'];
+                        $this->dataEsecuzione=$res['data_esecuzione'];
+                        $this->dataConsigliata=$res['data_consigliata'];
+                        $this->created=$res['created'];
+                        $this->createdBy=$res['created_by'];
+                        $this->last_update=$res['last_update'];
+                        $this->lastUpdateBy=$res['last_update_by'];
                     }
 
                     $out->status = "OK";

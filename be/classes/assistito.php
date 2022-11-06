@@ -481,7 +481,7 @@
                             $stmt->bindParam(':username',$user->username,PDO::PARAM_STR);
                             $stmt->execute();
                             $res=$stmt->fetch(PDO::FETCH_ASSOC);
-                            if (User::checkToken($token) && $res && $res['is_active']==1 AND User::checkCanUpdateAssistito($res['role_id'])){
+                            if ($res && $res['is_active']==1){
                                 $query="SELECT id FROM `assistiti` AS a WHERE UPPER(a.codicefiscale)=UPPER(:codicefiscale)";
                                 $codicefiscale=$this->getCodiceFiscale();
                                 $stmt = $conn->prepare($query);
@@ -492,7 +492,7 @@
                                     $this->id=$results['id'];
                                     $out->data="exists";
                                 } else {
-                                    $this->insert($username,$token);
+                                    $this->insert();
                                     $out->data="new";
                                 }
                                 $out->status="OK";
