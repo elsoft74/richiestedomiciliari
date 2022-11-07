@@ -201,7 +201,7 @@ class Tampone
                             WHERE a.is_active=1"
                             */
         
-                            $query = "SELECT * FROM `vista_tamponi` WHERE tampone_is_active=1 AND DATEDIFF(CURDATE(), data_esecuzione) < 8 ";
+                            $query = "SELECT * FROM `vista_tamponi` WHERE tampone_is_active=1 AND DATEDIFF(CURDATE(), data_esecuzione) < 7 ";
                             
                             if($activeUsca!="ALL"){
                                 $query.=" AND id_usca=:id_usca";
