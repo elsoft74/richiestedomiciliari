@@ -4,7 +4,7 @@ include_once("common.php");
 <html>
 
 <?php
-buildHead();
+buildHead("Gestionale UCA - Richieste");
 ?>
 
 <body>
