@@ -4,7 +4,7 @@
 <html>
 
 <?php
-    buildHead();
+    buildHead("Gestionale UCA - Nuovi Positivi");
 ?>
 
 <body>
