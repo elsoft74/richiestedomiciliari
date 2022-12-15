@@ -38,8 +38,8 @@ function showMenu(user) {
             button = $("<button>").addClass('btn btn-primary btn-block swabs-form menu-button').attr({"onClick":'uploadSwabs()','id':'caricaTamponiButton'}).text("Carica Tamponi");
             div1.append(button);
         }
-        button = $("<button>").addClass('btn btn-warning btn-block requests-form menu-button').attr({"onClick":'mostraStorico()','id':'mostraStoricoButton'}).text(mostraStorico?"Solo Attuali":"Tutte").hide();
-        div1.append(button);
+        //button = $("<button>").addClass('btn btn-warning btn-block requests-form menu-button').attr({"onClick":'mostraStorico()','id':'mostraStoricoButton'}).text(mostraStorico?"Solo Attuali":"Tutte").hide();
+        //div1.append(button);
         if(user.permissions.canChangeUsca){
             button = $("<button>").addClass('btn btn-primary btn-block requests-form assistiti-form swabs-form menu-button').attr({"onClick":'buildChangeUsca()','id':'cambiaTeam'}).text("Cambia Team");
             div1.append(button);
