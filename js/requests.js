@@ -244,9 +244,11 @@ function showRequests(richieste, user) {
 
     var datatable = $('#mainRequests').DataTable();
 
+    /*
     if (checkUserPermission(user, "canChangeUsca")) {
         datatable.columns(14).visible(false);
     }
+    */
 
     if (!mostraStorico) {
         datatable.columns(4).visible(false);
