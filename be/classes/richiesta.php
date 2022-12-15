@@ -544,7 +544,8 @@ class Richiesta
                             data=:data,
                             last_update=:last_update,
                             last_update_by=:last_update_by,
-                            note=:note
+                            note=:note,
+                            is_archived=:is_archived
                             WHERE `id`=:id";
 
                         $stmt = $conn->prepare($query);
@@ -555,6 +556,7 @@ class Richiesta
                         $stmt->bindParam(':note', $this->note, PDO::PARAM_STR);
                         $stmt->bindParam(':last_update', $this->lastUpdate, PDO::PARAM_STR);
                         $stmt->bindParam(':last_update_by', $this->lastUpdateBy, PDO::PARAM_INT);
+                        $stmt->bindParam(':is_archived', $this->isArchived, PDO::PARAM_INT);
                         $stmt->bindParam(':id', $this->id, PDO::PARAM_INT);
 
                         $stmt->execute();
