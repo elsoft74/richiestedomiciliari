@@ -280,18 +280,22 @@ class Richiesta
                         $query.=" AND (DATEDIFF(CURDATE(), data) < 9 OR data is null)";
                         $query.=" AND (is_archived = 0 OR is_archived is null)";
                     }
+                    /*
                     if($activeUsca!="ALL"){
                         $query.=" AND id_usca=:id_usca";
                     }
+                    */
 
                     $query.=" ORDER BY data ASC";
                     
                     $out->query=$query;
                     
                     $stmt = $conn->prepare($query);
+                    /*
                     if($activeUsca!="ALL"){
                         $stmt->bindParam(':id_usca',$activeUsca,PDO::PARAM_INT);
                     }
+                    */
                     $stmt->execute();
 
                     $res = $stmt->fetchAll(PDO::FETCH_ASSOC);
