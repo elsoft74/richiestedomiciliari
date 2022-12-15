@@ -234,6 +234,7 @@ class Richiesta
         $out = new stdClass();
         $out->status = "KO";
         $out->data = [];
+        $out->query="";
         try {
             $conn = DB::conn();
             if ($conn != null) {
@@ -276,7 +277,7 @@ class Richiesta
 
                     $query = "SELECT * FROM `vista_richieste` WHERE (richiesta_is_active=1 OR richiesta_is_active IS null)";
                     if (!$arc){
-                        $query.=" AND (data >= CURRENT_DATE()-5 OR data is null)";
+                        $query.=" AND (DATEDIFF(CURDATE(), data) < 9 OR data is null)";
                         $query.=" AND (is_archived = 0 OR is_archived is null)";
                     }
                     if($activeUsca!="ALL"){
@@ -284,6 +285,8 @@ class Richiesta
                     }
 
                     $query.=" ORDER BY data ASC";
+                    
+                    $out->query=$query;
                     
                     $stmt = $conn->prepare($query);
                     if($activeUsca!="ALL"){
