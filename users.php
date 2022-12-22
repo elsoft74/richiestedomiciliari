@@ -9,11 +9,12 @@ buildHead("Gestionale UCA - Utenti");
 
 <body>
     <nav id="menu"></nav>
+    <div><p class="pageTile">Utenti</p></div>
     <div id="insertUser"></div>
     <div id="login" class="sections"></div>
     <div id="users" class="sections users-form"></div>
     <div id="editUser"></div>
-    <div id="firma"><a href="https://ivopugliese.it">©2022 Ivo Pugliese</a></div>
+    <!-- <div id="firma"><a href="https://ivopugliese.it">©2022 Ivo Pugliese</a></div> -->
     <script>       
         if ($("#login").html() == "") {
             buildLogin();

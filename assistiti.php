@@ -9,6 +9,7 @@ buildHead("Gestionale UCA - Assistiti");
 
 <body>
     <nav id="menu"></nav>
+    <div><p class="pageTile">Assistiti</p></div>
     <div class="lds-grid position-absolute top-50 start-50 translate-middle"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
     <div id="insert"></div>
     <div id="insertAssistito"></div>

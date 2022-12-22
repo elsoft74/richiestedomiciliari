@@ -136,3 +136,8 @@ tbody tr td span {
   width: auto;
   padding-right: 10px;
 }
+
+.pageTile{
+  text-align: center;
+  font-size: x-large;
+}

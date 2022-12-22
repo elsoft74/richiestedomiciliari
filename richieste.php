@@ -4,11 +4,12 @@ include_once("common.php");
 <html>
 
 <?php
-buildHead("Gestionale UCA - Richieste");
+buildHead("Gestionale UCA - Elenco Attività");
 ?>
 
 <body>
     <nav id="menu"></nav>
+    <div><p class="pageTile">Elenco Attività</p></div>
     <div class="lds-grid position-absolute top-50 start-50 translate-middle"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
     <div id="main" class="sections requests-form">
         <table id="mainRequests" class="table table-striped" style="width:100%"></table>

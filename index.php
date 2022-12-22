@@ -4,11 +4,12 @@
 <html>
 
 <?php
-    buildHead("Gestionale UCA - Nuovi Positivi");
+    buildHead("Gestionale UCA - Pazienti Positivi");
 ?>
 
 <body>
     <nav id="menu"></nav>
+    <div><p class="pageTile">Pazienti Positivi</p></div>
     <div class="lds-grid position-absolute top-50 start-50 translate-middle"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
     <div id="swabs" class="sections swabs-form">
         <table id="mainSwabs" class="table table-striped" style="width:100%"></table>
